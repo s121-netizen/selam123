@@ -65,35 +65,18 @@ h1 {
   background:
     linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
     url("https://i.imgur.com/VqGB3wv.jpeg");
-  background-position: center 20%;
 }
 
 .card-two {
   background:
     linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
     url("https://i.imgur.com/xW8Z5FU.jpeg");
-  background-position: center 35%;
 }
 
 .card-three {
   background:
     linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
     url("https://i.imgur.com/hFsiwdH.jpeg");
-  background-position: center 55%;
-}
-
-h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  margin-bottom: 12px;
-}
-
-.link {
-  display: inline-block;
-  margin-top: 14px;
-  color: #1db954;
-  text-decoration: none;
-  font-weight: 500;
 }
 
 /* GALERİ */
@@ -104,145 +87,182 @@ h2 {
 .gallery h2 {
   font-family: 'Playfair Display', serif;
   font-size: 24px;
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
-/* GALERİ NAV */
-.gallery-nav {
-  margin-bottom: 16px;
-}
-
-.gallery-nav a {
-  color: #fff;
-  text-decoration: none;
-  margin: 0 8px;
-  font-size: 14px;
-  opacity: 0.6;
-}
-
-.gallery-nav a:hover {
-  opacity: 1;
-}
-
-/* KAYDIRMALI GALERİ */
 .gallery-scroll {
   display: flex;
   gap: 14px;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
   padding-bottom: 12px;
 }
 
-.gallery-scroll img {
+.gallery-item {
+  position: relative;
   flex: 0 0 auto;
+}
+
+.gallery-item img {
   width: 180px;
   height: 240px;
   object-fit: cover;
   border-radius: 18px;
-  scroll-snap-align: start;
+  cursor: pointer;
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
 }
 
-/* FOOTER */
+.gallery-date {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  font-size: 11px;
+  background: rgba(0,0,0,0.55);
+  padding: 4px 8px;
+  border-radius: 10px;
+}
+
+/* LIGHTBOX */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 85%;
+  border-radius: 18px;
+}
+
+.lightbox-date {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  font-size: 14px;
+  opacity: .8;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 26px;
+  font-size: 36px;
+  cursor: pointer;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  font-size: 52px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.arrow.left { left: 20px; }
+.arrow.right { right: 20px; }
+
 footer {
   margin-top: 80px;
   font-size: 13px;
-  opacity: 0.85;
+  opacity: .85;
 }
 </style>
 </head>
 
 <body>
-
 <div class="page">
 
 <h1>aynı şehirde olmasak da<br>aynı hislerdeyiz</h1>
 <div class="subtitle">bu sayfa bir mesafeye değil, bir hisse ait.</div>
 
 <div class="card card-one">
-  <p>
-    sevgililer günü için “bir şey istemiyorum” dedin,<br>
-    ama ben yine de boş geçmek istemedim.<br><br>
-    hislerim hep sende.
-  </p>
+  <p>hislerim hep sende.</p>
 </div>
 
 <div class="card card-two">
-  <div>
-    <h2>bizim playlist</h2>
-    <p>üçü benim, üçü senin.<br>ama hepsi biz.</p>
-
-    <iframe
-      src="https://open.spotify.com/embed/playlist/49IHmn6WGDS5Vnz5OgU57Y"
-      width="100%" height="152"
-      frameborder="0"
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-    </iframe>
-
-    <a class="link" href="https://open.spotify.com/playlist/49IHmn6WGDS5Vnz5OgU57Y" target="_blank">
-      spotify’da aç 🎧
-    </a>
-  </div>
+  <iframe src="https://open.spotify.com/embed/playlist/49IHmn6WGDS5Vnz5OgU57Y"
+    width="100%" height="152" frameborder="0"
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen;">
+  </iframe>
 </div>
 
 <div class="card card-three">
-  <p>
-    aynı anda özlemek,<br>
-    bazen yan yana olmaktan daha yakın.
-  </p>
+  <p>aynı anda özlemek,<br>bazen yan yana olmaktan daha yakın.</p>
 </div>
 
 <!-- GALERİ -->
 <div class="gallery">
   <h2>birlikte biriken anlar</h2>
 
-  <div class="gallery-nav">
-    <a href="#g1">1</a>
-    <a href="#g2">2</a>
-  </div>
-
-  <!-- GALERİ 1 -->
-  <div class="gallery-scroll" id="g1">
-    <img src="https://i.imgur.com/VqGB3wv.jpeg">
-    <img src="https://i.imgur.com/xW8Z5FU.jpeg">
-    <img src="https://i.imgur.com/hFsiwdH.jpeg">
-    <img src="https://i.imgur.com/PyNRVJW.jpeg">
-    <!-- buraya devam -->
-  </div>
-
-  <!-- GALERİ 2 -->
-  <div class="gallery-scroll" id="g2" style="margin-top:20px;">
-    <img src="https://i.ibb.co/kszN3DL3/MG-20251201-WA0038.jpg">
-      <img src="https://i.ibb.co/k23PNbHc/MG-20251207-WA0002.jpg">
-      <img src="https://i.ibb.co/QvJd6sk5/MG-20251209-WA0044.jpg">
-      <img src="https://i.ibb.co/Mz61rxr/MG-20251211-WA0101.jpg">
-      <img src="https://i.ibb.co/wFP4JB6D/MG-20251211-WA0102.jpg">
-      <img src="https://i.ibb.co/WjNBd3n/MG-20251212-WA0018.jpg">
-      <img src="https://i.ibb.co/jP00fCJh/MG-20251219-WA0030.jpg">
-      <img src="https://i.ibb.co/VcG32wGX/MG-20251222-WA0064.jpg">
-      <img src="https://i.ibb.co/C5HX84km/MG-20251222-WA0065.jpg">
-      <img src="https://i.ibb.co/rKywrsQq/MG-20251223-WA0016.jpg">
-      <img src="https://i.ibb.co/Ps3xjf62/MG-20251224-WA0053.jpg">
-      <img src="https://i.ibb.co/x8Rxbwvq/MG-20251225-WA0032.jpg">
-      <img src="https://i.ibb.co/HfjcD0zh/MG-20251227-WA0026.jpg">
-      <img src="https://i.ibb.co/21Jphy9L/MG-20251227-WA0039.jpg">
-      <img src="https://i.ibb.co/TxB1PvVb/MG-20251231-WA0044.jpg">
-      <img src="https://i.ibb.co/1pXDRn4/MG-20260101-WA0085.jpg">
-      <img src="https://i.ibb.co/6Jr7LMPC/MG-20260102-WA0038.jpg">
-      <img src="https://i.ibb.co/DfnBVhZs/MG-20260104-WA0038.jpg">
-      <img src="https://i.ibb.co/HL16TK53/MG-20260107-WA0021.jpg">
-      <img src="https://i.ibb.co/ZzkT7yFK/MG-20260107-WA0023.jpg">
-      <img src="https://i.ibb.co/0RDJY4kf/MG-20260113-WA0000.jpg">
-      <img src="https://i.ibb.co/GfBwLFNS/MG-20260116-WA0025.jpg">
-      <img src="https://i.ibb.co/Rpc1Z4xH/MG-20260116-WA0026.jpg">
-    <!-- buraya devam -->
+  <div class="gallery-scroll">
+    <div class="gallery-item">
+      <img src="https://i.imgur.com/VqGB3wv.jpeg" data-date="1.1.1111">
+      <span class="gallery-date">1.1.1111</span>
+    </div>
+    <div class="gallery-item">
+      <img src="https://i.imgur.com/xW8Z5FU.jpeg" data-date="2.2.2222">
+      <span class="gallery-date">2.2.2222</span>
+    </div>
+    <div class="gallery-item">
+      <img src="https://i.imgur.com/hFsiwdH.jpeg" data-date="3.3.3333">
+      <span class="gallery-date">3.3.3333</span>
+    </div>
   </div>
 </div>
 
-<footer>
-  14 şubat · 🤍
-</footer>
-
+<footer>14 şubat · 🤍</footer>
 </div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="close">×</span>
+  <span class="arrow left">‹</span>
+  <img id="lightbox-img">
+  <div class="lightbox-date" id="lightbox-date"></div>
+  <span class="arrow right">›</span>
+</div>
+
+<script>
+const lightbox = document.getElementById("lightbox");
+const imgBox = document.getElementById("lightbox-img");
+const dateBox = document.getElementById("lightbox-date");
+
+const images = Array.from(document.querySelectorAll(".gallery-item img"));
+let index = 0;
+
+images.forEach((img,i)=>{
+  img.onclick = ()=>{
+    index = i;
+    openLightbox();
+  };
+});
+
+function openLightbox(){
+  imgBox.src = images[index].src;
+  dateBox.textContent = images[index].dataset.date;
+  lightbox.style.display = "flex";
+}
+
+document.querySelector(".close").onclick = ()=> lightbox.style.display="none";
+document.querySelector(".arrow.right").onclick = ()=>{
+  index = (index+1)%images.length;
+  openLightbox();
+};
+document.querySelector(".arrow.left").onclick = ()=>{
+  index = (index-1+images.length)%images.length;
+  openLightbox();
+};
+
+document.addEventListener("keydown", e=>{
+  if(e.key==="Escape") lightbox.style.display="none";
+  if(e.key==="ArrowRight") document.querySelector(".arrow.right").click();
+  if(e.key==="ArrowLeft") document.querySelector(".arrow.left").click();
+});
+</script>
+
 </body>
 </html>
