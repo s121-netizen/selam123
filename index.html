@@ -3,6 +3,201 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sadece Bizim İçin</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap');
+
+* { box-sizing: border-box; }
+
+/* ŞİFRE EKRANI STİLLERİ */
+#login-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  transition: opacity 0.8s ease;
+}
+
+#login-overlay input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #555;
+  color: white;
+  font-size: 24px;
+  text-align: center;
+  padding: 10px;
+  outline: none;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 20px;
+}
+
+#login-overlay button {
+  background: white;
+  color: black;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ANA SAYFA STİLLERİ */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("https://i.imgur.com/PyNRVJW.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #f5f5f5;
+  overflow-x: hidden;
+}
+
+.page {
+  max-width: 720px;
+  margin: auto;
+  padding: 80px 16px;
+  text-align: center;
+  opacity: 0; /* Şifre girilmeden görünmez */
+  transition: opacity 1s ease;
+}
+
+/* NOTLAR BÖLÜMÜ */
+.notes-container {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 30px;
+  padding: 40px 20px;
+  margin: 40px 0;
+}
+
+#note-display {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  min-height: 60px;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.note-btn {
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.note-btn:active { transform: scale(0.95); }
+
+/* GALERİ VE DİĞERLERİ */
+h1 { font-family: 'Playfair Display', serif; font-size: 36px; margin-bottom: 40px; }
+.gallery-scroll { display: flex; gap: 14px; overflow-x: auto; padding: 20px 0; }
+.gallery-item img { width: 200px; height: 280px; object-fit: cover; border-radius: 20px; }
+
+/* ... (Önceki Lightbox ve Kart stillerin burada devam edebilir) ... */
+.card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 40px; margin-bottom: 30px; }
+</style>
+</head>
+
+<body>
+
+<div id="login-overlay">
+  <p style="font-family: 'Playfair Display'; font-size: 18px; margin-bottom: 20px;">Sana özel bir şey var...</p>
+  <input type="password" id="pass-input" placeholder="Şifreyi yaz...">
+  <button onclick="checkPass()">Giriş Yap</button>
+  <p id="error-msg" style="color: #ff4d4d; margin-top: 15px; font-size: 12px; display: none;">Hatalı şifre, tekrar dene sevgilim.</p>
+</div>
+
+<div class="page" id="main-content">
+  <h1>Aynı şehirde olmasak da,<br>aynı hislerdeyiz.</h1>
+
+  <div class="notes-container">
+    <div id="note-display">Buraya senin için minik notlar bıraktım...</div>
+    <button class="note-btn" onclick="generateNote()">Bir Not Oku ✨</button>
+  </div>
+
+  <div class="card">
+    <p>"Mesafeler sadece dokunmaya engeldir, hissetmeye değil."</p>
+  </div>
+
+  <div class="gallery">
+    <h2 style="font-family: 'Playfair Display'; margin-bottom: 20px;">Biriken Anılar</h2>
+    <div class="gallery-scroll">
+       <div class="gallery-item"><img src="2025/02.12.2025.jpg"></div>
+       <div class="gallery-item"><img src="2025/03.12.2025.jpg"></div>
+       <div class="gallery-item"><img src="2025/04.12.2025.jpg"></div>
+       </div>
+  </div>
+
+  <footer style="margin-top: 100px; opacity: 0.5; font-size: 12px;">14 Şubat 2026</footer>
+</div>
+
+<script>
+// --- ŞİFRE AYARI ---
+const SECRET_PASSWORD = "bizim gunumuz"; // <--- Şifreyi buradan değiştir!
+
+function checkPass() {
+  const input = document.getElementById("pass-input").value.toLowerCase();
+  const overlay = document.getElementById("login-overlay");
+  const content = document.getElementById("main-content");
+  
+  if(input === SECRET_PASSWORD) {
+    overlay.style.opacity = "0";
+    setTimeout(() => {
+      overlay.style.display = "none";
+      content.style.opacity = "1";
+    }, 800);
+  } else {
+    document.getElementById("error-msg").style.display = "block";
+  }
+}
+
+// --- NOTLAR LİSTESİ ---
+const loveNotes = [
+  "En çok gülüşünü seviyorum, çünkü o an dünya güzelleşiyor.",
+  "Seninle içtiğim en sade kahve bile dünyanın en güzel içeceği.",
+  "Gözlerinin içine baktığımda huzuru buluyorum.",
+  "Mesafeler sadece kilometrelerden ibaret, kalbim hep seninle.",
+  "İyi ki varsın, iyi ki hayatımdasın sevgilim.",
+  "Bir gün uyanıp yanımda seni göreceğim günü bekliyorum.",
+  "Sen benim başıma gelen en güzel şeysin."
+];
+
+function generateNote() {
+  const display = document.getElementById("note-display");
+  const randomIndex = Math.floor(Math.random() * loveNotes.length);
+  
+  // Hafif bir geçiş efekti
+  display.style.opacity = 0;
+  setTimeout(() => {
+    display.textContent = loveNotes[randomIndex];
+    display.style.opacity = 1;
+  }, 200);
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aynı Şehirde Olmasak da Aynı Hislerdeyiz</title>
 
 <style>
