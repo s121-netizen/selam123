@@ -15,7 +15,7 @@ body {
   font-family: 'Inter', sans-serif;
   background:
     linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-    url("fotolar/arka-plan.jpg"); /* varsa */
+    url("https://i.imgur.com/PyNRVJW.jpeg");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -29,6 +29,7 @@ body {
   text-align: center;
 }
 
+/* BAŞLIK */
 h1 {
   font-family: 'Playfair Display', serif;
   font-size: 40px;
@@ -41,6 +42,7 @@ h1 {
   margin-bottom: 60px;
 }
 
+/* CARD */
 .card {
   border-radius: 26px;
   padding: 48px 32px;
@@ -57,6 +59,24 @@ h1 {
 .card p {
   color: #fff;
   text-shadow: 0 2px 12px rgba(0,0,0,0.45);
+}
+
+.card-one {
+  background:
+    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+    url("https://i.imgur.com/VqGB3wv.jpeg");
+}
+
+.card-two {
+  background:
+    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+    url("https://i.imgur.com/xW8Z5FU.jpeg");
+}
+
+.card-three {
+  background:
+    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+    url("https://i.imgur.com/hFsiwdH.jpeg");
 }
 
 /* GALERİ */
@@ -168,25 +188,50 @@ footer {
 <h1>aynı şehirde olmasak da<br>aynı hislerdeyiz</h1>
 <div class="subtitle">bu sayfa bir mesafeye değil, bir hisse ait.</div>
 
+<div class="card card-one">
+  <p>hislerim hep sende.</p>
+</div>
+
+<div class="card card-two">
+  <iframe src="https://open.spotify.com/embed/playlist/49IHmn6WGDS5Vnz5OgU57Y"
+    width="100%" height="152" frameborder="0"
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen;">
+  </iframe>
+</div>
+
+<div class="card card-three">
+  <p>aynı anda özlemek,<br>bazen yan yana olmaktan daha yakın.</p>
+</div>
+
 <!-- GALERİ -->
 <div class="gallery">
   <h2>birlikte biriken anlar</h2>
 
-  <div class="gallery-scroll">
-
-    <!-- FOTO ŞABLONU – SADECE BUNU ÇOĞALT -->
+  <div class="gallery-scroll" id="gallery">
+    <!-- FOTO EKLEME ŞABLONU -->
     <div class="gallery-item">
-      <img src="fotolar/ocak/IMG_001.jpg">
-      <span class="gallery-date"></span>
+      <img src="https://i.imgur.com/VqGB3wv.jpeg" data-date="1.1.1111">
+      <span class="gallery-date">1.1.1111</span>
     </div>
 
     <div class="gallery-item">
-      <img src="fotolar/ocak/DSC_1234.png">
-      <span class="gallery-date"></span>
+      <img src="https://i.imgur.com/xW8Z5FU.jpeg" data-date="2.2.2222">
+      <span class="gallery-date">2.2.2222</span>
     </div>
 
-    <!-- 226 FOTOYU AYNI ŞEKİLDE EKLE -->
+    <div class="gallery-item">
+      <img src="https://i.imgur.com/hFsiwdH.jpeg" data-date="3.3.3333">
+      <span class="gallery-date">3.3.3333</span>
+    </div>
 
+    <div class="gallery-item">
+      <img src="https://i.imgur.com/hFsiwdH.jpeg" data-date="3.3.3333">
+      <span class="gallery-date">3.3.3333</span>
+    </div>
+
+    
+
+    <!-- 226 FOTOYU BURAYA AYNI ŞEKİLDE EKLE -->
   </div>
 </div>
 
@@ -207,54 +252,36 @@ const lightbox = document.getElementById("lightbox");
 const imgBox = document.getElementById("lightbox-img");
 const dateBox = document.getElementById("lightbox-date");
 
-const items = Array.from(document.querySelectorAll(".gallery-item"));
-const images = items.map(i => i.querySelector("img"));
+const images = Array.from(document.querySelectorAll(".gallery-item img"));
 let index = 0;
 
-/* DOSYA ADINI TARİH YERİNE YAZ */
-items.forEach(item => {
-  const img = item.querySelector("img");
-  const span = item.querySelector(".gallery-date");
-
-  let name = img.src.split("/").pop();
-  name = name.replace(/\.[^/.]+$/, "");
-
-  span.textContent = name;
-  img.dataset.date = name;
-});
-
-/* TIKLAMA */
-images.forEach((img, i) => {
-  img.addEventListener("click", () => {
+images.forEach((img,i)=>{
+  img.addEventListener("click", ()=>{
     index = i;
     openLightbox();
   });
 });
 
-function openLightbox() {
+function openLightbox(){
   imgBox.src = images[index].src;
   dateBox.textContent = images[index].dataset.date;
   lightbox.style.display = "flex";
 }
 
-document.querySelector(".close").onclick = () => {
-  lightbox.style.display = "none";
-};
-
-document.querySelector(".arrow.right").onclick = () => {
+document.querySelector(".close").onclick = ()=> lightbox.style.display="none";
+document.querySelector(".arrow.right").onclick = ()=>{
   index = (index + 1) % images.length;
   openLightbox();
 };
-
-document.querySelector(".arrow.left").onclick = () => {
+document.querySelector(".arrow.left").onclick = ()=>{
   index = (index - 1 + images.length) % images.length;
   openLightbox();
 };
 
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") lightbox.style.display = "none";
-  if (e.key === "ArrowRight") document.querySelector(".arrow.right").click();
-  if (e.key === "ArrowLeft") document.querySelector(".arrow.left").click();
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape") lightbox.style.display = "none";
+  if(e.key === "ArrowRight") document.querySelector(".arrow.right").click();
+  if(e.key === "ArrowLeft") document.querySelector(".arrow.left").click();
 });
 </script>
 
