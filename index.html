@@ -106,27 +106,6 @@
 
         footer { margin-top: 100px; opacity: 0.5; font-size: 12px; padding-bottom: 40px; text-align: center; }
     
-        /* --- GALERİ (AKTARILDI) --- */
-
-        .gallery { margin-top: 60px; text-align: left; }
-        .gallery-scroll { 
-            display: flex; gap: 15px; overflow-x: auto; padding: 10px 10px 25px; 
-            -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
-        }
-        .gallery-item { flex: 0 0 auto; position: relative; width: 180px; scroll-snap-align: start; }
-        .gallery-item img { width: 100%; height: 240px; object-fit: cover; border-radius: 18px; cursor: pointer; }
-
-        /* --- LIGHTBOX (AKTARILDI) --- */
-
-        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 11000; }
-        .lightbox img { max-width: 90%; max-height: 80vh; border-radius: 12px; transition: transform 0.3s ease; }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 50px; cursor: pointer; padding: 20px; user-select: none; z-index: 11001; }
-        .prev-btn { left: 10px; } .next-btn { right: 10px; }
-        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 40px; color: white; cursor: pointer; z-index: 11002; }
-
-        footer { padding: 40px 0; opacity: 0.4; font-size: 11px; text-align: center; }
-
-
         /* --- TIKLAYINCA ÇIKAN MOR/GRİ KALPLER --- */
         .tap-heart {
             position: fixed;
@@ -142,6 +121,23 @@
             0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             100% { opacity: 0; transform: translate(-50%, calc(-50% - 140px)) scale(1.8); }
         }
+
+
+        /* --- GALERİ (INDEX6) --- */
+
+        .gallery { margin-top: 60px; text-align: left; }
+        .gallery-scroll { display: flex; gap: 14px; overflow-x: auto; padding: 10px; }
+        .gallery-item { flex: 0 0 auto; position: relative; }
+        .gallery-item img { width: 180px; height: 240px; object-fit: cover; border-radius: 18px; cursor: pointer; }
+        .gallery-date { position: absolute; bottom: 8px; left: 10px; font-size: 10px; background: rgba(0,0,0,0.5); padding: 3px 8px; border-radius: 8px; pointer-events: none; }
+
+        /* --- LIGHTBOX (INDEX6) --- */
+
+        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 11000; padding: 10px; }
+        .lightbox img { max-width: 100%; max-height: 80vh; border-radius: 10px; }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 40px; cursor: pointer; padding: 20px; z-index: 12000; }
+        .prev { left: 5px; } .next { right: 5px; }
+        .close { position: absolute; top: 20px; right: 20px; font-size: 40px; color: white; cursor: pointer; }
 
 </style>
 </head>
@@ -179,7 +175,7 @@
 
     <div class="gallery">
         <h2>birlikte biriken anlar</h2>
-        <div class="gallery-scroll" id="scroller">
+        <div class="gallery-scroll" id="gallery-scroll">
             <div class="gallery-item"><img src="2025/02.12.2025.2.jpg"><span class="gallery-date">02.12.2025</span></div>
             <div class="gallery-item"><img src="2025/02.12.2025.jpg"><span class="gallery-date">02.12.2025</span></div>
             <div class="gallery-item"><img src="2025/03.12.2025.2.jpg"><span class="gallery-date">03.12.2025</span></div>
@@ -382,28 +378,25 @@
             <div class="gallery-item"><img src="02/04.02.2026.3.jpg"><span class="gallery-date">04.02.2026</span></div>
             <div class="gallery-item"><img src="02/05.02.2026.jpg"><span class="gallery-date">05.02.2026</span></div>
             <div class="gallery-item"><img src="02/05.02.2026.2.jpg"><span class="gallery-date">05.02.2026</span></div>
-            <div class="gallery-item"><img src="02/05.02.2026.3.jpg"><span class="gallery-date">05.02.2026</span></div>
-            <div class="gallery-item"><img src="02/05.02.2026.4.jpg"><span class="gallery-date">05.02.2026</span></div>
-            <div class="gallery-item"><img src="02/05.02.2026.5.jpg"><span class="gallery-date">05.02.2026</span></div>
-            <div class="gallery-item"><img src="02/05.02.2026.6.jpg"><span class="gallery-date">05.02.2026</span></div>
         </div>
     </div>
 
-   <footer
+    <footer
 
     <footer>14 şubat 2026 · kalbimdesin 🤍</footer>
 </div>
 
 <div class="lightbox" id="lightbox">
-    <span class="close-btn" onclick="closeLightbox()">×</span>
-    <span class="nav-btn prev-btn" onclick="changeImage(-1, event)">❮</span>
+    <span class="close" onclick="closeLightbox()">×</span>
+    <span class="nav-btn prev" onclick="changeImage(-1)">❮</span>
     <img id="lightbox-img" src="">
-    <span class="nav-btn next-btn" onclick="changeImage(1, event)">❯</span>
+    <span class="nav-btn next" onclick="changeImage(1)">❯</span>
 </div>
 
 
 
 <script>
+
 
 
     const MY_SECRET = "28112025"; 
@@ -473,7 +466,28 @@
 
     function startHeartRain() { setInterval(createHeart, 600); }
 
-    const loveNotes = [
+    let currentIdx = 0;
+    const imgs = document.querySelectorAll(".gallery-item img");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+
+    imgs.forEach((img, i) => {
+        img.onclick = () => { currentIdx = i; openLightbox(); };
+    });
+
+    function openLightbox() {
+        lightbox.style.display = "flex";
+        lightboxImg.src = imgs[currentIdx].src;
+    }
+
+    function closeLightbox() { lightbox.style.display = "none"; }
+
+    function changeImage(dir) {
+        currentIdx = (currentIdx + dir + imgs.length) % imgs.length;
+        lightboxImg.src = imgs[currentIdx].src;
+    }
+
+const loveNotes = [
         "Aynı gökyüzüne bakıyoruz, bu bizi hep bir arada tutuyor. ✨",
         "Mesafeler sadece rakamdan ibaret, kalbim her an seninle. ❤️",
         "Gülüşün, kilometrelerce uzaktan bile içimi ısıtıyor. 😊",
@@ -493,7 +507,7 @@
 
 
 
-    // --- TIKLAYINCA MOR/GRİ KALP EFEKTİ (BOŞ TIKLAMADA) ---
+    // --- TIKLAYINCA MOR/GRİ KALP (GALERİYİ BOZMADAN) ---
     (function () {
         if (window.__tapHeartsAdded) return;
         window.__tapHeartsAdded = true;
@@ -516,30 +530,19 @@
             // login ekranında olmasın
             if (e.target.closest("#login-overlay")) return;
 
-            // buton/input tıklamalarında olmasın
+            // galeri / lightbox tıklamalarını hiç elleme
+            if (e.target.closest(".gallery") || e.target.closest("#lightbox") || e.target.closest(".gallery-item")) return;
+
+            // input/button/link tıklamalarında olmasın
             if (e.target.closest("button") || e.target.closest("input") || e.target.closest("a")) return;
 
             // yağan kalbe tıklayınca K çıkıyor — onu bozma
             if (e.target.closest(".heart")) return;
 
-            // lightbox kontrol / resim tıklamalarında spam olmasın
-            if (e.target.closest("#lightbox")) return;
-
             spawnTapHeart(e.clientX, e.clientY);
         }, { passive: true });
-
-        // Mobil dokunuş desteği
-        document.addEventListener("touchstart", function (e) {
-            if (e.target.closest("#login-overlay")) return;
-            if (e.target.closest("button") || e.target.closest("input") || e.target.closest("a")) return;
-            if (e.target.closest(".heart")) return;
-            if (e.target.closest("#lightbox")) return;
-
-            const t = e.touches && e.touches[0];
-            if (!t) return;
-            spawnTapHeart(t.clientX, t.clientY);
-        }, { passive: true });
     })();
+
 
 
 </script>
