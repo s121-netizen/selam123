@@ -49,7 +49,66 @@
             font-weight: bold;
         }
 
-        /* --- GENEL TASARIM --- */
+        
+
+        /* --- LOGIN LOGO (YIN-YANG A/K) --- */
+        .login-logo{
+            text-align:center;
+            margin-bottom:18px;
+            user-select:none;
+        }
+        .login-logo-sub{
+            margin-top:10px;
+            font-family:'Playfair Display', serif;
+            font-size:14px;
+            opacity:0.75;
+            letter-spacing:0.6px;
+        }
+        .yinyang{
+            width:90px;
+            height:90px;
+            border-radius:50%;
+            background: linear-gradient(180deg, #7b2cbf 50%, #b0b0b0 50%);
+            position:relative;
+            margin:0 auto;
+            box-shadow: 0 0 22px rgba(123, 44, 191, 0.35);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-family:'Playfair Display', serif;
+            font-weight:600;
+        }
+        .yinyang::before{
+            content:"";
+            position:absolute;
+            width:45px;
+            height:45px;
+            background:#b0b0b0;
+            border-radius:50%;
+            top:0;
+            left:22.5px;
+        }
+        .yinyang::after{
+            content:"";
+            position:absolute;
+            width:45px;
+            height:45px;
+            background:#7b2cbf;
+            border-radius:50%;
+            bottom:0;
+            left:22.5px;
+        }
+        .yinyang span{
+            position:relative;
+            z-index:2;
+            font-size:22px;
+            letter-spacing:2px;
+            line-height:1;
+        }
+        .yinyang .a{ color:#fff; margin-right:6px; }
+        .yinyang .k{ color:#111; }
+
+/* --- GENEL TASARIM --- */
         body {
             margin: 0; font-family: 'Inter', sans-serif;
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("https://i.imgur.com/PyNRVJW.jpeg");
@@ -296,13 +355,104 @@
         .speed-controls button.active{
             background:#ff4d6d;
         }
+
+        @media (max-width: 420px){
+            .yinyang{ width:76px; height:76px; }
+            .yinyang::before, .yinyang::after{ width:38px; height:38px; left:19px; }
+            .yinyang span{ font-size:19px; }
+        }
+
+/* ===== MINI OYUNLAR ===== */
+.mini-game-btn{z-index:60000;position:relative;margin:14px auto 0;display:block;padding:10px 16px;border-radius:14px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.10);color:#fff;cursor:pointer;backdrop-filter:blur(8px);}
+.mg-modal{position:fixed;inset:0;display:none;z-index:50000;}
+.mg-modal.show{display:block;}
+.mg-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.65);}
+.mg-card{position:relative;width:min(980px,calc(100vw - 22px));max-height:min(86vh,760px);margin:6vh auto 0;background:rgba(15,15,18,0.92);border:1px solid rgba(255,255,255,0.12);border-radius:18px;box-shadow:0 18px 70px rgba(0,0,0,0.55);backdrop-filter:blur(10px);overflow:hidden;}
+.mg-header{display:flex;justify-content:space-between;gap:14px;padding:14px 14px 10px;border-bottom:1px solid rgba(255,255,255,0.10);}
+.mg-title{font-size:18px;font-weight:700;letter-spacing:0.2px;}
+.mg-sub{font-size:12px;opacity:0.75;margin-top:2px;}
+.mg-close{border:none;background:rgba(255,255,255,0.10);color:#fff;width:36px;height:36px;border-radius:12px;cursor:pointer;}
+.mg-name-row{display:flex;align-items:center;gap:10px;padding:10px 14px 12px;border-bottom:1px solid rgba(255,255,255,0.10);flex-wrap:wrap;}
+.mg-label{font-size:12px;opacity:0.85;}
+.mg-input{flex:1;min-width:180px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:#fff;padding:10px 12px;border-radius:12px;outline:none;}
+.mg-save{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.18);background:rgba(123,44,191,0.25);color:#fff;cursor:pointer;}
+.mg-name-ok{font-size:12px;opacity:0.8;min-width:140px;}
+.mg-tabs{display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.10);overflow:auto;}
+.mg-tab{padding:8px 10px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.07);color:#fff;cursor:pointer;font-size:12px;white-space:nowrap;}
+.mg-tab.active{background:rgba(255,77,109,0.22);border-color:rgba(255,77,109,0.35);}
+.mg-body{padding:12px 14px 14px;overflow:auto;max-height:calc(min(86vh,760px) - 160px);}
+.mg-panel{display:none;}
+.mg-panel.active{display:block;}
+.mg-panel-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.mg-hint{font-size:12px;opacity:0.8;}
+.mg-stats{display:flex;gap:12px;font-size:12px;opacity:0.85;}
+.mg-actions{display:flex;gap:10px;margin-top:10px;}
+.mg-actions-inline{margin-left:auto;}
+.mg-primary{padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,77,109,0.28);color:#fff;cursor:pointer;}
+.mg-ghost{padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.07);color:#fff;cursor:pointer;}
+.mg-danger{padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.07);color:#ff8ea2;cursor:pointer;}
+
+.ch-area{position:relative;width:100%;height:360px;border-radius:16px;border:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);overflow:hidden;touch-action:none;}
+.ch-heart{position:absolute;font-size:26px;user-select:none;cursor:pointer;transform:translate(-50%,-50%);animation:chPop 700ms ease-out forwards;}
+@keyframes chPop{0%{transform:translate(-50%,-50%) scale(0.9);opacity:1;}100%{transform:translate(-50%,-80%) scale(1.25);opacity:0;}}
+
+.mm-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+.mm-card{height:76px;border-radius:14px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;user-select:none;position:relative;overflow:hidden;}
+.mm-card.flipped{background:rgba(123,44,191,0.16);}
+.mm-card.matched{background:rgba(255,77,109,0.14);opacity:0.85;cursor:default;}
+.mm-card .mm-face{opacity:0;transition:opacity 140ms ease;}
+.mm-card.flipped .mm-face,.mm-card.matched .mm-face{opacity:1;}
+.mm-card .mm-back{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0.7;font-size:14px;}
+.mm-card.flipped .mm-back,.mm-card.matched .mm-back{opacity:0;}
+
+.q-box{border-radius:16px;border:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);padding:12px;}
+.q-q{font-size:14px;margin-bottom:10px;}
+.q-ans{display:grid;gap:8px;}
+.q-ans button{text-align:left;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.06);color:#fff;cursor:pointer;}
+.q-ans button.correct{border-color:rgba(140,255,170,0.45);background:rgba(140,255,170,0.12);}
+.q-ans button.wrong{border-color:rgba(255,90,110,0.45);background:rgba(255,90,110,0.12);}
+
+.lb-wrap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.lb-col{border-radius:16px;border:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);padding:10px 10px 12px;}
+.lb-title{font-weight:700;margin-bottom:8px;}
+.lb{margin:0;padding-left:18px;font-size:13px;opacity:0.9;}
+.lb li{margin:4px 0;}
+@media (max-width:820px){.lb-wrap{grid-template-columns:1fr;}.mm-grid{grid-template-columns:repeat(3,minmax(0,1fr));}.ch-area{height:320px;}}
+
+
+/* --- MOBILE BLUE HIGHLIGHT / FOCUS FIX --- */
+button, input, textarea, select, a{
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+button:focus, input:focus, textarea:focus, select:focus, a:focus{
+    outline: none !important;
+    box-shadow: none !important;
+}
+button{
+    transition: transform 0.08s ease, opacity 0.08s ease;
+}
+button:active{
+    transform: scale(0.97);
+    opacity: 0.92;
+}
+/* --- MINI OYUN GİRİŞ KİLİDİ --- */
+#mini-game-btn{ display:none !important; }
+body.logged-in #mini-game-btn{ display:block !important; }
 </style>
 </head>
 
 <body>
 
 <div id="login-overlay">
-    <p style="font-family: 'Playfair Display'; margin-bottom: 20px;">Bizim Günümüz...</p>
+    
+    <div class="login-logo" aria-hidden="true">
+        <div class="yinyang">
+            <span class="a">A</span><span class="k">K</span>
+        </div>
+        <div class="login-logo-sub">Atakan 💜 Kevser</div>
+    </div>
+<p style="font-family: 'Playfair Display'; margin-bottom: 20px;">Bizim Günümüz...</p>
     <input type="password" id="pass-input" placeholder="Şifreyi yaz...">
     <button onclick="checkPass()">Anılarımıza Giriş Yap</button>
 <p id="error-msg" style="color: #ff4d4d; display: none; margin-top: 15px; font-size: 13px;">Hatalı şifre sevgilim, tekrar dene.</p>
@@ -321,6 +471,7 @@
     <div class="notes-container">
         <div id="note-display">Seni ne kadar çok sevdiğimi biliyor musun? ✨</div>
         <button class="note-btn" onclick="generateNote()">Yeni Bir Not ✨</button>
+
     </div>
 
     <div class="card card-one"><p>hislerim hep sende.</p></div>
@@ -339,7 +490,19 @@
 
     <div class="gallery">
         <h2>birlikte biriken anlar</h2>
-        <div class="gallery-scroll" id="gallery-scroll">
+            <div class="gallery-scroll" id="gallery-scroll">
+            <div class="gallery-item"><img src="11.2025/28.11.2025.png"><span class="gallery-date">28.11.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/28.11.2025.2.png"><span class="gallery-date">28.11.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/29.11.2025.png"><span class="gallery-date">29.11.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/29.11.2025.2.png"><span class="gallery-date">29.11.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/30.11.2025.jpg"><span class="gallery-date">30.11.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/30.11.2025.2.jpg"><span class="gallery-date">30.11.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/30.11.2025.3.jpg"><span class="gallery-date">30.11.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/01.12.2025.png"><span class="gallery-date">01.12.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/01.12.2025.2.jpg"><span class="gallery-date">01.12.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/01.12.2025.3.jpg"><span class="gallery-date">01.12.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/01.12.2025.4.jpg"><span class="gallery-date">01.12.2025</span></div>
+            <div class="gallery-item"><img src="11.2025/01.12.2025.5.jpg"><span class="gallery-date">01.12.2025</span></div>
             <div class="gallery-item"><img src="2025/02.12.2025.2.jpg"><span class="gallery-date">02.12.2025</span></div>
             <div class="gallery-item"><img src="2025/02.12.2025.jpg"><span class="gallery-date">02.12.2025</span></div>
             <div class="gallery-item"><img src="2025/03.12.2025.2.jpg"><span class="gallery-date">03.12.2025</span></div>
@@ -542,6 +705,42 @@
             <div class="gallery-item"><img src="02/04.02.2026.3.jpg"><span class="gallery-date">04.02.2026</span></div>
             <div class="gallery-item"><img src="02/05.02.2026.jpg"><span class="gallery-date">05.02.2026</span></div>
             <div class="gallery-item"><img src="02/05.02.2026.2.jpg"><span class="gallery-date">05.02.2026</span></div>
+            <div class="gallery-item"><img src="2026.02/05.02.2025.jpg"><span class="gallery-date">05.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/06.02.2025.2.jpg"><span class="gallery-date">06.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/06.02.2025.3.jpg"><span class="gallery-date">06.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/06.02.2025.4.jpg"><span class="gallery-date">06.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/06.02.2025.5.jpg"><span class="gallery-date">06.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/06.02.2025.jpg"><span class="gallery-date">06.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/07.02.2025.2.jpg"><span class="gallery-date">07.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/07.02.2025.3.jpg"><span class="gallery-date">07.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/07.02.2025.4.jpg"><span class="gallery-date">07.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/07.02.2025.5.jpg"><span class="gallery-date">07.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/07.02.2025.jpg"><span class="gallery-date">07.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/08.02.2025.2.jpg"><span class="gallery-date">08.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/08.02.2025.3.jpg"><span class="gallery-date">08.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/08.02.2025.4.jpg"><span class="gallery-date">08.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/08.02.2025.5.jpg"><span class="gallery-date">08.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/08.02.2025.6.jpg"><span class="gallery-date">08.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/08.02.2025.7.jpg"><span class="gallery-date">08.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/08.02.2025.jpg"><span class="gallery-date">08.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/09.02.2025.2.jpg"><span class="gallery-date">09.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/09.02.2025.3.jpg"><span class="gallery-date">09.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/09.02.2025.4.jpg"><span class="gallery-date">09.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/09.02.2025.jpg"><span class="gallery-date">09.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/10.02.2025.2.jpg"><span class="gallery-date">10.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/10.02.2025.3.jpg"><span class="gallery-date">10.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/10.02.2025.4.jpg"><span class="gallery-date">10.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/10.02.2025.5.jpg"><span class="gallery-date">10.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/10.02.2025.6.jpg"><span class="gallery-date">10.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/10.02.2025.7.jpg"><span class="gallery-date">10.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/10.02.2025.jpg"><span class="gallery-date">10.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/11.02.2025.2.jpg"><span class="gallery-date">11.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/11.02.2025.3.jpg"><span class="gallery-date">11.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/11.02.2025.4.jpg"><span class="gallery-date">11.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/11.02.2025.5.jpg"><span class="gallery-date">11.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/11.02.2025.jpg"><span class="gallery-date">11.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/12.02.2025.2.jpg"><span class="gallery-date">12.02.2025</span></div>
+            <div class="gallery-item"><img src="2026.02/12.02.2025.jpg"><span class="gallery-date">12.02.2025</span></div>
         </div>
     </div>
 
@@ -590,6 +789,7 @@ function checkPass() {
         setTimeout(() => {
             overlay.style.display = "none";
             content.style.opacity = "1";
+                document.body.classList.add('logged-in');
 
             
             showWelcomeToast();
@@ -962,7 +1162,469 @@ function syncLightboxDate(index) {
             __lastHeartTap = Date.now();
         }
     }, { passive: true });
+
+// ===== MINI OYUNLAR (FINAL - offline + localStorage) =====
+(function(){
+  const LS_KEY = "ak_mini_games_v2";
+
+  const modal = () => document.getElementById("mini-game-modal");
+  const q = (sel) => document.querySelector(sel);
+  const qa = (sel) => Array.from(document.querySelectorAll(sel));
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      const data = raw ? JSON.parse(raw) : { players:{} , lastName:"" };
+      if(!data.players) data.players = {};
+      return data;
+    }catch(e){
+      return { players:{}, lastName:"" };
+    }
+  }
+  function save(data){
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+  }
+  function normName(n){
+    return (n||"").trim().slice(0,18);
+  }
+
+  // ---- UI refs (lazy) ----
+  function refs(){
+    return {
+      nameInput: q("#mg-name"),
+      saveName: q("#mg-save-name"),
+      nameOk: q("#mg-name-ok"),
+      tabs: qa(".mg-tab"),
+      panels: qa(".mg-panel"),
+      // click hearts
+      chArea: q("#ch-area"),
+      chStart: q("#ch-start"),
+      chStop: q("#ch-stop"),
+      chScore: q("#ch-score"),
+      chTime: q("#ch-time"),
+      // memory
+      mmGrid: q("#mm-grid"),
+      mmStart: q("#mm-start"),
+      mmMoves: q("#mm-moves"),
+      mmTime: q("#mm-time"),
+      // quiz
+      qBox: q("#q-box"),
+      qStart: q("#q-start"),
+      qScore: q("#q-score"),
+      qStep: q("#q-step"),
+      // leaderboard
+      lbClick: q("#lb-click"),
+      lbMemory: q("#lb-memory"),
+      lbQuiz: q("#lb-quiz"),
+      lbClear: q("#lb-clear"),
+    };
+  }
+
+  let currentName = "";
+  let inited = false;
+
+  function ensureInit(){
+    if(inited) return;
+    inited = true;
+    const R = refs();
+    const data = load();
+
+    // restore last name
+    if(data.lastName){
+      currentName = data.lastName;
+      if(R.nameInput) R.nameInput.value = data.lastName;
+      if(R.nameOk) R.nameOk.textContent = `hazır: ${data.lastName} ✅`;
+    }
+
+    // tabs
+    function activateTab(key){
+      R.tabs.forEach(t=>{
+        const on = t.dataset.tab === key;
+        t.classList.toggle("active", on);
+        t.setAttribute("aria-selected", on ? "true":"false");
+      });
+      R.panels.forEach(p=> p.classList.toggle("active", p.dataset.panel === key));
+      if(key === "board") renderBoards();
+    }
+    R.tabs.forEach(t=> t.addEventListener("click", ()=> activateTab(t.dataset.tab)));
+
+    // name save
+    function setName(n){
+      const name = normName(n);
+      if(!name){
+        R.nameOk.textContent = "bir isim yaz 😉";
+        return false;
+      }
+      const d = load();
+      if(!d.players[name]) d.players[name] = { click:0, memory:0, quiz:0, updatedAt: Date.now() };
+      d.lastName = name;
+      d.players[name].updatedAt = Date.now();
+      save(d);
+      currentName = name;
+      R.nameOk.textContent = `kaydedildi: ${name} ✅`;
+      renderBoards();
+      return true;
+    }
+
+    R.saveName.addEventListener("click", ()=> setName(R.nameInput.value));
+    R.nameInput.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){ e.preventDefault(); setName(R.nameInput.value); }
+    });
+
+    function updateScore(mode, value){
+      const d = load();
+      if(!currentName){
+        R.nameOk.textContent = "önce ismini kaydet 😉";
+        activateTab("board");
+        return;
+      }
+      if(!d.players[currentName]) d.players[currentName] = { click:0, memory:0, quiz:0, updatedAt: Date.now() };
+      d.players[currentName][mode] = Math.max(d.players[currentName][mode]||0, value);
+      d.players[currentName].updatedAt = Date.now();
+      save(d);
+      renderBoards();
+    }
+
+    // leaderboard
+    function topList(mode){
+      const d = load();
+      const arr = Object.entries(d.players).map(([name,s])=>({name,score:(s&&s[mode])||0, updatedAt:s.updatedAt||0}));
+      arr.sort((a,b)=> (b.score-a.score) || (b.updatedAt-a.updatedAt));
+      return arr.slice(0,10);
+    }
+    function renderOne(el, mode, suffix){
+      const list = topList(mode);
+      el.innerHTML = "";
+      if(!list.length){ el.innerHTML = "<li>ilk sen ol 😏</li>"; return; }
+      list.forEach(it=>{
+        const li = document.createElement("li");
+        li.textContent = `${it.name} — ${it.score}${suffix}`;
+        el.appendChild(li);
+      });
+    }
+    function renderBoards(){
+      renderOne(R.lbClick, "click", "");
+      renderOne(R.lbMemory, "memory", " pts");
+      renderOne(R.lbQuiz, "quiz", " pts");
+    }
+    window.renderBoards = renderBoards; // debugging
+    R.lbClear.addEventListener("click", ()=>{
+      if(!confirm("sıralama sıfırlansın mı? emin misin 😄")) return;
+      save({players:{}, lastName: currentName || ""});
+      renderBoards();
+    });
+
+    // ---------------- Game 1: Click Hearts ----------------
+    let chScore = 0, chTime = 30, chRunning = false, chTick=null, chSpawn=null;
+
+    function chReset(){
+      chScore = 0; chTime = 30;
+      R.chScore.textContent = "0";
+      R.chTime.textContent = "30";
+      R.chArea.innerHTML = "";
+    }
+    function chSpawnHeart(){
+      if(!chRunning) return;
+      const heart = document.createElement("div");
+      heart.className = "ch-heart";
+      heart.textContent = (Math.random() < 0.55 ? "💜" : "🩶");
+      const pad = 18;
+      const x = pad + Math.random()*(R.chArea.clientWidth - pad*2);
+      const y = pad + Math.random()*(R.chArea.clientHeight - pad*2);
+      heart.style.left = x + "px";
+      heart.style.top = y + "px";
+      heart.addEventListener("click", (e)=>{
+        e.preventDefault(); e.stopPropagation();
+        chScore += 1;
+        R.chScore.textContent = String(chScore);
+        heart.remove();
+      }, {passive:false});
+      R.chArea.appendChild(heart);
+      setTimeout(()=>{ if(heart.isConnected) heart.remove(); }, 680);
+    }
+    function chEnd(){
+      chRunning = false;
+      clearInterval(chTick); clearInterval(chSpawn);
+      chTick=null; chSpawn=null;
+      R.chStart.disabled = false;
+      R.chStop.disabled = true;
+      updateScore("click", chScore);
+    }
+    R.chStart.addEventListener("click", ()=>{
+      if(!setName(currentName || R.nameInput.value)){ R.nameInput.focus(); return; }
+      chReset();
+      chRunning = true;
+      R.chStart.disabled = true;
+      R.chStop.disabled = false;
+      chSpawnHeart(); chSpawnHeart(); chSpawnHeart();
+      chSpawn = setInterval(chSpawnHeart, 260);
+      chTick = setInterval(()=>{
+        chTime -= 1;
+        R.chTime.textContent = String(chTime);
+        if(chTime <= 0) chEnd();
+      }, 1000);
+    });
+    R.chStop.addEventListener("click", ()=>{ if(chRunning) chEnd(); });
+
+    // ---------------- Game 2: Memory ----------------
+    const mmPairs = [
+      { a:"💜", b:"🩶", key:"heart" },
+      { a:"☯️", b:"☯️", key:"yy" },
+      { a:"❤️", b:"❤️", key:"love" },
+      { a:"A", b:"A", key:"a" },
+      { a:"K", b:"K", key:"k" },
+      { a:"28", b:"11", key:"date" }
+    ];
+    let mmDeck=[], mmFirst=null, mmSecond=null, mmLocked=false, mmMoves=0, mmTime=0, mmTimer=null, mmMatched=0;
+
+    function mmShuffle(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+    function mmStop(){ if(mmTimer){ clearInterval(mmTimer); mmTimer=null; } }
+    function mmStartTimer(){ mmStop(); mmTimer=setInterval(()=>{ mmTime+=1; R.mmTime.textContent=String(mmTime); },1000); }
+    function mmReset(){
+      R.mmGrid.innerHTML="";
+      mmFirst=null; mmSecond=null; mmLocked=false;
+      mmMoves=0; mmTime=0; mmMatched=0;
+      R.mmMoves.textContent="0"; R.mmTime.textContent="0";
+      mmStop();
+      mmDeck = mmShuffle(mmPairs.flatMap(p => ([{face:p.a,key:p.key},{face:p.b,key:p.key}]))); // 12
+    }
+    function mmScore(){
+      const raw = 1000 - (mmTime*5 + mmMoves*20);
+      return Math.max(0, raw);
+    }
+    function mmEnd(){
+      mmStop();
+      updateScore("memory", mmScore());
+    }
+    function mmCard(value){
+      const b=document.createElement("button");
+      b.type="button";
+      b.className="mm-card";
+      b.dataset.key = value.key;
+      b.dataset.face = value.face;
+      b.innerHTML = `<div class="mm-back">A 💜 K</div><div class="mm-face">${value.face}</div>`;
+      b.addEventListener("click", ()=>{
+        if(mmLocked) return;
+        if(b.classList.contains("flipped") || b.classList.contains("matched")) return;
+        if(!mmTimer) mmStartTimer();
+        b.classList.add("flipped");
+
+        if(!mmFirst){ mmFirst=b; return; }
+        mmSecond=b;
+        mmMoves += 1;
+        R.mmMoves.textContent=String(mmMoves);
+
+        if(mmFirst.dataset.key === mmSecond.dataset.key){
+          mmFirst.classList.add("matched");
+          mmSecond.classList.add("matched");
+          mmFirst.classList.remove("flipped");
+          mmSecond.classList.remove("flipped");
+          mmFirst=null; mmSecond=null;
+          mmMatched += 1;
+          if(mmMatched >= mmPairs.length) mmEnd();
+        }else{
+          mmLocked=true;
+          setTimeout(()=>{
+            mmFirst.classList.remove("flipped");
+            mmSecond.classList.remove("flipped");
+            mmFirst=null; mmSecond=null;
+            mmLocked=false;
+          }, 550);
+        }
+      });
+      return b;
+    }
+    function mmRender(){ mmDeck.forEach(v=> R.mmGrid.appendChild(mmCard(v))); }
+    R.mmStart.addEventListener("click", ()=>{
+      if(!setName(currentName || R.nameInput.value)){ R.nameInput.focus(); return; }
+      mmReset(); mmRender();
+    });
+
+    // ---------------- Game 3: Quiz ----------------
+    const quiz = [
+      { q:"Atakan'ın favori rengi?", a:["mor","kırmızı","mavi","siyah"], c:0 },
+      { q:"Kevser'in rengi?", a:["pembe","gri","turuncu","yeşil"], c:1 },
+      { q:"Sizin temanız?", a:["zombi","yin-yang","uzay","süper kahraman"], c:1 },
+      { q:"Sitede kalp yağmuru tıklayınca ne çıkar?", a:["A","K","❤️","☯️"], c:1 },
+      { q:"Playlist nereden?", a:["YouTube","Spotify","SoundCloud","Apple Music"], c:1 },
+      { q:"Galeride oto kaydırma var mı?", a:["yok","var","sadece pc","sadece mobil"], c:1 },
+      { q:"Aşk sayacı neyi sayıyor?", a:["mesaj","gün/saat","foto","para"], c:1 },
+      { q:"Büyük notta ne yazıyor?", a:["iyi geceler","SENİ ÇOK SEVİYORUM SEVGİLİM","bye","şaka"], c:1 },
+      { q:"A & K neyi temsil eder?", a:["oyun","isimler","şehir","şifre"], c:1 },
+      { q:"Bu site kim için?", a:["herkes","biz","okul","iş"], c:1 },
+    ];
+    let qi=0, qScore=0, qLocked=false;
+
+    function qRender(){
+      qLocked=false;
+      const item=quiz[qi];
+      R.qBox.innerHTML = `
+        <div class="q-q">${item.q}</div>
+        <div class="q-ans">
+          ${item.a.map((t,i)=>`<button type="button" data-i="${i}">${t}</button>`).join("")}
+        </div>
+      `;
+      qa("#q-box button").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          if(qLocked) return;
+          qLocked=true;
+          const pick=parseInt(btn.dataset.i,10);
+          const correct=item.c;
+          qa("#q-box button").forEach(b=>{
+            if(parseInt(b.dataset.i,10)===correct) b.classList.add("correct");
+          });
+          if(pick===correct){
+            qScore += 10;
+            R.qScore.textContent=String(qScore);
+          }else{
+            btn.classList.add("wrong");
+          }
+          setTimeout(()=>{
+            qi += 1;
+            R.qStep.textContent=String(qi);
+            if(qi>=quiz.length){
+              R.qBox.innerHTML = `<div class="q-q">bitti 😄 puanın: <b>${qScore}</b> 💜</div><div class="mg-hint">sıralama güncellendi.</div>`;
+              updateScore("quiz", qScore);
+              return;
+            }
+            qRender();
+          }, 650);
+        });
+      });
+    }
+
+    R.qStart.addEventListener("click", ()=>{
+      if(!setName(currentName || R.nameInput.value)){ R.nameInput.focus(); return; }
+      qi=0; qScore=0;
+      R.qScore.textContent="0";
+      R.qStep.textContent="0";
+      qRender();
+    });
+
+    // Default view
+    activateTab("click");
+    renderBoards();
+  }
+
+  // IMPORTANT: when modal is opened (inline onclick), init once
+  document.addEventListener("click", (e)=>{
+    const t = e.target;
+    if(t && (t.id === "mini-game-btn" || (t.closest && t.closest("#mini-game-btn")))){
+      // init a tick later so modal DOM exists and is visible
+      setTimeout(ensureInit, 0);
+    }
+  });
+
+  // Also init if modal already visible (safety)
+  window.addEventListener("load", ()=>{
+    if(modal() && modal().classList.contains("show")) ensureInit();
+  });
+})();
 </script>
 
+
+<!-- ===== MINI OYUN MODAL ===== -->
+<div id="mini-game-modal" class="mg-modal" aria-hidden="true">
+  <div class="mg-backdrop" id="mg-backdrop" onclick="(function(){if(!document.body.classList.contains('logged-in'))return;var m=document.getElementById('mini-game-modal');if(m){m.classList.add('show');m.setAttribute('aria-hidden','false');}})();"></div>
+  <div class="mg-card" role="dialog" aria-modal="true" aria-labelledby="mg-title">
+    <div class="mg-header">
+      <div>
+        <div id="mg-title" class="mg-title">mini oyunlar 🎮</div>
+        <div class="mg-sub">ismini yaz, skorun sıralamaya girsin 💜</div>
+      </div>
+      <button class="mg-close" id="mg-close" type="button" aria-label="kapat" onclick="(function(){var m=document.getElementById('mini-game-modal');if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true');}})();">✕</button>
+    </div>
+
+    <div class="mg-name-row">
+      <label class="mg-label" for="mg-name">oyuncu adı</label>
+      <input id="mg-name" class="mg-input" type="text" placeholder="ör: kevser" maxlength="18" />
+      <button id="mg-save-name" class="mg-save" type="button">kaydet</button>
+      <div id="mg-name-ok" class="mg-name-ok" aria-live="polite"></div>
+    </div>
+
+    <div class="mg-tabs" role="tablist">
+      <button class="mg-tab active" data-tab="click" role="tab" aria-selected="true">kalp topla</button>
+      <button class="mg-tab" data-tab="memory" role="tab">hafıza</button>
+      <button class="mg-tab" data-tab="quiz" role="tab">mini quiz</button>
+      <button class="mg-tab" data-tab="board" role="tab">sıralama</button>
+    </div>
+
+    <div class="mg-body">
+      <section class="mg-panel active" data-panel="click" role="tabpanel">
+        <div class="mg-panel-top">
+          <div class="mg-hint">30 saniyede olabildiğince çok 💜 topla.</div>
+          <div class="mg-stats">
+            <div>skor: <span id="ch-score">0</span></div>
+            <div>süre: <span id="ch-time">30</span>s</div>
+          </div>
+        </div>
+        <div id="ch-area" class="ch-area" aria-label="oyun alanı"></div>
+        <div class="mg-actions">
+          <button id="ch-start" class="mg-primary" type="button">başlat</button>
+          <button id="ch-stop" class="mg-ghost" type="button" disabled>durdur</button>
+        </div>
+      </section>
+
+      <section class="mg-panel" data-panel="memory" role="tabpanel">
+        <div class="mg-panel-top">
+          <div class="mg-hint">eşleştir: 💜 🩶 ☯️ ❤️ A K (toplam 12 kart)</div>
+          <div class="mg-stats">
+            <div>hamle: <span id="mm-moves">0</span></div>
+            <div>süre: <span id="mm-time">0</span>s</div>
+          </div>
+        </div>
+        <div id="mm-grid" class="mm-grid"></div>
+        <div class="mg-actions">
+          <button id="mm-start" class="mg-primary" type="button">yeni oyun</button>
+        </div>
+      </section>
+
+      <section class="mg-panel" data-panel="quiz" role="tabpanel">
+        <div class="mg-panel-top">
+          <div class="mg-hint">10 soru. her doğru 10 puan.</div>
+          <div class="mg-stats">
+            <div>puan: <span id="q-score">0</span></div>
+            <div>soru: <span id="q-step">0</span>/10</div>
+          </div>
+        </div>
+        <div id="q-box" class="q-box"></div>
+        <div class="mg-actions">
+          <button id="q-start" class="mg-primary" type="button">başlat</button>
+        </div>
+      </section>
+
+      <section class="mg-panel" data-panel="board" role="tabpanel">
+        <div class="mg-panel-top">
+          <div class="mg-hint">aynı isimle girersen skorun güncellenir (en iyi skor tutulur).</div>
+          <div class="mg-actions-inline">
+            <button id="lb-clear" class="mg-danger" type="button">sıralamayı sıfırla</button>
+          </div>
+        </div>
+        <div class="lb-wrap">
+          <div class="lb-col">
+            <div class="lb-title">kalp topla</div>
+            <ol id="lb-click" class="lb"></ol>
+          </div>
+          <div class="lb-col">
+            <div class="lb-title">hafıza</div>
+            <ol id="lb-memory" class="lb"></ol>
+          </div>
+          <div class="lb-col">
+            <div class="lb-title">mini quiz</div>
+            <ol id="lb-quiz" class="lb"></ol>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<button id="mini-game-btn" class="mini-game-btn" type="button" style="position:fixed;bottom:20px;right:20px;z-index:999999;pointer-events:auto;" onclick="(function(){var m=document.getElementById('mini-game-modal');if(m){m.classList.add('show');m.setAttribute('aria-hidden','false');}})();">mini oyun 🎮</button>
 </body>
 </html>
