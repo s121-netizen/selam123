@@ -112,7 +112,7 @@
             left: 0; top: 0;
             pointer-events: none;
             z-index: 10050;
-            font-size: 28px;
+            font-size: 18px;
             transform: translate(-50%, -50%);
             animation: tapRise 1.4s ease-out forwards;
             filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
@@ -155,15 +155,15 @@
 
         .lightbox-date {
             position: absolute;
-            left: 20px;
-            bottom: 20px;
-            background: rgba(0,0,0,0.6);
+            left: 18px;
+            bottom: 18px;
+            background: rgba(0,0,0,0.65);
             color: #fff;
             font-size: 15px;
             padding: 6px 14px;
             border-radius: 14px;
+            z-index: 13000;
         }
-
 </style>
 </head>
 
@@ -420,12 +420,14 @@
     <span class="close" onclick="closeLightbox()">×</span>
     <span class="nav-btn prev" onclick="changeImage(-1)">❮</span>
     <img id="lightbox-img" src="">
+    <div id="lightbox-date" class="lightbox-date"></div>
     <span class="nav-btn next" onclick="changeImage(1)">❯</span>
 </div>
 
 
 
 <script>
+
 
 
 
@@ -465,7 +467,7 @@
         heart.classList.add("heart");
         heart.innerHTML = "❤️";
         heart.style.left = Math.random() * 95 + "vw";
-        heart.style.fontSize = Math.random() * 20 + 20 + "px";
+        heart.style.fontSize = (Math.random() * 10 + 12) + "px";
         heart.style.animationDuration = Math.random() * 3 + 4 + "s";
         
         heart.onclick = (e) => {
@@ -510,6 +512,7 @@
     function openLightbox() {
         lightbox.style.display = "flex";
         lightboxImg.src = imgs[currentIdx].src;
+        syncLightboxDate(currentIdx);
     }
 
     function closeLightbox() { lightbox.style.display = "none"; }
@@ -517,6 +520,7 @@
     function changeImage(dir) {
         currentIdx = (currentIdx + dir + imgs.length) % imgs.length;
         lightboxImg.src = imgs[currentIdx].src;
+        syncLightboxDate(currentIdx);
     }
 
 
@@ -577,7 +581,7 @@ const loveNotes = [
             h.style.left = x + "px";
             h.style.top = y + "px";
             h.style.color = colors[Math.floor(Math.random() * colors.length)];
-            h.style.fontSize = (22 + Math.random() * 14) + "px";
+            h.style.fontSize = (14 + Math.random() * 8) + "px";
             document.body.appendChild(h);
             setTimeout(() => h.remove(), 1500);
         }
@@ -627,6 +631,17 @@ const loveNotes = [
         updateLightboxDate(currentIdx);
     };
     
+
+
+
+
+    function syncLightboxDate(index) {
+        const dates = document.querySelectorAll(".gallery-date");
+        const lbDate = document.getElementById("lightbox-date");
+        if (!lbDate) return;
+        if (dates && dates[index]) lbDate.innerText = dates[index].innerText;
+        else lbDate.innerText = "";
+    }
 
 </script>
 
