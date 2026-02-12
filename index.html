@@ -8,6 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>28.11.2025 🩶∞💜 </title>
 
+
+.custom-login-logo{
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:50%;
+    box-shadow:0 0 25px rgba(123,44,191,0.35);
+    display:block;
+    margin:0 auto 14px auto;
+}
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap');
 
@@ -439,6 +450,32 @@ button:active{
 /* --- MINI OYUN GİRİŞ KİLİDİ --- */
 #mini-game-btn{ display:none !important; }
 body.logged-in #mini-game-btn{ display:block !important; }
+/* --- MEMORY 20 KART DÜZENİ --- */
+.mm-grid{grid-template-columns:repeat(5,minmax(0,1fr));}
+@media (max-width:820px){.mm-grid{grid-template-columns:repeat(4,minmax(0,1fr));}}
+@media (max-width:480px){.mm-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+
+/* --- MINIMAL LOGIN LOGO --- */
+.minimal-logo{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:42px;
+    font-weight:600;
+    letter-spacing:4px;
+    color:#fff;
+    background:linear-gradient(135deg,#7b2cbf,#b0b0b0);
+    box-shadow:0 0 30px rgba(123,44,191,0.35);
+    margin:0 auto 12px auto;
+}
+.minimal-logo span{
+    margin:0 6px;
+    font-size:30px;
+}
+
 </style>
 </head>
 
@@ -446,12 +483,12 @@ body.logged-in #mini-game-btn{ display:block !important; }
 
 <div id="login-overlay">
     
-    <div class="login-logo" aria-hidden="true">
-        <div class="yinyang">
-            <span class="a">A</span><span class="k">K</span>
-        </div>
-        <div class="login-logo-sub">Atakan 💜 Kevser</div>
-    </div>
+    
+<div class="login-logo">
+    <img src="logo4.png" class="custom-login-logo">
+    <div class="login-logo-sub">28.11.2025 ♾️</div>
+</div>
+
 <p style="font-family: 'Playfair Display'; margin-bottom: 20px;">Bizim Günümüz...</p>
     <input type="password" id="pass-input" placeholder="Şifreyi yaz...">
     <button onclick="checkPass()">Anılarımıza Giriş Yap</button>
@@ -470,7 +507,7 @@ body.logged-in #mini-game-btn{ display:block !important; }
 
     <div class="notes-container">
         <div id="note-display">Seni ne kadar çok sevdiğimi biliyor musun? ✨</div>
-        <button class="note-btn" onclick="generateNote()">Yeni Bir Not ✨</button>
+        <button class="note-btn" onclick="generateNote()">💜Yeni Bir Not 🩶</button>
 
     </div>
 
@@ -478,7 +515,8 @@ body.logged-in #mini-game-btn{ display:block !important; }
 
     
     <div class="card card-two">
-        <p>kalbimin ritmi 🎵</p>
+        <p>💜üçü benim, üçü senin.<br>
+        ama hepsi biz.🩶</p>
         <iframe style="border-radius:16px; width:100%; max-width:520px; height:152px; border:0; margin-top:14px;"
             src="https://open.spotify.com/embed/playlist/6bIp7TqcJfDi6jRy2k7Qfi?utm_source=generator"
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
@@ -489,7 +527,7 @@ body.logged-in #mini-game-btn{ display:block !important; }
     <div class="card card-three"><p>mesafeler kalbi güçlendirir.</p></div>
 
     <div class="gallery">
-        <h2>birlikte biriken anlar</h2>
+        <h2>bizi biz yapan şeyler yaşadığımız anılardır</h2>
             <div class="gallery-scroll" id="gallery-scroll">
             <div class="gallery-item"><img src="11.2025/28.11.2025.png"><span class="gallery-date">28.11.2025</span></div>
             <div class="gallery-item"><img src="11.2025/28.11.2025.2.png"><span class="gallery-date">28.11.2025</span></div>
@@ -744,10 +782,10 @@ body.logged-in #mini-game-btn{ display:block !important; }
         </div>
     </div>
 
-    <footer>14 şubat 2026 · kalbimdesin 🤍</footer>
+    <footer><span id="dynamic-date"></span> · kalbimdesin 🤍</footer>
 </div>
 
-<div id="welcome-toast">hoş geldin aşkım 💜 parmakların yorulmasın diye otomatik yaptım 😄</div>
+<div id="welcome-toast">hoş geldin aşkımmmmm 💜🩶 </div>
 
 <div class="lightbox" id="lightbox">
     <span class="close" onclick="closeLightbox()">×</span>
@@ -1367,13 +1405,17 @@ function syncLightboxDate(index) {
     R.chStop.addEventListener("click", ()=>{ if(chRunning) chEnd(); });
 
     // ---------------- Game 2: Memory ----------------
-    const mmPairs = [
-      { a:"💜", b:"🩶", key:"heart" },
+      const mmPairs = [
+      { a:"💜", b:"🩶", key:"heart" },   // mor+gri eşleşir
       { a:"☯️", b:"☯️", key:"yy" },
-      { a:"❤️", b:"❤️", key:"love" },
-      { a:"A", b:"A", key:"a" },
-      { a:"K", b:"K", key:"k" },
-      { a:"28", b:"11", key:"date" }
+      { a:"♥️", b:"♥️", key:"love" },
+      { a:"🌼", b:"🌼", key:"a" },
+      { a:"⛓️", b:"⛓️", key:"k" },
+      { a:"🥌", b:"🥌", key:"d28" },
+      { a:"🌚", b:"🌚", key:"d11" },
+      { a:"🖕🏻", b:"🖕🏻", key:"d2025" },
+      { a:"🪰", b:"🪰", key:"moon" },
+      { a:"💍", b:"💍", key:"ring" }
     ];
     let mmDeck=[], mmFirst=null, mmSecond=null, mmLocked=false, mmMoves=0, mmTime=0, mmTimer=null, mmMatched=0;
 
@@ -1392,7 +1434,7 @@ function syncLightboxDate(index) {
       mmMoves=0; mmTime=0; mmMatched=0;
       R.mmMoves.textContent="0"; R.mmTime.textContent="0";
       mmStop();
-      mmDeck = mmShuffle(mmPairs.flatMap(p => ([{face:p.a,key:p.key},{face:p.b,key:p.key}]))); // 12
+      mmDeck = mmShuffle(mmPairs.flatMap(p => ([{face:p.a,key:p.key},{face:p.b,key:p.key}]))); // 20
     }
     function mmScore(){
       const raw = 1000 - (mmTime*5 + mmMoves*20);
@@ -1525,6 +1567,16 @@ function syncLightboxDate(index) {
   window.addEventListener("load", ()=>{
     if(modal() && modal().classList.contains("show")) ensureInit();
   });
+})();
+
+// ===== FOOTER OTOMATİK TARİH =====
+(function(){
+  const el = document.getElementById("dynamic-date");
+  if(!el) return;
+  const now = new Date();
+  const options = { day: "numeric", month: "long", year: "numeric" };
+  const trDate = now.toLocaleDateString("tr-TR", options);
+  el.textContent = trDate;
 })();
 </script>
 
