@@ -1240,7 +1240,6 @@ document.body.appendChild(heart);
     function startHeartRain() { setInterval(createHeart, 600); }
 
     let currentIdx = 0;
-    const imgs = document.querySelectorAll(".gallery-item img");
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
 
@@ -1912,17 +1911,14 @@ function syncLightboxDate(index) {
   el.textContent = trDate;
 })();
 
-// BU FONKSİYON HER ŞEYİN DIŞINDA, EN ALTTA DURSUN
 function filterMonth(month) {
-    // 1. Butonların görselliğini güncelle
+    // 1. Butonların mor rengini ayarla
     document.querySelectorAll('.month-btn').forEach(btn => {
         btn.classList.remove('active');
-        if(btn.getAttribute('onclick').includes("'" + month + "'")) {
-            btn.classList.add('active');
-        }
+        if(btn.getAttribute('onclick').includes("'" + month + "'")) btn.classList.add('active');
     });
 
-    // 2. Resimleri filtrele
+    // 2. Resimleri gizle veya göster
     const items = document.querySelectorAll('.gallery-item');
     items.forEach(item => {
         const itemMonth = item.getAttribute('data-month');
@@ -1933,29 +1929,18 @@ function filterMonth(month) {
         }
     });
 
-    // 3. Lightbox (Büyütme) listesini güncelle (Sadece seçili ayın resimleri dönsün)
-    updateVisibleImages();
-}
+    // 3. BURASI KRİTİK: Sadece ekranda kalan (görünen) resimleri yeni bir listeye al
+    visibleImgs = Array.from(document.querySelectorAll(".gallery-item"))
+                       .filter(item => item.style.display !== 'none')
+                       .map(item => item.querySelector("img"));
 
-// Seçili ayın resimlerini takip eden yeni liste
-let currentMonthImages = [];
-
-function updateVisibleImages() {
-    const allGalleryItems = Array.from(document.querySelectorAll(".gallery-item"));
-    // Sadece ekranında 'block' (görünür) olanları al
-    currentMonthImages = allGalleryItems
-        .filter(item => item.style.display !== 'none')
-        .map(item => item.querySelector("img"));
-
-    // Resimlere tıklama olayını güncelle
-    currentMonthImages.forEach((img, i) => {
+    // 4. Her resme "Yeni sıran bu" diye öğret
+    visibleImgs.forEach((img, i) => {
         img.onclick = () => { 
-            currentIdx = i; 
+            currentIdx = i; // Artık tıkladığın resim kaçıncıysa o açılır
             openLightbox(); 
         };
     });
-    // filterMonth fonksiyonunun en sonuna, süslü parantezden hemen önce ekle:
-document.querySelector('.gallery').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 </script>
