@@ -598,29 +598,54 @@ body.logged-in #mini-game-btn{ display:block !important; }
 
 .gallery-filters {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     overflow-x: auto;
-    padding: 10px 0;
-    margin-bottom: 15px;
-    scrollbar-width: none; /* Firefox */
+    padding: 20px 5px;
+    margin-bottom: 25px;
+    scrollbar-width: none;
+    justify-content: center; /* Mobilde sola yaslı durması için kaldırabilirsin */
 }
-.gallery-filters::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.gallery-filters::-webkit-scrollbar { display: none; }
 
 .filter-btn {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 8px 16px;
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 22px;
+    border-radius: 15px;
     cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
     white-space: nowrap;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(5px);
 }
 
-.filter-btn.active {
+/* Üzerine gelince (Hover) */
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+/* Mor Aktif (A) */
+.filter-btn.active-purple {
     background: #7b2cbf;
+    color: #fff;
     border-color: #9d4edd;
-    box-shadow: 0 0 10px rgba(123, 44, 191, 0.5);
+    box-shadow: 0 8px 20px rgba(123, 44, 191, 0.4);
+    transform: scale(1.05);
+}
+
+/* Gri Aktif (K) */
+.filter-btn.active-grey {
+    background: #e0e0e0;
+    color: #111;
+    border-color: #ffffff;
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
 }
 
 </style>
@@ -2047,38 +2072,34 @@ function syncLightboxDate(index) {
 
 function filterGallery(month) {
     const btns = document.querySelectorAll('.filter-btn');
-    btns.forEach(btn => btn.classList.remove('active'));
-    if(event) event.target.classList.add('active');
-
-    const items = document.querySelectorAll('.gallery-item');
     
+    // Aktif sınıfları temizle
+    btns.forEach(btn => btn.classList.remove('active-purple', 'active-grey'));
+
+    if (event) {
+        const clickedBtn = event.target;
+        const btnIndex = Array.from(btns).indexOf(clickedBtn);
+
+        // Mor (A) ve Gri (K) döngüsü
+        if (btnIndex % 2 === 0) {
+            clickedBtn.classList.add('active-purple');
+        } else {
+            clickedBtn.classList.add('active-grey');
+        }
+    }
+
+    // Filtreleme mantığı (Burayı bozmadan bırakıyoruz)
+    const items = document.querySelectorAll('.gallery-item');
     items.forEach(item => {
         const imgSrc = item.querySelector('img').getAttribute('src');
         let isMatch = false;
 
-        if (month === 'all') {
-            isMatch = true;
-        } 
-        // KASIM: Sadece içinde "11.2025" geçenler
-        else if (month === '11.2025') {
-            if (imgSrc.includes('11.2025')) isMatch = true;
-        }
-        // ARALIK: İçinde "2025" geçen ama "11.2025" GEÇMEYENLER
-        else if (month === '12.2025') {
-            if (imgSrc.includes('2025') && !imgSrc.includes('11.2025')) isMatch = true;
-        }
-        // OCAK: İçinde "/01/" geçenler
-        else if (month === '01.2026') {
-            if (imgSrc.includes('01/')) isMatch = true;
-        }
-        // ŞUBAT: İçinde "02/" veya "2026.02" geçenler (Senin iki farklı klasörün var)
-        else if (month === '02.2026') {
-            if (imgSrc.includes('02/') || imgSrc.includes('2026.02')) isMatch = true;
-        }
-        // MART: İçinde "03/" geçenler
-        else if (month === '03.2026') {
-            if (imgSrc.includes('03/')) isMatch = true;
-        }
+        if (month === 'all') isMatch = true;
+        else if (month === '11.2025' && imgSrc.includes('11.2025')) isMatch = true;
+        else if (month === '12.2025' && imgSrc.includes('2025') && !imgSrc.includes('11.2025')) isMatch = true;
+        else if (month === '01.2026' && imgSrc.includes('01/')) isMatch = true;
+        else if (month === '02.2026' && (imgSrc.includes('02/') || imgSrc.includes('2026.02'))) isMatch = true;
+        else if (month === '03.2026' && imgSrc.includes('03/')) isMatch = true;
 
         item.style.display = isMatch ? 'block' : 'none';
     });
