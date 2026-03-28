@@ -2324,6 +2324,48 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// --- EKSİK OLAN ANA FONKSİYONLAR ---
+
+// 1. Beraberlik Sayacı İçin Başlangıç Tarihi
+const START_DATE = new Date("2025-11-28T19:58:00");
+
+// 2. Canlı Aşk Sayacı Fonksiyonu
+function updateLiveTimer() {
+    const timerEl = document.getElementById("live-timer");
+    if (!timerEl) return;
+    
+    const now = new Date();
+    const diff = now - START_DATE;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const mins = Math.floor((diff / (1000 * 60)) % 60);
+    const secs = Math.floor((diff / 1000) % 60);
+
+    timerEl.innerText = 
+        `${days} gün ${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+// 3. Alt Kısımdaki Güncel Tarih Fonksiyonu
+function updateFooterDate() {
+    const el = document.getElementById("dynamic-date");
+    if(!el) return;
+    const now = new Date();
+    const options = { day: "numeric", month: "long", year: "numeric" };
+    const trDate = now.toLocaleDateString("tr-TR", options);
+    el.textContent = trDate;
+}
+
+// 4. Sayfa Yüklendiğinde Otomatik Başlatma
+window.addEventListener('DOMContentLoaded', () => {
+    // Eğer cihaz zaten yetkiliyse sayaçları hemen başlat
+    if (localStorage.getItem("ak_trusted_device") === "true") {
+        updateLiveTimer();
+        setInterval(updateLiveTimer, 1000);
+        updateFooterDate();
+    }
+});
+
 </script>
 
 
