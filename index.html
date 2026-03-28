@@ -709,45 +709,6 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
-/* --- GÖRÜNÜM VE FİLTRELEME STİLLERİ --- */
-.gallery-filters { 
-    display: flex; gap: 10px; overflow-x: auto; padding: 15px 5px; 
-    scrollbar-width: none; -webkit-overflow-scrolling: touch;
-}
-.gallery-filters::-webkit-scrollbar { display: none; }
-
-.filter-btn { 
-    background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); 
-    padding: 10px 20px; border-radius: 15px; cursor: pointer; white-space: nowrap; transition: 0.3s; 
-}
-
-/* Mor Aktif (A) */
-.filter-btn.active-purple { 
-    background: #7b2cbf !important; border-color: #9d4edd !important; 
-    box-shadow: 0 4px 15px rgba(123,44,191,0.4); 
-}
-
-/* Gri Aktif (K) */
-.filter-btn.active-grey { 
-    background: #8e8e8e !important; border-color: #b0b0b0 !important; 
-    box-shadow: 0 4px 15px rgba(142,142,142,0.3); color: #fff !important;
-}
-
-.view-controls { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
-.view-btn { 
-    background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); 
-    padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 12px;
-}
-.view-btn.active { background: rgba(255,255,255,0.2); border-color: #fff; }
-
-/* IZGARA MODU AYARI */
-.gallery-grid-mode { 
-    display: grid !important; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
-    gap: 15px; overflow-x: hidden !important; padding: 10px;
-}
-.gallery-grid-mode .gallery-item { flex: none !important; width: 100% !important; }
-.gallery-grid-mode .gallery-item img { width: 100% !important; height: 200px !important; }
-
 </style>
 </head>
 
@@ -1342,6 +1303,15 @@ body.logged-in #mini-game-btn{ display:block !important; }
 let slideSpeed = 3000;
 let __lastHeartTap = 0;
 
+// --- CİHAZ YETKİLENDİRME ---
+(function() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('anahtar') === 'aktif') {
+        localStorage.setItem("ak_trusted_device", "true");
+        alert("Cihazın başarıyla yetkilendirildi aşkım! 💜");
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+})();
 
 // --- ŞİFRE KONTROLÜ ---
 const MY_SECRET = "1046km";
@@ -1396,42 +1366,45 @@ function checkPass() {
     const inputEl = document.getElementById("pass-input");
     const val = inputEl ? inputEl.value.trim() : "";
     const err = document.getElementById("error-msg");
+    
+    // Cihazın yetkili olup olmadığını kontrol et
+    const isTrusted = localStorage.getItem("ak_trusted_device");
 
     if (val === MY_SECRET) {
-        if (err) err.style.display = "none";
+        // Şifre doğru, şimdi yetki kontrolü yapalım
+        if (isTrusted === "true") {
+            if (err) err.style.display = "none";
 
-        const overlay = document.getElementById("login-overlay");
-        const content = document.getElementById("main-content");
+            const overlay = document.getElementById("login-overlay");
+            const content = document.getElementById("main-content");
 
-        overlay.style.opacity = "0";
-        setTimeout(() => {
-            overlay.style.display = "none";
-            content.style.opacity = "1";
+            overlay.style.opacity = "0";
+            setTimeout(() => {
+                overlay.style.display = "none";
+                content.style.opacity = "1";
                 document.body.classList.add('logged-in');
 
-            
-            showWelcomeToast();
-// ✅ Aşk sayacı bozulmasın: girişten sonra başlat
-            setInterval(updateLiveTimer, 1000);
-            updateLiveTimer();
+                showWelcomeToast();
+                setInterval(updateLiveTimer, 1000);
+                updateLiveTimer();
 
+                // --- DOĞUM GÜNÜ MODU ---
+                if (isBirthdayToday()){
+                    const bm = document.getElementById("birthday-message");
+                    if(bm) bm.style.display = "block";
+                    const timerEl = document.getElementById("live-timer");
+                    if(timerEl) timerEl.innerHTML = "Bugün senin günün 💜";
+                    document.body.style.backgroundImage =
+                      'linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url("https://i.imgur.com/VqGB3wv.jpeg")';
+                    showBirthday();
+                }
 
-            // --- DOĞUM GÜNÜ MODU ---
-            if (isBirthdayToday()){
-                const bm = document.getElementById("birthday-message");
-                if(bm) bm.style.display = "block";
-                // sayaç yerine küçük mesaj
-                const timerEl = document.getElementById("live-timer");
-                if(timerEl) timerEl.innerHTML = "Bugün senin günün 💜";
-                // arka planı biraz farklılaştır
-                document.body.style.backgroundImage =
-                  'linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url("https://i.imgur.com/VqGB3wv.jpeg")';
-                showBirthday();
-            }
-
-            // ✅ Kalp yağmuru da girişten sonra başlasın
-            startHeartRain();
-        }, 800);
+                startHeartRain();
+            }, 800);
+        } else {
+            // Şifre doğru ama cihaz yetkisizse uyarı ver
+            alert("Bu cihaz henüz yetkilendirilmemiş sevgilim. Önce sana gönderdiğim özel linke tıklamalısın! 🔐");
+        }
 
     } else {
         if (err) err.style.display = "block";
@@ -2263,35 +2236,6 @@ slider.addEventListener('wheel', (e) => {
         slider.scrollLeft += e.deltaY;
     }
 });
-
-// --- YENİ ÖZELLİKLER MANTIĞI ---
-
-// 1. Cihaz Yetkilendirme (URL'den ?anahtar=aktif gelirse)
-(function() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('anahtar') === 'aktif') {
-        localStorage.setItem("ak_trusted_device", "true");
-        alert("Cihazın başarıyla yetkilendirildi aşkım! 💜");
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-})();
-
-// 2. Mevcut checkPass fonksiyonunu şu şekilde GÜNCELLE (Eskisini sil bununla değiştir)
-function checkPass() {
-    const inputEl = document.getElementById("pass-input");
-    const val = inputEl ? inputEl.value.trim() : "";
-    const isTrusted = localStorage.getItem("ak_trusted_device");
-
-    if (val === MY_SECRET) {
-        if (isTrusted === "true") {
-            executeLogin(); // Giriş animasyonunu başlat
-        } else {
-            alert("Bu cihaz yetkilendirilmemiş sevgilim. Önce sana gönderdiğim linke tıklamalısın! 🔐");
-        }
-    } else {
-        document.getElementById("error-msg").style.display = "block";
-    }
-}
 
 </script>
 
