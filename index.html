@@ -709,65 +709,10 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
-/* --- ADMİN PANELİ MODAL --- */
-.admin-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(15px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 100000;
-}
-.admin-card {
-    background: #1a1a1a;
-    border: 1px solid rgba(123, 44, 191, 0.3);
-    padding: 30px;
-    border-radius: 24px;
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
-.admin-card h2 { font-family: 'Playfair Display', serif; color: #7b2cbf; margin-bottom: 20px; }
-.device-status {
-    background: rgba(255,255,255,0.05);
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    font-size: 14px;
-}
-.admin-btn-red {
-    background: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    width: 100%;
-    transition: 0.3s;
-}
-.admin-btn-red:hover { background: #ff2a2a; transform: scale(1.02); }
-.admin-close { margin-top: 15px; color: #888; cursor: pointer; display: block; font-size: 12px; }
-
 </style>
 </head>
 
 <body>
-
-    <div id="admin-panel" class="admin-modal">
-    <div class="admin-card">
-        <h2>Yönetim Paneli 🛡️</h2>
-        <div class="device-status">
-            <p id="device-info">Cihaz Durumu: Kontrol ediliyor...</p>
-        </div>
-        <button class="admin-btn-red" onclick="resetAuth()">Bu Cihazın Yetkisini Kaldır</button>
-        <span class="admin-close" onclick="closeAdmin()">Kapat</span>
-    </div>
-</div>
-
 
 <div id="login-overlay">
     
@@ -2362,44 +2307,6 @@ window.addEventListener('DOMContentLoaded', () => {
         window.history.replaceState({}, document.title, "/");
     }
 });
-
-let adminClickCount = 0;
-
-// Logoya tıklandığında admin panelini tetikle
-document.addEventListener('click', (e) => {
-    if (e.target.closest('.custom-login-logo') || e.target.closest('.yinyang')) {
-        adminClickCount++;
-        if (adminClickCount >= 5) {
-            openAdmin();
-            adminClickCount = 0;
-        }
-    } else {
-        adminClickCount = 0; // Başka yere tıklarsa sıfırla
-    }
-});
-
-function openAdmin() {
-    const panel = document.getElementById('admin-panel');
-    const info = document.getElementById('device-info');
-    const isTrusted = localStorage.getItem("ak_trusted_device");
-
-    panel.style.display = 'flex';
-    info.innerHTML = isTrusted === "true" 
-        ? "✅ Bu cihaz şu an <b>YETKİLİ</b>.<br><small>Yetkiyi silersen şifre doğru olsa da girilemez.</small>" 
-        : "❌ Bu cihaz <b>YETKİSİZ</b>.";
-}
-
-function closeAdmin() {
-    document.getElementById('admin-panel').style.display = 'none';
-}
-
-function resetAuth() {
-    if (confirm("Bu cihazın erişimini tamamen kesmek istediğine emin misin?")) {
-        localStorage.removeItem("ak_trusted_device");
-        alert("Yetki kaldırıldı. Sayfa yenileniyor...");
-        window.location.reload();
-    }
-}
 
 </script>
 
