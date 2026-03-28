@@ -1303,21 +1303,10 @@ body.logged-in #mini-game-btn{ display:block !important; }
 let slideSpeed = 3000;
 let __lastHeartTap = 0;
 
-// --- CIHAZ YETKILENDIRME (URL KONTROL) ---
-(function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('anahtar') === 'aktif') {
-        localStorage.setItem("ak_trusted_device", "true");
-        alert("Cihazın başarıyla yetkilendirildi aşkım! Artık giriş yapabilirsin. 💜");
-        // URL'yi temizle (Parametreyi gizle)
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-})();
 
-// Şifre Değişkeni (Basit Gizleme)
+// Şifreyi koda ters yazıyoruz ki ilk bakışta anlaşılmasın
 const _0xhidden = "mk6401"; 
-const MY_SECRET = _0xhidden.split("").reverse().join(""); // "1046km"
-
+const MY_SECRET = _0xhidden.split("").reverse().join(""); // Kod bunu çalışırken "1046km" yapar
 
 // --- DOĞUM GÜNÜ AYARI (İSTERSEN DEĞİŞTİR) ---
 const BDAY_DAY = 3;      // gün (1-31)
@@ -1369,43 +1358,22 @@ function checkPass() {
     const val = inputEl ? inputEl.value.trim() : "";
     const err = document.getElementById("error-msg");
     
-    // Tarayıcıdaki dijital anahtarı kontrol et
-    const isTrusted = localStorage.getItem("ak_trusted_device");
+    // Cihaz Anahtarı Kontrolü (Sadece izinli cihazlar)
+    const deviceKey = localStorage.getItem("ak_trusted_device");
 
     if (val === MY_SECRET) {
-        if (isTrusted === "true") {
-            // Cihaz yetkiliyse ve şifre doğruysa gir
-            if (err) err.style.display = "none";
-            executeLogin(); 
-        } else {
-            // Şifre doğru olsa bile anahtar yoksa uyarı ver
-            alert("Bu cihaz henüz yetkilendirilmemiş sevgilim. Önce sana gönderdiğim özel linke tıklamalısın! 🔐");
+        // Eğer cihaz tanımlı değilse giriş yaptırma (Opsiyonel: Sen girmek istersen burayı kullanabilirsin)
+        if (!deviceKey && val === MY_SECRET) {
+             alert("Bu cihaz yetkilendirilmemiş sevgilim. Önce anahtarı yüklemelisin! 🔐");
+             return;
         }
+
+        // Giriş Başarılı
+        if (err) err.style.display = "none";
+        executeLogin();
     } else {
         if (err) err.style.display = "block";
     }
-}
-
-// Giriş başarılı olunca çalışan fonksiyon
-function executeLogin() {
-    const overlay = document.getElementById("login-overlay");
-    const content = document.getElementById("main-content");
-
-    overlay.style.opacity = "0";
-    setTimeout(() => {
-        overlay.style.display = "none";
-        content.style.opacity = "1";
-        document.body.classList.add('logged-in');
-        
-        showWelcomeToast();
-        setInterval(updateLiveTimer, 1000);
-        updateLiveTimer();
-
-        if (isBirthdayToday()){
-            showBirthday();
-        }
-        startHeartRain();
-    }, 800);
 }
 
 // Giriş animasyonlarını başlatan ayrı bir fonksiyon
