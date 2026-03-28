@@ -709,6 +709,45 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
+/* --- GÖRÜNÜM VE FİLTRELEME STİLLERİ --- */
+.gallery-filters { 
+    display: flex; gap: 10px; overflow-x: auto; padding: 15px 5px; 
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.gallery-filters::-webkit-scrollbar { display: none; }
+
+.filter-btn { 
+    background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); 
+    padding: 10px 20px; border-radius: 15px; cursor: pointer; white-space: nowrap; transition: 0.3s; 
+}
+
+/* Mor Aktif (A) */
+.filter-btn.active-purple { 
+    background: #7b2cbf !important; border-color: #9d4edd !important; 
+    box-shadow: 0 4px 15px rgba(123,44,191,0.4); 
+}
+
+/* Gri Aktif (K) */
+.filter-btn.active-grey { 
+    background: #8e8e8e !important; border-color: #b0b0b0 !important; 
+    box-shadow: 0 4px 15px rgba(142,142,142,0.3); color: #fff !important;
+}
+
+.view-controls { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+.view-btn { 
+    background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); 
+    padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 12px;
+}
+.view-btn.active { background: rgba(255,255,255,0.2); border-color: #fff; }
+
+/* IZGARA MODU AYARI */
+.gallery-grid-mode { 
+    display: grid !important; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+    gap: 15px; overflow-x: hidden !important; padding: 10px;
+}
+.gallery-grid-mode .gallery-item { flex: none !important; width: 100% !important; }
+.gallery-grid-mode .gallery-item img { width: 100% !important; height: 200px !important; }
+
 </style>
 </head>
 
@@ -1304,9 +1343,9 @@ let slideSpeed = 3000;
 let __lastHeartTap = 0;
 
 
-// Şifreyi koda ters yazıyoruz ki ilk bakışta anlaşılmasın
-const _0xhidden = "mk6401"; 
-const MY_SECRET = _0xhidden.split("").reverse().join(""); // Kod bunu çalışırken "1046km" yapar
+// --- ŞİFRE KONTROLÜ ---
+const MY_SECRET = "1046km";
+const START_DATE = new Date("2025-11-28T19:58:00");
 
 // --- DOĞUM GÜNÜ AYARI (İSTERSEN DEĞİŞTİR) ---
 const BDAY_DAY = 3;      // gün (1-31)
@@ -1357,76 +1396,6 @@ function checkPass() {
     const inputEl = document.getElementById("pass-input");
     const val = inputEl ? inputEl.value.trim() : "";
     const err = document.getElementById("error-msg");
-    
-    // Cihaz Anahtarı Kontrolü (Sadece izinli cihazlar)
-    const deviceKey = localStorage.getItem("ak_trusted_device");
-
-    if (val === MY_SECRET) {
-        // Eğer cihaz tanımlı değilse giriş yaptırma (Opsiyonel: Sen girmek istersen burayı kullanabilirsin)
-        if (!deviceKey && val === MY_SECRET) {
-             alert("Bu cihaz yetkilendirilmemiş sevgilim. Önce anahtarı yüklemelisin! 🔐");
-             return;
-        }
-
-        // Giriş Başarılı
-        if (err) err.style.display = "none";
-        executeLogin();
-    } else {
-        if (err) err.style.display = "block";
-    }
-}
-
-function updateLiveTimer() {
-    const timerEl = document.getElementById("live-timer");
-    if (!timerEl) return;
-    
-    const now = new Date();
-    const diff = now - START_DATE;
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const mins = Math.floor((diff / (1000 * 60)) % 60);
-    const secs = Math.floor((diff / 1000) % 60);
-
-    timerEl.innerText = 
-        `${days} gün ${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
-
-function updateFooterDate() {
-    const el = document.getElementById("dynamic-date");
-    if(!el) return;
-    const now = new Date();
-    const options = { day: "numeric", month: "long", year: "numeric" };
-    const trDate = now.toLocaleDateString("tr-TR", options);
-    el.textContent = trDate;
-}
-
-// Giriş animasyonlarını başlatan ayrı bir fonksiyon
-function executeLogin() {
-    const overlay = document.getElementById("login-overlay");
-    const content = document.getElementById("main-content");
-
-    overlay.style.opacity = "0";
-    setTimeout(() => {
-        overlay.style.display = "none";
-        content.style.opacity = "1";
-        document.body.classList.add('logged-in');
-        
-        showWelcomeToast();
-        
-        // --- SAYAÇ VE TARİH BAŞLATMA ---
-        updateLiveTimer(); 
-        setInterval(updateLiveTimer, 1000); 
-        updateFooterDate(); 
-
-        if (isBirthdayToday()){
-            const timerEl = document.getElementById("live-timer");
-            if(timerEl) timerEl.innerHTML = "Bugün senin günün 💜";
-            showBirthday();
-        }
-        startHeartRain();
-    }, 800);
-}
 
     if (val === MY_SECRET) {
         if (err) err.style.display = "none";
@@ -1467,7 +1436,7 @@ function executeLogin() {
     } else {
         if (err) err.style.display = "block";
     }
-
+}
 
 
     function updateLiveTimer() {
@@ -1652,6 +1621,8 @@ function generateNote() {
 
 
 
+
+
     // --- TIKLAYINCA MOR/GRİ KALP (GALERİYİ BOZMADAN) ---
     (function () {
         if (window.__tapHeartsAdded) return;
@@ -1770,15 +1741,6 @@ function syncLightboxDate(index) {
         autoSlideResumeTimer = setTimeout(() => startAutoSlide(), 4000);
     }
 
-    function updateFooterDate() {
-    const el = document.getElementById("dynamic-date");
-    if(!el) return;
-    const now = new Date();
-    const options = { day: "numeric", month: "long", year: "numeric" };
-    const trDate = now.toLocaleDateString("tr-TR", options);
-    el.textContent = trDate;
-}
-
     // --- AUTO SLIDE ETKİLEŞİM: dokununca dur, sonra devam ---
     ["click","touchstart","keydown"].forEach(ev => {
         document.addEventListener(ev, (e) => {
@@ -1810,17 +1772,6 @@ function syncLightboxDate(index) {
             else stopAutoSlide();
         });
     });
-
-    window.addEventListener('DOMContentLoaded', () => {
-    // Mevcut anahtar kontrol kodların... (anahtar=aktif vs.)
-    
-    // Eğer kullanıcı zaten giriş yapmışsa (login ekranı kapalıysa)
-    if (document.body.classList.contains('logged-in') || !document.getElementById('login-overlay')) {
-        updateLiveTimer();
-        setInterval(updateLiveTimer, 1000);
-        updateFooterDate();
-    }
-});
 
     document.addEventListener("DOMContentLoaded", () => {
         const speedBtns = document.querySelectorAll("#speed-controls button");
@@ -2313,58 +2264,34 @@ slider.addEventListener('wheel', (e) => {
     }
 });
 
-// Sayfa yüklendiğinde URL'de anahtar var mı bak
-window.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('anahtar') === 'aktif') {
+// --- YENİ ÖZELLİKLER MANTIĞI ---
+
+// 1. Cihaz Yetkilendirme (URL'den ?anahtar=aktif gelirse)
+(function() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('anahtar') === 'aktif') {
         localStorage.setItem("ak_trusted_device", "true");
-        alert("Cihazın başarıyla yetkilendirildi aşkım! Artık giriş yapabilirsin. 💜");
-        // URL'deki çirkin yazıyı temizle
-        window.history.replaceState({}, document.title, "/");
+        alert("Cihazın başarıyla yetkilendirildi aşkım! 💜");
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
-});
+})();
 
-// --- EKSİK OLAN ANA FONKSİYONLAR ---
+// 2. Mevcut checkPass fonksiyonunu şu şekilde GÜNCELLE (Eskisini sil bununla değiştir)
+function checkPass() {
+    const inputEl = document.getElementById("pass-input");
+    const val = inputEl ? inputEl.value.trim() : "";
+    const isTrusted = localStorage.getItem("ak_trusted_device");
 
-// 1. Beraberlik Sayacı İçin Başlangıç Tarihi
-const START_DATE = new Date("2025-11-28T19:58:00");
-
-// 2. Canlı Aşk Sayacı Fonksiyonu
-function updateLiveTimer() {
-    const timerEl = document.getElementById("live-timer");
-    if (!timerEl) return;
-    
-    const now = new Date();
-    const diff = now - START_DATE;
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const mins = Math.floor((diff / (1000 * 60)) % 60);
-    const secs = Math.floor((diff / 1000) % 60);
-
-    timerEl.innerText = 
-        `${days} gün ${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
-
-// 3. Alt Kısımdaki Güncel Tarih Fonksiyonu
-function updateFooterDate() {
-    const el = document.getElementById("dynamic-date");
-    if(!el) return;
-    const now = new Date();
-    const options = { day: "numeric", month: "long", year: "numeric" };
-    const trDate = now.toLocaleDateString("tr-TR", options);
-    el.textContent = trDate;
-}
-
-// 4. Sayfa Yüklendiğinde Otomatik Başlatma
-window.addEventListener('DOMContentLoaded', () => {
-    // Eğer cihaz zaten yetkiliyse sayaçları hemen başlat
-    if (localStorage.getItem("ak_trusted_device") === "true") {
-        updateLiveTimer();
-        setInterval(updateLiveTimer, 1000);
-        updateFooterDate();
+    if (val === MY_SECRET) {
+        if (isTrusted === "true") {
+            executeLogin(); // Giriş animasyonunu başlat
+        } else {
+            alert("Bu cihaz yetkilendirilmemiş sevgilim. Önce sana gönderdiğim linke tıklamalısın! 🔐");
+        }
+    } else {
+        document.getElementById("error-msg").style.display = "block";
     }
-});
+}
 
 </script>
 
