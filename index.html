@@ -1376,6 +1376,31 @@ function checkPass() {
     }
 }
 
+function updateLiveTimer() {
+    const timerEl = document.getElementById("live-timer");
+    if (!timerEl) return;
+    
+    const now = new Date();
+    const diff = now - START_DATE;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const mins = Math.floor((diff / (1000 * 60)) % 60);
+    const secs = Math.floor((diff / 1000) % 60);
+
+    timerEl.innerText = 
+        `${days} gün ${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function updateFooterDate() {
+    const el = document.getElementById("dynamic-date");
+    if(!el) return;
+    const now = new Date();
+    const options = { day: "numeric", month: "long", year: "numeric" };
+    const trDate = now.toLocaleDateString("tr-TR", options);
+    el.textContent = trDate;
+}
+
 // Giriş animasyonlarını başlatan ayrı bir fonksiyon
 function executeLogin() {
     const overlay = document.getElementById("login-overlay");
@@ -1389,12 +1414,14 @@ function executeLogin() {
         
         showWelcomeToast();
         
-        // --- SAYAÇ VE TARİHİ BURADA TETİKLİYORUZ ---
-        updateLiveTimer(); // Hemen çalıştır
-        setInterval(updateLiveTimer, 1000); // Her saniye güncelle
-        updateFooterDate(); // En alttaki tarihi yazdır
+        // --- SAYAÇ VE TARİH BAŞLATMA ---
+        updateLiveTimer(); 
+        setInterval(updateLiveTimer, 1000); 
+        updateFooterDate(); 
 
         if (isBirthdayToday()){
+            const timerEl = document.getElementById("live-timer");
+            if(timerEl) timerEl.innerHTML = "Bugün senin günün 💜";
             showBirthday();
         }
         startHeartRain();
@@ -1621,8 +1648,6 @@ function generateNote() {
 
     }, 300);
 }
-
-
 
 
 
