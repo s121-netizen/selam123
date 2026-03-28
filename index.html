@@ -1388,8 +1388,11 @@ function executeLogin() {
         document.body.classList.add('logged-in');
         
         showWelcomeToast();
-        setInterval(updateLiveTimer, 1000);
-        updateLiveTimer();
+        
+        // --- SAYAÇ VE TARİHİ BURADA TETİKLİYORUZ ---
+        updateLiveTimer(); // Hemen çalıştır
+        setInterval(updateLiveTimer, 1000); // Her saniye güncelle
+        updateFooterDate(); // En alttaki tarihi yazdır
 
         if (isBirthdayToday()){
             showBirthday();
@@ -1742,6 +1745,15 @@ function syncLightboxDate(index) {
         autoSlideResumeTimer = setTimeout(() => startAutoSlide(), 4000);
     }
 
+    function updateFooterDate() {
+    const el = document.getElementById("dynamic-date");
+    if(!el) return;
+    const now = new Date();
+    const options = { day: "numeric", month: "long", year: "numeric" };
+    const trDate = now.toLocaleDateString("tr-TR", options);
+    el.textContent = trDate;
+}
+
     // --- AUTO SLIDE ETKİLEŞİM: dokununca dur, sonra devam ---
     ["click","touchstart","keydown"].forEach(ev => {
         document.addEventListener(ev, (e) => {
@@ -1773,6 +1785,17 @@ function syncLightboxDate(index) {
             else stopAutoSlide();
         });
     });
+
+    window.addEventListener('DOMContentLoaded', () => {
+    // Mevcut anahtar kontrol kodların... (anahtar=aktif vs.)
+    
+    // Eğer kullanıcı zaten giriş yapmışsa (login ekranı kapalıysa)
+    if (document.body.classList.contains('logged-in') || !document.getElementById('login-overlay')) {
+        updateLiveTimer();
+        setInterval(updateLiveTimer, 1000);
+        updateFooterDate();
+    }
+});
 
     document.addEventListener("DOMContentLoaded", () => {
         const speedBtns = document.querySelectorAll("#speed-controls button");
