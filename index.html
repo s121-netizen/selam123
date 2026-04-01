@@ -479,15 +479,32 @@ body.logged-in #mini-game-btn{ display:block !important; }
 
 
 
-.custom-login-logo{
-    width:140px;
-    height:auto;
-    max-width:60%;
-    display:block;
-    margin:0 auto 20px auto;
-    filter: drop-shadow(0 0 25px rgba(123,44,191,0.45));
+/* Giriş logosu arkasındaki çift renkli ve yanıp sönen ışık efekti */
+.custom-login-logo {
+    width: 140px;
+    height: auto;
+    max-width: 60%;
+    display: block;
+    margin: 0 auto 20px auto;
+    /* Sol taraf gri (#b0b0b0), sağ taraf mor (#7b2cbf) ışık */
+    filter: drop-shadow(-15px 0 20px rgba(176, 176, 176, 0.6)) 
+            drop-shadow(15px 0 20px rgba(123, 44, 191, 0.6));
+    animation: glowPulse 3s infinite ease-in-out;
 }
 
+/* Yanıp sönme animasyonu */
+@keyframes glowPulse {
+    0%, 100% {
+        filter: drop-shadow(-10px 0 15px rgba(176, 176, 176, 0.4)) 
+                drop-shadow(10px 0 15px rgba(123, 44, 191, 0.4));
+        transform: scale(1);
+    }
+    50% {
+        filter: drop-shadow(-20px 0 30px rgba(176, 176, 176, 0.8)) 
+                drop-shadow(20px 0 30px rgba(123, 44, 191, 0.8));
+        transform: scale(1.02);
+    }
+}
 
 
 /* ===== DOĞUM GÜNÜ MODU ===== */
