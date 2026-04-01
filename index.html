@@ -1408,7 +1408,7 @@ function checkPass() {
             executeLogin(); 
         } else {
             // Şifre doğru ama anahtar yok
-            alert("Bu cihaz yetkilendirilmemiş sevgilim. Önce sana gönderdiğim özel linke tıklamalısın! 🔐");
+            alert("Bu cihaz yetkilendirilmemiş . Önce sana gönderdiğim özel linke tıklamalısın! 🔐");
         }
     } else {
         const err = document.getElementById("error-msg");
@@ -1417,7 +1417,7 @@ function checkPass() {
 }
 
 function logout() {
-    if (confirm("Çıkış yapmak ve bu cihazın yetkisini kaldırmak istediğine emin misin sevgilim?")) {
+    if (confirm("Çıkış yapmak ve bu cihazın yetkisini kaldırmak istediğine emin misin ?")) {
         // Tarayıcıdaki güvenli cihaz anahtarını siler
         localStorage.removeItem("ak_trusted_device");
         alert("Yetki kaldırıldı. Tekrar girmek için özel linke ihtiyacın olacak. 🔒");
@@ -1448,7 +1448,7 @@ function executeLogin() {
 
 // --- 3. ÇIKIŞ YAPMA FONKSİYONU ---
 function logout() {
-    if (confirm("Çıkış yapmak ve bu cihazın yetkisini kaldırmak istediğine emin misin sevgilim?")) {
+    if (confirm("Çıkış yapmak ve bu cihazın yetkisini kaldırmak istediğine emin misin a?")) {
         localStorage.removeItem("ak_trusted_device");
         alert("Yetki kaldırıldı. Tekrar girmek için özel linke ihtiyacın olacak. 🔒");
         window.location.reload(); // Sayfayı yenileyerek şifre ekranına döndürür
@@ -1963,14 +1963,6 @@ function syncLightboxDate(index) {
       renderBoards();
     });
 
-    const secretWord = "MESAF"; // Her gün değiştirebilirsin
-function checkWord(guess) {
-    if(guess.toUpperCase() === secretWord) {
-        alert("Harikasın! Bizim kelimemiz: " + secretWord + " 💜");
-        updateScore("wordle", 100);
-    }
-}
-
     // ---------------- Game 1: Click Hearts ----------------
     let chScore = 0, chTime = 30, chRunning = false, chTick=null, chSpawn=null;
 
@@ -1998,24 +1990,6 @@ function checkWord(guess) {
       }, {passive:false});
       R.chArea.appendChild(heart);
       setTimeout(()=>{ if(heart.isConnected) heart.remove(); }, 680);
-      // chSpawnHeart fonksiyonunun içine ekle
-heart.addEventListener("click", (e) => {
-    e.preventDefault(); e.stopPropagation();
-    chScore += 1;
-    R.chScore.textContent = String(chScore);
-    
-    // Yüzen +1 efekti
-    const plusOne = document.createElement("div");
-    plusOne.innerText = "+1";
-    plusOne.className = "k-pop"; // Mevcut CSS animasyonunu kullanıyoruz
-    plusOne.style.left = e.clientX + "px";
-    plusOne.style.top = e.clientY + "px";
-    plusOne.style.color = "#7b2cbf";
-    document.body.appendChild(plusOne);
-    setTimeout(() => plusOne.remove(), 800);
-
-    heart.remove();
-}, {passive:false});
     }
     function chEnd(){
       chRunning = false;
@@ -2174,15 +2148,6 @@ heart.addEventListener("click", (e) => {
             }
             qRender();
           }, 650);
-          // qRender içindeki cevap kontrol kısmını güncelle
-if(pick === correct){
-    qScore += 10;
-    R.qScore.textContent = String(qScore);
-    R.qBox.insertAdjacentHTML('beforeend', '<div style="color:#8cffaa; margin-top:10px;">Aynen öyle aşkım! 💜</div>');
-} else {
-    btn.classList.add("wrong");
-    R.qBox.insertAdjacentHTML('beforeend', '<div style="color:#ff5a6e; margin-top:10px;">Bunu konuşacağız... 🤨</div>');
-}
         });
       });
     }
@@ -2342,7 +2307,6 @@ slider.addEventListener('wheel', (e) => {
       <button class="mg-tab active" data-tab="click" role="tab" aria-selected="true">kalp topla</button>
       <button class="mg-tab" data-tab="memory" role="tab">hafıza</button>
       <button class="mg-tab" data-tab="quiz" role="tab">mini quiz</button>
-      <button class="mg-tab" data-tab="wordle" role="tab">kelime avı</button>
       <button class="mg-tab" data-tab="board" role="tab">sıralama</button>
     </div>
 
@@ -2361,12 +2325,6 @@ slider.addEventListener('wheel', (e) => {
           <button id="ch-stop" class="mg-ghost" type="button" disabled>durdur</button>
         </div>
       </section>
-
-      <section class="mg-panel" data-panel="mash" role="tabpanel">
-    <div class="mg-hint">10 saniyede aşkını kanıtla! Butona aban! 💜</div>
-    <div id="mash-count" style="font-size:40px; margin:20px;">0</div>
-    <button id="mash-btn" class="mg-primary" style="width:120px; height:120px; border-radius:50%;">BASSS!</button>
-</section>
 
       <section class="mg-panel" data-panel="memory" role="tabpanel">
         <div class="mg-panel-top">
