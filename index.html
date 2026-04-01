@@ -1408,7 +1408,7 @@ function checkPass() {
             executeLogin(); 
         } else {
             // Şifre doğru ama anahtar yok
-            alert("Bu cihaz yetkilendirilmemiş sevgilim. Önce sana gönderdiğim özel linke tıklamalısın! 🔐");
+            alert("Bu cihaz yetkilendirilmemiş . Önce sana gönderdiğim özel linke tıklamalısın! 🔐");
         }
     } else {
         const err = document.getElementById("error-msg");
@@ -1417,7 +1417,7 @@ function checkPass() {
 }
 
 function logout() {
-    if (confirm("Çıkış yapmak ve bu cihazın yetkisini kaldırmak istediğine emin misin sevgilim?")) {
+    if (confirm("Çıkış yapmak ve bu cihazın yetkisini kaldırmak istediğine emin misin ?")) {
         // Tarayıcıdaki güvenli cihaz anahtarını siler
         localStorage.removeItem("ak_trusted_device");
         alert("Yetki kaldırıldı. Tekrar girmek için özel linke ihtiyacın olacak. 🔒");
@@ -1448,7 +1448,7 @@ function executeLogin() {
 
 // --- 3. ÇIKIŞ YAPMA FONKSİYONU ---
 function logout() {
-    if (confirm("Çıkış yapmak ve bu cihazın yetkisini kaldırmak istediğine emin misin sevgilim?")) {
+    if (confirm("Çıkış yapmak ve bu cihazın yetkisini kaldırmak istediğine emin misin a?")) {
         localStorage.removeItem("ak_trusted_device");
         alert("Yetki kaldırıldı. Tekrar girmek için özel linke ihtiyacın olacak. 🔒");
         window.location.reload(); // Sayfayı yenileyerek şifre ekranına döndürür
