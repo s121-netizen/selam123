@@ -2508,23 +2508,14 @@ let isSpinning = false;
 let motionInited = false;
 
 const rewards = [
-
-    "5 dakika rol yaparak konuş 🎭",       // 0. Dilim: Rol
-
-    "Bizimle ilgili güzel bir anını anlat 📖",          // 1. Dilim: Anı
-
-    "Sana verdiğim mini challenge’ı yap ⚡",   // 2. Dilim: Challenge
-
-    "Bana yeni bir lakap bul🏷️",       // 3. Dilim: Lakap
-
-    "Bana küçük bir itiraf yap 😳",         // 4. Dilim: İtiraf
-
-    "Bana sadece emojilerle mesaj at😍",        // 5. Dilim: Emoji
-
-    "Bana kısa bir şiir yaz veya oku 📝",         // 6. Dilim: Şiir
-
-    "Bana kısa bir video çek 🎥"         // 7. Dilim: Video
-
+    "5 dakika rol yaparak konuş 🎭",
+    "Bizimle ilgili güzel bir anını anlat 📖",
+    "Sana verdiğim mini challenge’ı yap ⚡",
+    "Bana yeni bir lakap bul 🏷️",
+    "Bana küçük bir itiraf yap 😳",
+    "Bana sadece emojilerle mesaj at 😍",
+    "Bana kısa bir şiir yaz 📝",
+    "Bana kısa bir video çek 🎥"
 ];
 
 function spinWheel() {
@@ -2545,20 +2536,18 @@ function spinWheel() {
         wheel.style.transform = `rotate(${currentRotation}deg)`;
     }
     
-    setTimeout(() => {
+setTimeout(() => {
     isSpinning = false;
     
     let actualAngle = currentRotation % 360;
 
-/* YARIM DİLİM OFFSET */
-actualAngle = (actualAngle + 22.5) % 360;
+    /* FIX */
+    actualAngle = (360 - actualAngle + 22.5) % 360;
 
-const corrected = (360 - actualAngle) % 360;
-const prizeIndex = Math.floor(corrected / 45);
+    const prizeIndex = Math.floor(actualAngle / 45);
     
     if (resultText) resultText.innerText = rewards[prizeIndex];
     
-    // Kalp efekti
     const rect = wheel.getBoundingClientRect();
     if (typeof noteBurstHearts === "function") {
         noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
