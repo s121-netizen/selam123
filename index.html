@@ -811,6 +811,29 @@ body.logged-in #mini-game-btn{ display:block !important; }
     pointer-events: none;
 }
 
+/* --- ÇARK OKU (POINTER) --- */
+.wheel-pointer {
+    position: absolute;
+    top: -15px; /* Çarkın tam üstüne oturması için */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 30px solid #ff4d6d; /* Okun rengi pembe/kırmızı tonlarında */
+    z-index: 110;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* Çarkın genel kapsayıcısını (wrapper) hizalamak için bunu güncelle veya ekle */
+.wheel-wrapper {
+    position: relative;
+    width: min(300px, 80vw); 
+    height: min(300px, 80vw);
+    border-radius: 50%;
+    margin: 40px auto 20px auto; /* Üstten biraz boşluk verdik ok sığsın diye */
+}
 </style>
 </head>
 
@@ -2672,20 +2695,21 @@ document.addEventListener('contextmenu', e => {
     </div>
     <div class="wheel-container">
         <div class="wheel-wrapper">
-            <div class="wheel-pointer"></div>
+            <div class="wheel-pointer"></div> 
+            
             <div id="wheel">
                 <div class="wheel-label" style="transform: rotate(22.5deg)">Rol 🎭</div>
-    <div class="wheel-label" style="transform: rotate(67.5deg)">Anı 📖</div>
-    <div class="wheel-label" style="transform: rotate(112.5deg)">Challenge ⚡</div>
-    <div class="wheel-label" style="transform: rotate(157.5deg)">Lakap 🏷️</div>
-    <div class="wheel-label" style="transform: rotate(202.5deg)">İtiraf 😳</div>
-    <div class="wheel-label" style="transform: rotate(247.5deg)">Emoji 😍</div>
-    <div class="wheel-label" style="transform: rotate(292.5deg)">Şiir 📝</div>
-    <div class="wheel-label" style="transform: rotate(337.5deg)">Video 🎥</div>
+                <div class="wheel-label" style="transform: rotate(67.5deg)">Anı 📖</div>
+                <div class="wheel-label" style="transform: rotate(112.5deg)">Challenge ⚡</div>
+                <div class="wheel-label" style="transform: rotate(157.5deg)">Lakap 🏷️</div>
+                <div class="wheel-label" style="transform: rotate(202.5deg)">İtiraf 😳</div>
+                <div class="wheel-label" style="transform: rotate(247.5deg)">Emoji 😍</div>
+                <div class="wheel-label" style="transform: rotate(292.5deg)">Şiir 📝</div>
+                <div class="wheel-label" style="transform: rotate(337.5deg)">Video 🎥</div>
             </div>
             <div class="wheel-center-btn" onclick="spinWheel()">ÇEVİR</div>
         </div>
-        <div id="wheel-result"></div>
+        <div id="wheel-result" style="margin-top: 15px; font-weight: bold; min-height: 24px; color: #ff4d6d;"></div>
     </div>
 </section>
 
