@@ -814,14 +814,15 @@ body.logged-in #mini-game-btn{ display:block !important; }
 /* --- ÇARK OKU (POINTER) --- */
 .wheel-pointer {
     position: absolute;
-    top: -15px; /* Çarkın tam üstüne oturması için */
+    top: -20px; 
     left: 50%;
-    transform: translateX(-50%);
+    /* margin-left ile okun kendi genişliğinin yarısı kadar sola çekiyoruz */
+    margin-left: -15px; 
     width: 0;
     height: 0;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-top: 30px solid #ff4d6d; /* Okun rengi pembe/kırmızı tonlarında */
+    border-top: 30px solid #ff4d6d;
     z-index: 110;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
@@ -2552,9 +2553,12 @@ function spinWheel() {
         
         // Ok en üstte (0 derece) olduğu için hesaplamayı buna göre yapıyoruz
         // 360 derecelik çarkta 8 dilim var, her biri 45 derece
-        const actualAngle = currentRotation % 360;
-// 360'tan çıkararak dönüş yönünü tersine çeviriyoruz ve 45 derecelik 8 dilime bölüyoruz
-const prizeIndex = Math.floor((360 - actualAngle) / 45) % 8;
+       // actualAngle çarkın durduğu açıyı verir
+const actualAngle = currentRotation % 360;
+
+// Çark saat yönünde döndüğü için 360'tan çıkarıyoruz. 
+// 22.5 derecelik ofset, ok tam dilimin ortasına gelsin diye eklenir.
+const prizeIndex = Math.floor(((360 - actualAngle + 22.5) % 360) / 45);
         
         if (resultText) {
             resultText.style.opacity = "1";
