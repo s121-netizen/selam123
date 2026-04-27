@@ -750,15 +750,15 @@ body.logged-in #mini-game-btn{ display:block !important; }
 /* KAZANAN DİLİMİ GÖSTEREN OK */
 .wheel-pointer {
     position: absolute;
-    top: -22px;
-    left: calc(50% + 12px); /* ← SAĞA KAYDIR */
+    top: -20px; /* Çarkın biraz üstünde durması için */
+    left: 50%;
     transform: translateX(-50%);
     width: 35px;
     height: 35px;
-    background: #ff4d6d;
-    clip-path: polygon(50% 100%, 0 0, 100% 0); /* Aşağı bakan üçgen */
+    background: var(--accent-color);
+    clip-path: polygon(50% 100%, 0 0, 100% 0); /* Aşağı bakan net bir üçgen */
     z-index: 110;
-    filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
 #wheel {
@@ -2539,13 +2539,28 @@ function spinWheel() {
 
     wheel.style.transform = `rotate(${finalRotation}deg)`;
 
-    setTimeout(() => {
-        isSpinning = false;
-
-        // 💥 direkt sonucu veriyoruz (hesap yok)
-        if (resultText) resultText.innerText = rewards[randomIndex];
-
-    }, 4000);
+   setTimeout(() => {
+    isSpinning = false;
+    
+    // Çarkın durduğu toplam açının 360'a bölümünden kalanı al
+    const actualAngle = currentRotation % 360;
+    
+    // Ok tepede (0 derece) olduğu için kazananı saat yönünün tersine hesaplar
+    // 8 dilim olduğu için 360 / 8 = 45 derecelik dilimler kullanılır
+    const prizeIndex = Math.floor(((360 - (actualAngle % 360)) % 360) / 45);
+    
+    const resultText = document.getElementById('wheel-result');
+    if (resultText) {
+        resultText.innerText = rewards[prizeIndex];
+    }
+    
+    // Kalp patlatma efekti
+    const wheel = document.getElementById('wheel');
+    const rect = wheel.getBoundingClientRect();
+    if (typeof noteBurstHearts === "function") {
+        noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+}, 4000);
 }
 
 // SALLAMA AYARLARI (Gelişmiş)
