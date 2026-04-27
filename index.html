@@ -2508,14 +2508,23 @@ let isSpinning = false;
 let motionInited = false;
 
 const rewards = [
-    "5 dakika rol yaparak konuş 🎭",
-    "Bizimle ilgili güzel bir anını anlat 📖",
-    "Sana verdiğim mini challenge’ı yap ⚡",
-    "Bana yeni bir lakap bul 🏷️",
-    "Bana küçük bir itiraf yap 😳",
-    "Bana sadece emojilerle mesaj at 😍",
-    "Bana kısa bir şiir yaz 📝",
-    "Bana kısa bir video çek 🎥"
+
+    "5 dakika rol yaparak konuş 🎭",       // 0. Dilim: Rol
+
+    "Bizimle ilgili güzel bir anını anlat 📖",          // 1. Dilim: Anı
+
+    "Sana verdiğim mini challenge’ı yap ⚡",   // 2. Dilim: Challenge
+
+    "Bana yeni bir lakap bul🏷️",       // 3. Dilim: Lakap
+
+    "Bana küçük bir itiraf yap 😳",         // 4. Dilim: İtiraf
+
+    "Bana sadece emojilerle mesaj at😍",        // 5. Dilim: Emoji
+
+    "Bana kısa bir şiir yaz veya oku 📝",         // 6. Dilim: Şiir
+
+    "Bana kısa bir video çek 🎥"         // 7. Dilim: Video
+
 ];
 
 function spinWheel() {
@@ -2539,8 +2548,10 @@ function spinWheel() {
     setTimeout(() => {
     isSpinning = false;
     
-    // Okun gösterdiği dilimi (tepe noktasını) doğru hesaplar
+    // Mevcut dönüş açısının 360'a bölümünden kalanı al
     const actualAngle = currentRotation % 360;
+    
+    // Ok tepede sabit olduğu için açıyı ters yönde (saat yönünün tersi) hesaplıyoruz
     const prizeIndex = Math.floor(((360 - (actualAngle % 360)) % 360) / 45);
     
     if (resultText) resultText.innerText = rewards[prizeIndex];
@@ -2551,7 +2562,6 @@ function spinWheel() {
         noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
     }
 }, 4000);
-}
 
 // SALLAMA AYARLARI (Gelişmiş)
 let lastShake = 0;
