@@ -2534,9 +2534,12 @@ function spinWheel() {
     const wheel = document.getElementById('wheel');
     const resultText = document.getElementById('wheel-result');
     
-    if (resultText) resultText.innerText = "Kaderin dönüyor... ✨";
+    if (resultText) {
+        resultText.style.opacity = "0.5";
+        resultText.innerText = "Kaderin dönüyor... ✨";
+    }
     
-    // Rastgele dönüş (GPU dostu miktar)
+    // Rastgele dönüş miktarı
     const randomExtra = Math.floor(Math.random() * 360) + 1800; 
     currentRotation += randomExtra; 
     
@@ -2546,11 +2549,18 @@ function spinWheel() {
     
     setTimeout(() => {
         isSpinning = false;
+        
+        // Ok en üstte (0 derece) olduğu için hesaplamayı buna göre yapıyoruz
+        // 360 derecelik çarkta 8 dilim var, her biri 45 derece
         const actualAngle = currentRotation % 360;
-        const prizeIndex = Math.floor(((360 - (actualAngle % 360)) % 360) / 45);
+        const prizeIndex = Math.floor(((360 - actualAngle) % 360) / 45);
         
-        if (resultText) resultText.innerText = rewards[prizeIndex];
+        if (resultText) {
+            resultText.style.opacity = "1";
+            resultText.innerHTML = `Görevin: <span style="color:#fff; background:rgba(255,77,109,0.3); padding:2px 8px; border-radius:8px;">${rewards[prizeIndex]}</span>`;
+        }
         
+        // Efekt
         const rect = wheel.getBoundingClientRect();
         if (typeof noteBurstHearts === "function") {
             noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
