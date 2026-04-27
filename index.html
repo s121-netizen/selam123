@@ -2,7 +2,6 @@
 <html lang="tr">
 <head>
 
-
     <meta property="og:title" content="A🩶K💜" />
     <meta property="og:description" content="sevgilimecokasigim" />
     <meta property="og:image" content="https://28112025.com/logo4.png" />
@@ -23,42 +22,6 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap');
-
-        :root {
-    /* Varsayılan: Klasik Mor & Gri Teması */
-    --bg-color: #0a0a0a;
-    --panel-bg: rgba(20, 20, 20, 0.95);
-    --primary-color: #7b2cbf;
-    --accent-color: #ff4d6d;
-    --text-color: #ffffff;
-    --secondary-text: #b0b0b0;
-}
-
-/* Pembe & Beyaz (Pamuk Şekeri) Teması */
-[data-theme="sweet"] {
-    --bg-color: #fff0f3;
-    --panel-bg: rgba(255, 255, 255, 0.95);
-    --primary-color: #ff85a1;
-    --accent-color: #ff4d6d;
-    --text-color: #4a4a4a;
-    --secondary-text: #8a8a8a;
-}
-
-/* Gece & Neon Teması */
-[data-theme="dark"] {
-    --bg-color: #000000;
-    --panel-bg: rgba(10, 10, 10, 0.98);
-    --primary-color: #00f5d4;
-    --accent-color: #fee440;
-    --text-color: #ffffff;
-    --secondary-text: #94d2bd;
-}
-
-/* Tüm bileşenleri bu değişkenlere bağla (Örnek) */
-body { background-color: var(--bg-color); color: var(--text-color); }
-.mg-panel { background: var(--panel-bg); }
-.mg-primary { background: var(--primary-color); }
-
 
         * { box-sizing: border-box; }
 
@@ -410,8 +373,6 @@ body { background-color: var(--bg-color); color: var(--text-color); }
             .yinyang::before, .yinyang::after{ width:38px; height:38px; left:19px; }
             .yinyang span{ font-size:19px; }
         }
-
-        
 
 /* ===== MINI OYUNLAR ===== */
 .mini-game-btn{z-index:60000;position:relative;margin:14px auto 0;display:block;padding:10px 16px;border-radius:14px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.10);color:#fff;cursor:pointer;backdrop-filter:blur(8px);}
@@ -869,8 +830,6 @@ body.logged-in #mini-game-btn{ display:block !important; }
 </head>
 
 <body>
-
-    <button id="theme-toggle" class="theme-btn">🎨</button>
 
 <div id="login-overlay">
     
@@ -1894,34 +1853,6 @@ function generateNote() {
 
 
 
-// --- TEMA SİSTEMİ AYARLARI ---
-const themes = ['default', 'sweet', 'dark'];
-let currentThemeIdx = 0;
-
-// Tema Değiştirme Butonu Mantığı
-const themeToggleBtn = document.getElementById('theme-toggle');
-if (themeToggleBtn) {
-    themeToggleBtn.addEventListener('click', () => {
-        // Sıradaki temaya geç
-        currentThemeIdx = (currentThemeIdx + 1) % themes.length;
-        const selectedTheme = themes[currentThemeIdx];
-        
-        // HTML etiketine temayı uygula
-        document.documentElement.setAttribute('data-theme', selectedTheme);
-        
-        // Seçimi hafızaya kaydet (Sayfa yenilenince gitmemesi için)
-        localStorage.setItem('selectedTheme', selectedTheme);
-    });
-}
-
-// Sayfa yüklendiğinde kaydedilen temayı geri yükle
-window.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('selectedTheme');
-    if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        currentThemeIdx = themes.indexOf(savedTheme);
-    }
-});
 
 
 
