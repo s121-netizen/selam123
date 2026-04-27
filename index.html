@@ -726,14 +726,16 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
-/* ===== AŞK ÇARKI PROFESYONEL GÜNCEL ===== */
+/* ===== PROFESYONEL AŞK ÇARKI GÜNCEL ===== */
 .wheel-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     width: 100%;
-    padding: 10px 0 40px 0;
+    /* Mavi seçilme efektini her yerden kaldırır */
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    outline: none;
 }
 
 .wheel-wrapper {
@@ -742,7 +744,6 @@ body.logged-in #mini-game-btn{ display:block !important; }
     height: min(300px, 80vw);
     border-radius: 50%;
     margin: 20px auto;
-    touch-action: none; 
 }
 
 #wheel {
@@ -751,8 +752,10 @@ body.logged-in #mini-game-btn{ display:block !important; }
     border-radius: 50%;
     position: relative;
     overflow: hidden;
-    will-change: transform; /* Kasmayı önleyen sihirli komut */
-    transform: rotate(0deg);
+    /* KASMA ÖNLEYİCİ AYARLAR */
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0); 
     transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
     background: conic-gradient(
         #7b2cbf 0deg 45deg, #b0b0b0 45deg 90deg, #9d4edd 90deg 135deg, 
@@ -762,16 +765,15 @@ body.logged-in #mini-game-btn{ display:block !important; }
     border: 4px solid rgba(255, 255, 255, 0.2);
 }
 
-/* ÇARKIN ORTASINDAKİ BUTON */
 .wheel-center-btn {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
+    width: 65px;
+    height: 65px;
     background: #ff4d6d;
-    border: 3px solid #fff;
+    border: 4px solid #fff;
     border-radius: 50%;
     z-index: 105;
     cursor: pointer;
@@ -781,10 +783,15 @@ body.logged-in #mini-game-btn{ display:block !important; }
     font-weight: bold;
     color: white;
     font-size: 11px;
-    box-shadow: 0 0 15px rgba(255, 77, 109, 0.5);
-    transition: transform 0.2s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    /* MOBİL MAVİ EFEKT ÖNLEYİCİ */
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
 }
-.wheel-center-btn:active { transform: translate(-50%, -50%) scale(0.9); }
+
+.wheel-center-btn:active {
+    transform: translate(-50%, -50%) scale(0.92);
+}
 
 .wheel-label {
     position: absolute;
@@ -802,18 +809,6 @@ body.logged-in #mini-game-btn{ display:block !important; }
     color: #fff;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     pointer-events: none;
-}
-
-.wheel-pointer {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30px;
-    height: 30px;
-    background: #ff4d6d;
-    clip-path: polygon(50% 100%, 0 0, 100% 0);
-    z-index: 110;
 }
 
 </style>
@@ -2492,37 +2487,33 @@ slider.addEventListener('wheel', (e) => {
     }
 });
 
-/* ===== AŞK ÇARKI TÜM MANTIK (EKSİKSİZ) ===== */
+/* ===== AŞK ÇARKI TÜM MANTIK (PRO) ===== */
 let currentRotation = 0;
 let isSpinning = false;
 let motionInited = false;
 
-// Uzaktan ilişki temalı görevler
 const rewards = [
-    "Sana kocaman bir öpücük! (Ekranı öp 💋)",
-    "Favori yemeğini söyle, buluşunca benden 🍕",
-    "En güzel iltifatın bende! (Sesli söyleyeceğim) 🌹",
-    "Sana özel ses kaydı yolda! 🎙️",
-    "Sıradaki filmi sen seç aşkım 🎬",
-    "Aynı anda 'Seni Seviyorum' diyelim! 💜",
-    "Buluşma için geri sayım başlasın! 🤗",
-    "Kargo sürprizine hazır ol! ✨"
+    "Sana kocaman bir öpücük! 💋",
+    "Yemek Ismarla! 🍕",
+    "Sesli İltifat 🌹",
+    "Ses Kaydı At 🎙️",
+    "Film Seç 🎬",
+    "Aynı Anda Söyle 💜",
+    "Geri Sayım 🤗",
+    "Kargo Sürprizi ✨"
 ];
 
-// Çevirme Fonksiyonu
 function spinWheel() {
     if (isSpinning) return;
-    
-    // Mobilde sensör izni için tetikleyici
     if (!motionInited) requestMotionPermission();
 
     isSpinning = true;
     const wheel = document.getElementById('wheel');
     const resultText = document.getElementById('wheel-result');
     
-    if (resultText) resultText.innerText = "Kader çarkı dönüyor... ✨";
+    if (resultText) resultText.innerText = "Kaderin dönüyor... ✨";
     
-    // Akıcı dönüş: En az 5 tur + rastgele açı
+    // Rastgele dönüş (GPU dostu miktar)
     const randomExtra = Math.floor(Math.random() * 360) + 1800; 
     currentRotation += randomExtra; 
     
@@ -2532,76 +2523,50 @@ function spinWheel() {
     
     setTimeout(() => {
         isSpinning = false;
-        
-        // Hangi dilime geldiğini hesapla (8 dilim, her biri 45 derece)
         const actualAngle = currentRotation % 360;
         const prizeIndex = Math.floor(((360 - (actualAngle % 360)) % 360) / 45);
         
         if (resultText) resultText.innerText = rewards[prizeIndex];
         
-        // Kalp patlatma efekti
-        if (wheel) {
-            const rect = wheel.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            if (typeof noteBurstHearts === "function") {
-                noteBurstHearts(centerX, centerY);
-            }
+        const rect = wheel.getBoundingClientRect();
+        if (typeof noteBurstHearts === "function") {
+            noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
         }
-    }, 4000); // 4 saniye dönüş süresi
+    }, 4000);
 }
 
-// --- MOBİL: SALLAMA (SHAKE) AYARLARI ---
+// SALLAMA AYARLARI (Gelişmiş)
 let lastShake = 0;
-const shakeThreshold = 45; // Daha sert sallama gerektirir
-
-function requestMotionPermission() {
-    motionInited = true;
-    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-        DeviceMotionEvent.requestPermission()
-            .then(state => {
-                if (state === 'granted') {
-                    window.addEventListener('devicemotion', handleShake);
-                }
-            })
-            .catch(err => console.error("Sensör izni hatası:", err));
-    } else {
-        window.addEventListener('devicemotion', handleShake);
-    }
-}
+const shakeThreshold = 55; // Daha da sert sallama gerekir
 
 function handleShake(event) {
     const acc = event.accelerationIncludingGravity;
     if (!acc) return;
     
-    // X, Y, Z toplam ivmesini hesapla
-    const totalAcc = Math.sqrt(acc.x * acc.x + acc.y * acc.y + acc.z * acc.z);
+    // Daha profesyonel ivme ölçümü
+    const speed = Math.sqrt(acc.x**2 + acc.y**2 + acc.z**2);
     const now = Date.now();
     
-    // Yeterince sert sallandıysa ve son dönüşten 3 sn geçtiyse
-    if (totalAcc > shakeThreshold && (now - lastShake > 3000)) { 
+    if (speed > shakeThreshold && (now - lastShake > 3500)) { 
         lastShake = now;
         spinWheel();
     }
 }
 
-// --- MOBİL: KAYDIRMA (SWIPE) AYARLARI ---
-document.addEventListener('DOMContentLoaded', () => {
-    const wheelWrapper = document.querySelector('.wheel-wrapper');
-    if (wheelWrapper) {
-        let touchStartX = 0;
-        wheelWrapper.addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
-        }, {passive: true});
-        
-        wheelWrapper.addEventListener('touchend', (e) => {
-            let touchEndX = e.changedTouches[0].clientX;
-            // 80px ve üzeri kaydırma döndürmeyi tetikler
-            if (Math.abs(touchStartX - touchEndX) > 80) {
-                spinWheel();
-            }
-        }, {passive: true});
+function requestMotionPermission() {
+    motionInited = true;
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission().then(s => {
+            if (s === 'granted') window.addEventListener('devicemotion', handleShake);
+        });
+    } else {
+        window.addEventListener('devicemotion', handleShake);
     }
+}
+
+// Mavi seçilme engelleyici
+document.addEventListener('contextmenu', e => {
+    if (e.target.closest('.wheel-wrapper')) e.preventDefault();
 });
 
 </script>
