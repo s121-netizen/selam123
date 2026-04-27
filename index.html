@@ -726,24 +726,14 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
-/* ===== PROFESYONEL AŞK ÇARKI GÜNCEL ===== */
-.wheel-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    /* Mavi seçilme efektini her yerden kaldırır */
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-    outline: none;
-}
-
+/* ===== AŞK ÇARKI GÜNCEL & HIZLI ===== */
 .wheel-wrapper {
     position: relative;
     width: min(300px, 80vw); 
     height: min(300px, 80vw);
     border-radius: 50%;
-    margin: 20px auto;
+    margin: 30px auto; /* Üstten biraz boşluk verdik ok sığsın diye */
+    perspective: 1000px;
 }
 
 #wheel {
@@ -752,7 +742,7 @@ body.logged-in #mini-game-btn{ display:block !important; }
     border-radius: 50%;
     position: relative;
     overflow: hidden;
-    /* KASMA ÖNLEYİCİ AYARLAR */
+    /* KASMA ÖNLEYİCİLER */
     will-change: transform;
     backface-visibility: hidden;
     transform: translateZ(0); 
@@ -763,6 +753,20 @@ body.logged-in #mini-game-btn{ display:block !important; }
         #480ca8 270deg 315deg, #adb5bd 315deg 360deg
     );
     border: 4px solid rgba(255, 255, 255, 0.2);
+}
+
+/* KAZANANI GÖSTEREN OK İŞARETİ */
+.wheel-pointer {
+    position: absolute;
+    top: -20px; /* Çarkın tam tepesinde */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35px;
+    height: 35px;
+    background: #ff4d6d;
+    clip-path: polygon(50% 100%, 0 0, 100% 0); /* Aşağı bakan üçgen */
+    z-index: 110;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
 }
 
 .wheel-center-btn {
@@ -784,31 +788,7 @@ body.logged-in #mini-game-btn{ display:block !important; }
     color: white;
     font-size: 11px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    /* MOBİL MAVİ EFEKT ÖNLEYİCİ */
-    outline: none !important;
-    -webkit-tap-highlight-color: transparent !important;
-}
-
-.wheel-center-btn:active {
-    transform: translate(-50%, -50%) scale(0.92);
-}
-
-.wheel-label {
-    position: absolute;
-    width: 50%;
-    height: 30px;
-    top: calc(50% - 15px);
-    left: 50%;
-    transform-origin: left center;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 15px;
-    font-size: min(10px, 3vw);
-    font-weight: 600;
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 </style>
@@ -2513,8 +2493,8 @@ function spinWheel() {
     
     if (resultText) resultText.innerText = "Kaderin dönüyor... ✨";
     
-    // Rastgele dönüş (GPU dostu miktar)
-    const randomExtra = Math.floor(Math.random() * 360) + 1800; 
+    // İlk turda yavaşlığı önlemek için dönüş miktarını artırdık
+    const randomExtra = Math.floor(Math.random() * 360) + 2160; // 6 tam tur + rastgele
     currentRotation += randomExtra; 
     
     if (wheel) {
@@ -2523,7 +2503,10 @@ function spinWheel() {
     
     setTimeout(() => {
         isSpinning = false;
+        
+        // Okun ucuna gelen dilimi doğru hesaplamak için:
         const actualAngle = currentRotation % 360;
+        // Matematiksel olarak okun gösterdiği dilim
         const prizeIndex = Math.floor(((360 - (actualAngle % 360)) % 360) / 45);
         
         if (resultText) resultText.innerText = rewards[prizeIndex];
@@ -2534,6 +2517,7 @@ function spinWheel() {
         }
     }, 4000);
 }
+
 
 // SALLAMA AYARLARI (Gelişmiş)
 let lastShake = 0;
@@ -2673,15 +2657,16 @@ document.addEventListener('contextmenu', e => {
     <div class="wheel-container">
         <div class="wheel-wrapper">
             <div class="wheel-pointer"></div>
+            
             <div id="wheel">
                 <div class="wheel-label" style="transform: rotate(22.5deg)">Öpücük 💋</div>
                 <div class="wheel-label" style="transform: rotate(67.5deg)">Şarkı Söyle 🎵</div>
                 <div class="wheel-label" style="transform: rotate(112.5deg)">İltifat 🌹</div>
                 <div class="wheel-label" style="transform: rotate(157.5deg)">Ses Kaydı 🎙️</div>
                 <div class="wheel-label" style="transform: rotate(202.5deg)">Yemek 🍕</div>
-                <div class="wheel-label" style="transform: rotate(247.5deg)">Masaj Borcu 💆‍♀️</div>
-                <div class="wheel-label" style="transform: rotate(292.5deg)">Sıkıca Sarıl 🤗</div>
-                <div class="wheel-label" style="transform: rotate(337.5deg)">Kargo Sürprizi ✨</div>
+                <div class="wheel-label" style="transform: rotate(247.5deg)">Masaj 💆‍♀️</div>
+                <div class="wheel-label" style="transform: rotate(292.5deg)">Sarılma 🤗</div>
+                <div class="wheel-label" style="transform: rotate(337.5deg)">Sürpriz ✨</div>
             </div>
             <div class="wheel-center-btn" onclick="spinWheel()">ÇEVİR</div>
         </div>
