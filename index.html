@@ -2503,9 +2503,7 @@ slider.addEventListener('wheel', (e) => {
 });
 
 /* ===== AŞK ÇARKI TÜM MANTIK (PRO) ===== */
-let currentRotation = 0;
 let isSpinning = false;
-let motionInited = false;
 
 const rewards = [
     "5 dakika rol yaparak konuş 🎭",
@@ -2520,42 +2518,34 @@ const rewards = [
 
 function spinWheel() {
     if (isSpinning) return;
-    if (!motionInited) requestMotionPermission();
-
     isSpinning = true;
-    const wheel = document.getElementById('wheel');
-    const resultText = document.getElementById('wheel-result');
-    
+
+    const wheel = document.getElementById("wheel");
+    const resultText = document.getElementById("wheel-result");
+
     if (resultText) resultText.innerText = "Kaderin dönüyor... ✨";
-    
-    // Rastgele dönüş (GPU dostu miktar)
-    const randomExtra = Math.floor(Math.random() * 360) + 1800; 
-    currentRotation += randomExtra; 
-    
-    if (wheel) {
-        wheel.style.transform = `rotate(${currentRotation}deg)`;
-    }
-    
-setTimeout(() => {
-    isSpinning = false;
 
-    const segment = 360 / rewards.length; // 45
+    const segment = 360 / rewards.length;
 
-    // açıyı normalize et
-    let normalized = currentRotation % 360;
+    // 🎯 rastgele ödül seç
+    const randomIndex = Math.floor(Math.random() * rewards.length);
 
-    // ters çevir (çünkü çark dönüyor, pointer sabit)
-    normalized = (360 - normalized) % 360;
+    // 🎯 o dilimin ORTASINA denk gelen açı
+    const targetAngle = (randomIndex * segment) + (segment / 2);
 
-    // hangi dilimde olduğunu bul
-    const index = Math.floor(normalized / segment);
+    // 🎯 çarkı oraya döndür (çok tur + hedef)
+    const spin = 360 * 6; // kaç tur atsın
+    const finalRotation = spin + (360 - targetAngle);
 
-    // güvenlik (taşma olursa)
-    const prizeIndex = (index + rewards.length) % rewards.length;
+    wheel.style.transform = `rotate(${finalRotation}deg)`;
 
-    if (resultText) resultText.innerText = rewards[prizeIndex];
+    setTimeout(() => {
+        isSpinning = false;
 
-}, 4000);
+        // 💥 direkt sonucu veriyoruz (hesap yok)
+        if (resultText) resultText.innerText = rewards[randomIndex];
+
+    }, 4000);
 }
 
 // SALLAMA AYARLARI (Gelişmiş)
