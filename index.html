@@ -726,52 +726,68 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
-/* ===== AŞK ÇARKI OYUNU ===== */
-.wheel-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-}
+/* ===== AŞK ÇARKI GÜNCEL ===== */
 .wheel-wrapper {
     position: relative;
-    width: 280px;
-    height: 280px;
+    width: 300px;
+    height: 300px;
+    margin: 20px auto;
 }
+
 #wheel {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 5px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    border: 8px solid rgba(255, 255, 255, 0.1);
     transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
-    background: conic-gradient(
-        #7b2cbf 0deg 60deg, 
-        #b0b0b0 60deg 120deg, 
-        #9d4edd 120deg 180deg, 
-        #8e8e8e 180deg 240deg, 
-        #5a189a 240deg 300deg, 
-        #ced4da 300deg 360deg
-    );
+    transform: rotate(0deg);
 }
+
+/* Çark Dilimleri ve Yazıları */
+.segment {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    transform-origin: 100% 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+.segment span {
+    position: absolute;
+    transform: rotate(30deg) translateY(-70px); /* Yazıyı dilimin ortasına çeker */
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    width: 80px;
+    text-align: center;
+    line-height: 1.2;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Renkler: Mor ve Gri Tonları */
+.segment:nth-child(1) { background: #7b2cbf; transform: rotate(0deg); }
+.segment:nth-child(2) { background: #b0b0b0; transform: rotate(60deg); }
+.segment:nth-child(3) { background: #9d4edd; transform: rotate(120deg); }
+.segment:nth-child(4) { background: #8e8e8e; transform: rotate(180deg); }
+.segment:nth-child(5) { background: #5a189a; transform: rotate(240deg); }
+.segment:nth-child(6) { background: #ced4da; transform: rotate(300deg); }
+
 .wheel-pointer {
     position: absolute;
-    top: -15px;
+    top: -10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 30px;
-    height: 30px;
-    background: #ff4d6d;
-    clip-path: polygon(50% 100%, 0 0, 100% 0);
-    z-index: 10;
-}
-#wheel-result {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    min-height: 24px;
-    color: #fff;
-    text-shadow: 0 0 10px rgba(123, 44, 191, 0.5);
-    margin-top: 10px;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 25px solid #ff4d6d;
+    z-index: 100;
 }
 
 </style>
@@ -2446,7 +2462,9 @@ slider.addEventListener('wheel', (e) => {
     }
 });
 
+let currentRotation = 0; // Dönüş miktarını burada saklıyoruz
 let isSpinning = false;
+
 const rewards = [
     "Sana kocaman bir öpücük! 💋",
     "İstediğin bir şarkıyı söyleyeceğim 🎵",
@@ -2465,27 +2483,32 @@ function spinWheel() {
     const btn = document.getElementById('spin-btn');
     
     btn.disabled = true;
-    resultText.innerText = "çark dönüyor...";
+    resultText.innerText = "Kader belirleniyor...";
     
-    // Rastgele dönüş açısı (en az 5 tam tur + rastgele derece)
-    const randomDeg = Math.floor(Math.random() * 360) + 1800; 
-    wheel.style.transform = `rotate(${randomDeg}deg)`;
+    // Yavaşlamayı önlemek için: Mevcut açının üzerine rastgele + tur ekle
+    const randomExtra = Math.floor(Math.random() * 360);
+    const spins = 1800; // 5 tam tur
+    currentRotation += spins + randomExtra; 
+    
+    wheel.style.transform = `rotate(${currentRotation}deg)`;
     
     setTimeout(() => {
         isSpinning = false;
         btn.disabled = false;
         
-        // Hangi dilime geldiğini hesapla (6 dilim olduğu için 360/6 = 60 derece)
-        const actualDeg = randomDeg % 360;
-        const prizeIndex = Math.floor(((360 - actualDeg) % 360) / 60);
+        // Kazananı hesapla (360 derece / 6 dilim = 60 derece)
+        // Dönüş açısına göre dilim indeksini buluyoruz
+        const actualAngle = currentRotation % 360;
+        const prizeIndex = Math.floor(((360 - actualAngle) % 360) / 60);
         
         resultText.innerText = rewards[prizeIndex];
         
-        // Kazandığında kalp patlaması efekti (notBurstHearts fonksiyonunu kullanıyoruz)
+        // Kalp patlatma efekti
         const rect = wheel.getBoundingClientRect();
-        noteBurstHearts(rect.left + rect.width/2, rect.top + rect.height/2);
-        
-    }, 4000); // CSS transition süresi ile aynı olmalı
+        if(typeof noteBurstHearts === "function") {
+            noteBurstHearts(rect.left + rect.width/2, rect.top + rect.height/2);
+        }
+    }, 4000); 
 }
 
 </script>
@@ -2585,16 +2608,23 @@ function spinWheel() {
         </div>
       </section>
 
-      <section class="mg-panel" data-panel="wheel" role="tabpanel">
+   <section class="mg-panel" data-panel="wheel" role="tabpanel">
     <div class="mg-panel-top">
         <div class="mg-hint">çarkı çevir, şansına ne çıkarsa... 💜</div>
     </div>
     <div class="wheel-container">
         <div class="wheel-wrapper">
             <div class="wheel-pointer"></div>
-            <div id="wheel"></div>
+            <div id="wheel">
+                <div class="segment"><span>Öpücük 💋</span></div>
+                <div class="segment"><span>Şarkı Söyle 🎵</span></div>
+                <div class="segment"><span>İltifat 🌹</span></div>
+                <div class="segment"><span>Ses Kaydı 🎙️</span></div>
+                <div class="segment"><span>Yemek 🍕</span></div>
+                <div class="segment"><span>Masaj 💆‍♀️</span></div>
+            </div>
         </div>
-        <div id="wheel-result"></div>
+        <div id="wheel-result" style="text-align:center; font-weight:bold; color:#ff4d6d; height:30px;"></div>
         <button id="spin-btn" class="mg-primary" onclick="spinWheel()">çevir 🚀</button>
     </div>
 </section>
