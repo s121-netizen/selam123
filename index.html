@@ -2538,20 +2538,23 @@ function spinWheel() {
     
 setTimeout(() => {
     isSpinning = false;
-    
-    let actualAngle = currentRotation % 360;
 
-    /* FIX */
-    actualAngle = (360 - actualAngle + 22.5) % 360;
+    const segment = 360 / rewards.length; // 45
 
-    const prizeIndex = Math.floor(actualAngle / 45);
-    
+    // açıyı normalize et
+    let normalized = currentRotation % 360;
+
+    // ters çevir (çünkü çark dönüyor, pointer sabit)
+    normalized = (360 - normalized) % 360;
+
+    // hangi dilimde olduğunu bul
+    const index = Math.floor(normalized / segment);
+
+    // güvenlik (taşma olursa)
+    const prizeIndex = (index + rewards.length) % rewards.length;
+
     if (resultText) resultText.innerText = rewards[prizeIndex];
-    
-    const rect = wheel.getBoundingClientRect();
-    if (typeof noteBurstHearts === "function") {
-        noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    }
+
 }, 4000);
 }
 
