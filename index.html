@@ -731,8 +731,14 @@ body.logged-in #mini-game-btn{ display:block !important; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 25px;
-    padding: 20px;
+    gap: 15px;
+    padding: 10px;
+    width: 100%; /* Mobilde taşmayı önler */
+}
+
+#spin-btn {
+    z-index: 101; /* Diğer elementlerin üstünde kalması için */
+    margin-bottom: 20px;
 }
 
 .wheel-wrapper {
@@ -2487,14 +2493,14 @@ let currentRotation = 0;
 let isSpinning = false;
 
 const rewards = [
-    "Sana kocaman bir öpücük! 💋",
-    "İstediğin bir şarkıyı senin için söyleyeceğim 🎵",
-    "Günün en güzel iltifatı senin 🌹",
-    "Sana özel, en içten bir ses kaydı geliyor 🎙️",
-    "Bir sonraki buluşmada en sevdiğin yemek benden 🍕",
-    "Sana 10 dakikalık huzurlu bir masaj borcum olsun 💆‍♀️",
-    "Sımsıcak, uzun bir sarılma! 🤗",
-    "Hiç beklemediğin küçük bir sürpriz seni bulacak ✨"
+    "Sana kocaman bir öpücük! (Ekranı öpmen lazım 💋)",
+    "En sevdiğin yemeği söyle, bir sonraki buluşmada benden 🍕",
+    "Günün en güzel iltifatı senin! (Şu an sesli söyleyeceğim) 🌹",
+    "Sana özel, en içten bir ses kaydı geliyor! 🎙️",
+    "Birlikte izleyeceğimiz bir sonraki filmi sen seç 🎬",
+    "Aynı anda 'Seni Seviyorum' diyelim! (3-2-1 başla) 💜",
+    "Bir sonraki buluşma için geri sayım başlatıyoruz! 🤗",
+    "Sana hiç beklemediğin minik bir kargo sürprizi yolda ✨"
 ];
 
 function spinWheel() {
@@ -2534,6 +2540,73 @@ setTimeout(() => {
         
     }, 4000);
 }
+
+// --- MOBİL ETKİLEŞİMLER (SWIPE & SHAKE) ---
+
+// 1. Elle Döndürme (Swipe/Dokunmatik)
+let touchStartX = 0;
+const wheelWrapper = document.querySelector('.wheel-wrapper');
+
+if (wheelWrapper) {
+    wheelWrapper.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    wheelWrapper.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        // Eğer parmakla yeterli miktarda (50px+) kaydırma yapıldıysa
+        if (Math.abs(touchStartX - touchEndX) > 50) {
+            spinWheel();
+        }
+    }, { passive: true });
+}
+
+// 2. Telefonu Sallayarak Döndürme (Shake)
+let lastUpdate = 0;
+let lastX, lastY, lastZ;
+const threshold = 15; // Hassasiyet (Artırırsan daha sert sallamak gerekir)
+
+function deviceMotionHandler(event) {
+    const acceleration = event.accelerationIncludingGravity;
+    const curTime = Date.now();
+
+    if ((curTime - lastUpdate) > 100) {
+        const diffTime = curTime - lastUpdate;
+        lastUpdate = curTime;
+
+        const x = acceleration.x;
+        const y = acceleration.y;
+        const z = acceleration.z;
+
+        const speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
+
+        if (speed > threshold) {
+            spinWheel(); // Telefon sallanınca çark döner
+        }
+
+        lastX = x;
+        lastY = y;
+        lastZ = z;
+    }
+}
+
+// Sensör izni (iOS 13+ ve modern tarayıcılar için)
+function requestMotionPermission() {
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission()
+            .then(permissionState => {
+                if (permissionState === 'granted') {
+                    window.addEventListener('devicemotion', deviceMotionHandler);
+                }
+            })
+            .catch(console.error);
+    } else {
+        window.addEventListener('devicemotion', deviceMotionHandler);
+    }
+}
+
+// Butona tıklandığında sensör iznini de isteyelim (Browser kısıtlaması nedeniyle)
+document.getElementById('spin-btn').addEventListener('click', requestMotionPermission);
 
 </script>
 
