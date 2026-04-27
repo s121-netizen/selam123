@@ -811,20 +811,27 @@ body.logged-in #mini-game-btn{ display:block !important; }
     pointer-events: none;
 }
 
-/* --- ÇARK OKU (POINTER) --- */
+/* Okun Konumu (Pointer) - Sağ Tarafa Sabitlendi */
 .wheel-pointer {
     position: absolute;
-    top: -20px; 
-    left: 50%;
-    /* margin-left ile okun kendi genişliğinin yarısı kadar sola çekiyoruz */
-    margin-left: -15px; 
+    top: 50%; /* Dikeyde ortala */
+    right: -25px; /* Çarkın sağ dışına yerleştir */
+    transform: translateY(-50%) rotate(90deg); /* Ortala ve sağa bakması için döndür */
     width: 0;
     height: 0;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
     border-top: 30px solid #ff4d6d;
     z-index: 110;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    filter: drop-shadow(-2px 0 4px rgba(0,0,0,0.3));
+}
+
+.wheel-wrapper {
+    position: relative;
+    width: min(300px, 80vw); 
+    height: min(300px, 80vw);
+    border-radius: 50%;
+    margin: 20px auto; 
 }
 
 /* Çarkın genel kapsayıcısını (wrapper) hizalamak için bunu güncelle veya ekle */
@@ -2549,28 +2556,26 @@ function spinWheel() {
     }
     
     setTimeout(() => {
-        isSpinning = false;
-        
-        // Ok en üstte (0 derece) olduğu için hesaplamayı buna göre yapıyoruz
-        // 360 derecelik çarkta 8 dilim var, her biri 45 derece
-       // actualAngle çarkın durduğu açıyı verir
-const actualAngle = currentRotation % 360;
-
-// Çark saat yönünde döndüğü için 360'tan çıkarıyoruz. 
-// 22.5 derecelik ofset, ok tam dilimin ortasına gelsin diye eklenir.
-const prizeIndex = Math.floor(((360 - actualAngle + 22.5) % 360) / 45);
-        
-        if (resultText) {
-            resultText.style.opacity = "1";
-            resultText.innerHTML = `Görevin: <span style="color:#fff; background:rgba(255,77,109,0.3); padding:2px 8px; border-radius:8px;">${rewards[prizeIndex]}</span>`;
-        }
-        
-        // Efekt
-        const rect = wheel.getBoundingClientRect();
-        if (typeof noteBurstHearts === "function") {
-            noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
-        }
-    }, 4000);
+    isSpinning = false;
+    
+    // Çarkın durduğu anlık açı
+    const actualAngle = currentRotation % 360;
+    
+    // Ok sağda (90 derece) olduğu için hesaplamaya +90 ekliyoruz.
+    // +22.5 payı ise okun dilimin tam ortasına denk gelmesini sağlar.
+    const prizeIndex = Math.floor(((360 - actualAngle + 90 + 22.5) % 360) / 45);
+    
+    if (resultText) {
+        resultText.style.opacity = "1";
+        resultText.innerHTML = `Görevin: <span style="color:#fff; background:rgba(255,77,109,0.3); padding:4px 10px; border-radius:10px;">${rewards[prizeIndex]}</span>`;
+    }
+    
+    // Efekt
+    const rect = wheel.getBoundingClientRect();
+    if (typeof noteBurstHearts === "function") {
+        noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+}, 4000);
 }
 
 // SALLAMA AYARLARI (Gelişmiş)
