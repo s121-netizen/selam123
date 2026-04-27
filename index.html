@@ -2553,7 +2553,8 @@ function spinWheel() {
         // Ok en üstte (0 derece) olduğu için hesaplamayı buna göre yapıyoruz
         // 360 derecelik çarkta 8 dilim var, her biri 45 derece
         const actualAngle = currentRotation % 360;
-        const prizeIndex = Math.floor(((360 - actualAngle) % 360) / 45);
+// 360'tan çıkararak dönüş yönünü tersine çeviriyoruz ve 45 derecelik 8 dilime bölüyoruz
+const prizeIndex = Math.floor((360 - actualAngle) / 45) % 8;
         
         if (resultText) {
             resultText.style.opacity = "1";
