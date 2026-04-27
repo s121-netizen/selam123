@@ -743,22 +743,7 @@ body.logged-in #mini-game-btn{ display:block !important; }
     width: min(300px, 80vw); 
     height: min(300px, 80vw);
     border-radius: 50%;
-    margin: 30px auto; /* Okun yukarıdan sığması için pay bıraktık */
-    touch-action: none; 
-}
-
-/* KAZANAN DİLİMİ GÖSTEREN OK */
-.wheel-pointer {
-    position: absolute;
-    top: -20px; /* Çarkın biraz üstünde durması için */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 35px;
-    height: 35px;
-    background: var(--accent-color);
-    clip-path: polygon(50% 100%, 0 0, 100% 0); /* Aşağı bakan net bir üçgen */
-    z-index: 110;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    margin: 20px auto;
 }
 
 #wheel {
@@ -2503,64 +2488,51 @@ slider.addEventListener('wheel', (e) => {
 });
 
 /* ===== AŞK ÇARKI TÜM MANTIK (PRO) ===== */
+let currentRotation = 0;
 let isSpinning = false;
+let motionInited = false;
 
 const rewards = [
-    "5 dakika rol yaparak konuş 🎭",
-    "Bizimle ilgili güzel bir anını anlat 📖",
-    "Sana verdiğim mini challenge’ı yap ⚡",
-    "Bana yeni bir lakap bul 🏷️",
-    "Bana küçük bir itiraf yap 😳",
-    "Bana sadece emojilerle mesaj at 😍",
-    "Bana kısa bir şiir yaz 📝",
-    "Bana kısa bir video çek 🎥"
+    "Sana kocaman bir öpücük! 💋",
+    "Yemek Ismarla! 🍕",
+    "Sesli İltifat 🌹",
+    "Ses Kaydı At 🎙️",
+    "Film Seç 🎬",
+    "Aynı Anda Söyle 💜",
+    "Geri Sayım 🤗",
+    "Kargo Sürprizi ✨"
 ];
 
 function spinWheel() {
     if (isSpinning) return;
+    if (!motionInited) requestMotionPermission();
+
     isSpinning = true;
-
-    const wheel = document.getElementById("wheel");
-    const resultText = document.getElementById("wheel-result");
-
-    if (resultText) resultText.innerText = "Kaderin dönüyor... ✨";
-
-    const segment = 360 / rewards.length;
-
-    // 🎯 rastgele ödül seç
-    const randomIndex = Math.floor(Math.random() * rewards.length);
-
-    // 🎯 o dilimin ORTASINA denk gelen açı
-    const targetAngle = (randomIndex * segment) + (segment / 2);
-
-    // 🎯 çarkı oraya döndür (çok tur + hedef)
-    const spin = 360 * 6; // kaç tur atsın
-    const finalRotation = spin + (360 - targetAngle);
-
-    wheel.style.transform = `rotate(${finalRotation}deg)`;
-
-   setTimeout(() => {
-    isSpinning = false;
-    
-    // Çarkın durduğu toplam açının 360'a bölümünden kalanı al
-    const actualAngle = currentRotation % 360;
-    
-    // Ok tepede (0 derece) olduğu için kazananı saat yönünün tersine hesaplar
-    // 8 dilim olduğu için 360 / 8 = 45 derecelik dilimler kullanılır
-    const prizeIndex = Math.floor(((360 - (actualAngle % 360)) % 360) / 45);
-    
-    const resultText = document.getElementById('wheel-result');
-    if (resultText) {
-        resultText.innerText = rewards[prizeIndex];
-    }
-    
-    // Kalp patlatma efekti
     const wheel = document.getElementById('wheel');
-    const rect = wheel.getBoundingClientRect();
-    if (typeof noteBurstHearts === "function") {
-        noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    const resultText = document.getElementById('wheel-result');
+    
+    if (resultText) resultText.innerText = "Kaderin dönüyor... ✨";
+    
+    // Rastgele dönüş (GPU dostu miktar)
+    const randomExtra = Math.floor(Math.random() * 360) + 1800; 
+    currentRotation += randomExtra; 
+    
+    if (wheel) {
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
     }
-}, 4000);
+    
+    setTimeout(() => {
+        isSpinning = false;
+        const actualAngle = currentRotation % 360;
+        const prizeIndex = Math.floor(((360 - (actualAngle % 360)) % 360) / 45);
+        
+        if (resultText) resultText.innerText = rewards[prizeIndex];
+        
+        const rect = wheel.getBoundingClientRect();
+        if (typeof noteBurstHearts === "function") {
+            noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        }
+    }, 4000);
 }
 
 // SALLAMA AYARLARI (Gelişmiş)
@@ -2699,23 +2671,22 @@ document.addEventListener('contextmenu', e => {
         <div class="mg-hint">çarkın ortasına bas veya telefonu sertçe salla! 💜</div>
     </div>
     <div class="wheel-container">
-    <div class="wheel-wrapper">
-        <div class="wheel-pointer"></div>
-        
- <div id="wheel">
-    <div class="wheel-label" style="transform: rotate(22.5deg)">Rol 🎭</div>
-    <div class="wheel-label" style="transform: rotate(67.5deg)">Anı 📖</div>
-    <div class="wheel-label" style="transform: rotate(112.5deg)">Challenge ⚡</div>
-    <div class="wheel-label" style="transform: rotate(157.5deg)">Lakap 🏷️</div>
-    <div class="wheel-label" style="transform: rotate(202.5deg)">İtiraf 😳</div>
-    <div class="wheel-label" style="transform: rotate(247.5deg)">Emoji 😍</div>
-    <div class="wheel-label" style="transform: rotate(292.5deg)">Şiir 📝</div>
-    <div class="wheel-label" style="transform: rotate(337.5deg)">Video 🎥</div>
-</div>
-        <div class="wheel-center-btn" onclick="spinWheel()">ÇEVİR</div>
+        <div class="wheel-wrapper">
+            <div class="wheel-pointer"></div>
+            <div id="wheel">
+                <div class="wheel-label" style="transform: rotate(22.5deg)">Öpücük 💋</div>
+                <div class="wheel-label" style="transform: rotate(67.5deg)">Şarkı Söyle 🎵</div>
+                <div class="wheel-label" style="transform: rotate(112.5deg)">İltifat 🌹</div>
+                <div class="wheel-label" style="transform: rotate(157.5deg)">Ses Kaydı 🎙️</div>
+                <div class="wheel-label" style="transform: rotate(202.5deg)">Yemek 🍕</div>
+                <div class="wheel-label" style="transform: rotate(247.5deg)">Masaj Borcu 💆‍♀️</div>
+                <div class="wheel-label" style="transform: rotate(292.5deg)">Sıkıca Sarıl 🤗</div>
+                <div class="wheel-label" style="transform: rotate(337.5deg)">Kargo Sürprizi ✨</div>
+            </div>
+            <div class="wheel-center-btn" onclick="spinWheel()">ÇEVİR</div>
+        </div>
+        <div id="wheel-result"></div>
     </div>
-    <div id="wheel-result"></div>
-</div>
 </section>
 
     </div>
