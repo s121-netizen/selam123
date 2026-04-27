@@ -2548,11 +2548,13 @@ function spinWheel() {
     setTimeout(() => {
     isSpinning = false;
     
-    // Mevcut dönüş açısının 360'a bölümünden kalanı al
-    const actualAngle = currentRotation % 360;
-    
-    // Ok tepede sabit olduğu için açıyı ters yönde (saat yönünün tersi) hesaplıyoruz
-    const prizeIndex = Math.floor(((360 - (actualAngle % 360)) % 360) / 45);
+    let actualAngle = currentRotation % 360;
+
+/* YARIM DİLİM OFFSET */
+actualAngle = (actualAngle + 22.5) % 360;
+
+const corrected = (360 - actualAngle) % 360;
+const prizeIndex = Math.floor(corrected / 45);
     
     if (resultText) resultText.innerText = rewards[prizeIndex];
     
@@ -2562,6 +2564,7 @@ function spinWheel() {
         noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
     }
 }, 4000);
+}
 
 // SALLAMA AYARLARI (Gelişmiş)
 let lastShake = 0;
