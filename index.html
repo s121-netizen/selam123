@@ -726,29 +726,25 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
-/* ===== YENİ GELİŞMİŞ AŞK ÇARKI ===== */
+/* ===== AŞK ÇARKI MOBİL UYUMLU GÜNCEL ===== */
 .wheel-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
-    padding: 10px;
-    width: 100%; /* Mobilde taşmayı önler */
+    gap: 10px;
+    width: 100%;
+    padding-bottom: 30px; /* Altta boşluk bırakır */
 }
 
-#spin-btn {
-    z-index: 101; /* Diğer elementlerin üstünde kalması için */
-    margin-bottom: 20px;
-}
-
+/* Çark boyutunu mobilde otomatik küçültür */
 .wheel-wrapper {
     position: relative;
-    width: 320px;
-    height: 320px;
+    width: min(290px, 80vw); 
+    height: min(290px, 80vw);
     border-radius: 50%;
-    padding: 10px;
     background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 0 30px rgba(123, 44, 191, 0.2);
+    box-shadow: 0 0 20px rgba(123, 44, 191, 0.2);
+    margin: 10px auto;
 }
 
 #wheel {
@@ -758,61 +754,46 @@ body.logged-in #mini-game-btn{ display:block !important; }
     position: relative;
     overflow: hidden;
     transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
-    /* 8 Dilimli Arka Plan */
     background: conic-gradient(
-        #7b2cbf 0deg 45deg, 
-        #b0b0b0 45deg 90deg, 
-        #9d4edd 90deg 135deg, 
-        #8e8e8e 135deg 180deg, 
-        #5a189a 180deg 225deg, 
-        #ced4da 225deg 270deg,
-        #480ca8 270deg 315deg,
-        #adb5bd 315deg 360deg
+        #7b2cbf 0deg 45deg, #b0b0b0 45deg 90deg, #9d4edd 90deg 135deg, 
+        #8e8e8e 135deg 180deg, #5a189a 180deg 225deg, #ced4da 225deg 270deg,
+        #480ca8 270deg 315deg, #adb5bd 315deg 360deg
     );
-    border: 4px solid rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.2);
 }
 
 .wheel-label {
     position: absolute;
     width: 50%;
-    height: 40px;
-    top: calc(50% - 20px);
+    height: 30px;
+    top: calc(50% - 15px);
     left: 50%;
     transform-origin: left center;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding-right: 15px;
-    font-size: 12px;
+    padding-right: 10px;
+    font-size: min(11px, 3vw); /* Yazı boyutunu da küçültür */
     font-weight: 600;
     color: #fff;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-    pointer-events: none;
-}
-
-.wheel-pointer {
-    position: absolute;
-    top: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 35px;
-    height: 35px;
-    background: #ff4d6d;
-    clip-path: polygon(50% 100%, 0 0, 100% 0);
-    z-index: 100;
-    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
 }
 
 #wheel-result {
     font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 16px;
     color: #ff4d6d;
     text-align: center;
-    min-height: 50px;
-    max-width: 280px;
-    line-height: 1.4;
+    min-height: 40px;
+    margin: 10px 0;
+    padding: 0 10px;
 }
+
+/* Modal içindeki kaydırma sorununu çözer */
+.mg-body {
+    -webkit-overflow-scrolling: touch;
+}
+
 </style>
 </head>
 
@@ -2491,122 +2472,92 @@ slider.addEventListener('wheel', (e) => {
 
 let currentRotation = 0;
 let isSpinning = false;
+let motionInited = false;
 
 const rewards = [
-    "Sana kocaman bir öpücük! (Ekranı öpmen lazım 💋)",
-    "En sevdiğin yemeği söyle, bir sonraki buluşmada benden 🍕",
-    "Günün en güzel iltifatı senin! (Şu an sesli söyleyeceğim) 🌹",
-    "Sana özel, en içten bir ses kaydı geliyor! 🎙️",
-    "Birlikte izleyeceğimiz bir sonraki filmi sen seç 🎬",
-    "Aynı anda 'Seni Seviyorum' diyelim! (3-2-1 başla) 💜",
-    "Bir sonraki buluşma için geri sayım başlatıyoruz! 🤗",
-    "Sana hiç beklemediğin minik bir kargo sürprizi yolda ✨"
+    "Sana kocaman bir öpücük! (Ekranı öp 💋)",
+    "Favori yemeğini söyle, buluşunca benden 🍕",
+    "En güzel iltifatın bende! (Sesli söyleyeceğim) 🌹",
+    "Sana özel ses kaydı yolda! 🎙️",
+    "Sıradaki filmi sen seç aşkım 🎬",
+    "Aynı anda 'Seni Seviyorum' diyelim! 💜",
+    "Buluşma için geri sayım başlasın! 🤗",
+    "Kargo sürprizine hazır ol! ✨"
 ];
 
 function spinWheel() {
     if (isSpinning) return;
     
+    // Sallama iznini butona ilk tıklandığında alıyoruz
+    if (!motionInited) requestMotionPermission();
+
     isSpinning = true;
     const wheel = document.getElementById('wheel');
     const resultText = document.getElementById('wheel-result');
     const btn = document.getElementById('spin-btn');
     
-    btn.disabled = true;
-    resultText.innerText = "Kader çarkı dönüyor... ✨";
+    if(btn) btn.disabled = true;
+    resultText.innerText = "Şansın dönüyor sevgilim... ✨";
     
-    // Her seferinde hızlanması ve akıcı olması için mevcut rotasyona ekle
     const randomExtra = Math.floor(Math.random() * 360);
     currentRotation += 1800 + randomExtra; 
     
     wheel.style.transform = `rotate(${currentRotation}deg)`;
     
-setTimeout(() => {
+    setTimeout(() => {
         isSpinning = false;
-        btn.disabled = false;
+        if(btn) btn.disabled = false;
         
         const actualAngle = currentRotation % 360;
         const prizeIndex = Math.floor(((360 - actualAngle) % 360) / 45);
         
         resultText.innerText = rewards[prizeIndex];
         
-        // --- EFEKT TETİKLEYİCİ ---
         const rect = wheel.getBoundingClientRect();
-        // Sayfa kaydırılmışsa koordinatların şaşmaması için window.scroll ekliyoruz
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        noteBurstHearts(centerX, centerY);
-        // -------------------------
-        
+        noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
     }, 4000);
 }
 
-// --- MOBİL ETKİLEŞİMLER (SWIPE & SHAKE) ---
+// --- SENSÖR VE KAYDIRMA DESTEĞİ ---
 
-// 1. Elle Döndürme (Swipe/Dokunmatik)
-let touchStartX = 0;
-const wheelWrapper = document.querySelector('.wheel-wrapper');
-
-if (wheelWrapper) {
-    wheelWrapper.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    wheelWrapper.addEventListener('touchend', (e) => {
-        const touchEndX = e.changedTouches[0].screenX;
-        // Eğer parmakla yeterli miktarda (50px+) kaydırma yapıldıysa
-        if (Math.abs(touchStartX - touchEndX) > 50) {
-            spinWheel();
-        }
-    }, { passive: true });
-}
-
-// 2. Telefonu Sallayarak Döndürme (Shake)
-let lastUpdate = 0;
-let lastX, lastY, lastZ;
-const threshold = 15; // Hassasiyet (Artırırsan daha sert sallamak gerekir)
-
-function deviceMotionHandler(event) {
-    const acceleration = event.accelerationIncludingGravity;
-    const curTime = Date.now();
-
-    if ((curTime - lastUpdate) > 100) {
-        const diffTime = curTime - lastUpdate;
-        lastUpdate = curTime;
-
-        const x = acceleration.x;
-        const y = acceleration.y;
-        const z = acceleration.z;
-
-        const speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
-
-        if (speed > threshold) {
-            spinWheel(); // Telefon sallanınca çark döner
-        }
-
-        lastX = x;
-        lastY = y;
-        lastZ = z;
+// 1. Dokunmatik (Swipe)
+document.addEventListener('DOMContentLoaded', () => {
+    const wheelArea = document.querySelector('.wheel-wrapper');
+    if (wheelArea) {
+        let tsX = 0;
+        wheelArea.addEventListener('touchstart', (e) => { tsX = e.changedTouches[0].screenX; }, {passive: true});
+        wheelArea.addEventListener('touchend', (e) => {
+            let teX = e.changedTouches[0].screenX;
+            if (Math.abs(tsX - teX) > 40) spinWheel();
+        }, {passive: true});
     }
-}
+});
 
-// Sensör izni (iOS 13+ ve modern tarayıcılar için)
+// 2. Sallama (Shake)
+let lastShake = 0;
 function requestMotionPermission() {
-    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-        DeviceMotionEvent.requestPermission()
-            .then(permissionState => {
-                if (permissionState === 'granted') {
-                    window.addEventListener('devicemotion', deviceMotionHandler);
-                }
-            })
-            .catch(console.error);
+    motionInited = true;
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission().then(state => {
+            if (state === 'granted') window.addEventListener('devicemotion', handleShake);
+        });
     } else {
-        window.addEventListener('devicemotion', deviceMotionHandler);
+        window.addEventListener('devicemotion', handleShake);
     }
 }
 
-// Butona tıklandığında sensör iznini de isteyelim (Browser kısıtlaması nedeniyle)
-document.getElementById('spin-btn').addEventListener('click', requestMotionPermission);
+function handleShake(event) {
+    const acc = event.accelerationIncludingGravity;
+    if (!acc) return;
+    
+    const totalAcc = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
+    const now = Date.now();
+    
+    if (totalAcc > 25 && (now - lastShake > 2000)) { // 25 hassasiyet, 2 sn bekleme
+        lastShake = now;
+        spinWheel();
+    }
+}
 
 </script>
 
