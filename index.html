@@ -1700,18 +1700,23 @@ document.body.appendChild(heart);
         syncLightboxDate(currentIdx);
         updateAutoplayBtn();
         startAutoSlide();
+        // --- BU SATIRI EKLEDİK ---
+    updateFavoriteUI();
     }
 
     function closeLightbox() { lightbox.style.display = "none"; stopAutoSlide(); }
 
     function changeImage(dir) {
-        const img = document.getElementById('lightbox-img');
-        img.classList.add('img-fade-out');
-        setTimeout(()=>{ img.classList.remove('img-fade-out'); }, 200);
-        currentIdx = (currentIdx + dir + imgs.length) % imgs.length;
-        lightboxImg.src = imgs[currentIdx].src;
-        syncLightboxDate(currentIdx);
-    }
+    const img = document.getElementById('lightbox-img');
+    img.classList.add('img-fade-out');
+    setTimeout(()=>{ img.classList.remove('img-fade-out'); }, 200);
+    currentIdx = (currentIdx + dir + imgs.length) % imgs.length;
+    lightboxImg.src = imgs[currentIdx].src;
+    syncLightboxDate(currentIdx);
+    
+    // --- BU SATIRI EKLEDİK ---
+    updateFavoriteUI(); 
+}
 
 
 
@@ -2379,6 +2384,7 @@ function filterGallery(month) {
             clickedBtn.classList.add('active-grey');
         }
     }
+    
 
     // --- Filtreleme İşlemi (Mevcut kodun devamı) ---
     const items = document.querySelectorAll('.gallery-item');
@@ -2387,6 +2393,9 @@ function filterGallery(month) {
         let isMatch = false;
 
         if (month === 'all') isMatch = true;
+        // --- BU KISMI EKLEDİK ---
+        else if (month === 'favorites') isMatch = favorites.includes(imgSrc);
+        // ------------------------
         else if (month === '11.2025' && imgSrc.includes('11.2025')) isMatch = true;
         else if (month === '12.2025' && imgSrc.includes('2025') && !imgSrc.includes('11.2025')) isMatch = true;
         else if (month === '01.2026' && imgSrc.includes('01/')) isMatch = true;
@@ -2396,6 +2405,8 @@ function filterGallery(month) {
 
         item.style.display = isMatch ? 'block' : 'none';
     });
+
+    
 }
 
 function setView(mode) {
