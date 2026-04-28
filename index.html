@@ -726,122 +726,21 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
-/* ===== PROFESYONEL AŞK ÇARKI GÜNCEL ===== */
-.wheel-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    /* Mavi seçilme efektini her yerden kaldırır */
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-    outline: none;
-}
-
-.wheel-wrapper {
-    position: relative;
-    width: min(300px, 80vw); 
-    height: min(300px, 80vw);
-    border-radius: 50%;
-    margin: 20px auto;
-}
-
-#wheel {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    position: relative;
-    overflow: hidden;
-    /* KASMA ÖNLEYİCİ AYARLAR */
-    will-change: transform;
-    backface-visibility: hidden;
-    transform: translateZ(0); 
+.wheel-spinning {
     transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
-    background: conic-gradient(
-        #7b2cbf 0deg 45deg, #b0b0b0 45deg 90deg, #9d4edd 90deg 135deg, 
-        #8e8e8e 135deg 180deg, #5a189a 180deg 225deg, #ced4da 225deg 270deg,
-        #480ca8 270deg 315deg, #adb5bd 315deg 360deg
-    );
-    border: 4px solid rgba(255, 255, 255, 0.2);
+}
+/* Pop-up modalı için basit stil */
+.wheel-popup {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100000; opacity: 0; pointer-events: none; transition: 0.4s;
+}
+.wheel-popup.show { opacity: 1; pointer-events: auto; }
+.wheel-popup-content {
+    background: #1a1a1a; border: 2px solid #7b2cbf; padding: 30px;
+    border-radius: 20px; text-align: center; max-width: 300px;
 }
 
-.wheel-center-btn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 65px;
-    height: 65px;
-    background: #ff4d6d;
-    border: 4px solid #fff;
-    border-radius: 50%;
-    z-index: 105;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: white;
-    font-size: 11px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    /* MOBİL MAVİ EFEKT ÖNLEYİCİ */
-    outline: none !important;
-    -webkit-tap-highlight-color: transparent !important;
-}
-
-.wheel-center-btn:active {
-    transform: translate(-50%, -50%) scale(0.92);
-}
-
-.wheel-label {
-    position: absolute;
-    width: 50%;
-    height: 30px;
-    top: calc(50% - 15px);
-    left: 50%;
-    transform-origin: left center;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 15px;
-    font-size: min(10px, 3vw);
-    font-weight: 600;
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    pointer-events: none;
-}
-
-/* Okun Konumu (Pointer) - Sağ Tarafa Sabitlendi */
-.wheel-pointer {
-    position: absolute;
-    top: 50%; /* Dikeyde ortala */
-    right: -25px; /* Çarkın sağ dışına yerleştir */
-    transform: translateY(-50%) rotate(90deg); /* Ortala ve sağa bakması için döndür */
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-top: 30px solid #ff4d6d;
-    z-index: 110;
-    filter: drop-shadow(-2px 0 4px rgba(0,0,0,0.3));
-}
-
-.wheel-wrapper {
-    position: relative;
-    width: min(300px, 80vw); 
-    height: min(300px, 80vw);
-    border-radius: 50%;
-    margin: 20px auto; 
-}
-
-/* Çarkın genel kapsayıcısını (wrapper) hizalamak için bunu güncelle veya ekle */
-.wheel-wrapper {
-    position: relative;
-    width: min(300px, 80vw); 
-    height: min(300px, 80vw);
-    border-radius: 50%;
-    margin: 40px auto 20px auto; /* Üstten biraz boşluk verdik ok sığsın diye */
-}
 </style>
 </head>
 
@@ -1928,47 +1827,43 @@ function syncLightboxDate(index) {
     }
 
     function noteBurstHearts(x, y) {
-    // Ana büyük kalp
-    const big = document.createElement("div");
-    big.className = "note-heart";
-    big.textContent = "❤️";
-    big.style.position = "fixed"; // Garantiye almak için
-    big.style.left = x + "px";
-    big.style.top = y + "px";
-    big.style.fontSize = "40px";
-    big.style.zIndex = "100000";
-    document.body.appendChild(big);
-    setTimeout(() => big.remove(), 950);
+        const big = document.createElement("div");
+        big.className = "note-heart";
+        big.textContent = "❤️";
+        big.style.left = x + "px";
+        big.style.top = y + "px";
+        big.style.fontSize = "28px";
+        document.body.appendChild(big);
+        setTimeout(() => big.remove(), 950);
 
-    // Etrafa saçılan küçük kalpler
-    const count = 15; // Sayıyı biraz artırdım daha belirgin olsun
-    for (let i = 0; i < count; i++) {
-        const p = document.createElement("div");
-        p.className = "note-heart-p";
-        p.textContent = Math.random() > 0.5 ? "💜" : "🩶"; // Senin renklerin
+        const count = 10;
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement("div");
+            p.className = "note-heart-p";
+            p.textContent = "❤";
 
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 50 + Math.random() * 100;
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 30 + Math.random() * 80;
 
-        const x0 = x;
-        const y0 = y;
-        const x1 = x0 + Math.cos(angle) * dist;
-        const y1 = y0 + Math.sin(angle) * dist;
+            const x0 = x - 6;
+            const y0 = y - 10;
+            const x1 = x0 + Math.cos(angle) * dist;
+            const y1 = y0 + Math.sin(angle) * dist;
 
-        p.style.position = "fixed";
-        p.style.zIndex = "100000";
-        p.style.left = "0px";
-        p.style.top = "0px";
-        p.style.setProperty("--x0", `${x0}px`);
-        p.style.setProperty("--y0", `${y0}px`);
-        p.style.setProperty("--x1", `${x1}px`);
-        p.style.setProperty("--y1", `${y1}px`);
-        p.style.fontSize = (15 + Math.random() * 15) + "px";
+            p.style.setProperty("--x0", `${x0}px`);
+            p.style.setProperty("--y0", `${y0}px`);
+            p.style.setProperty("--x1", `${x1}px`);
+            p.style.setProperty("--y1", `${y1}px`);
 
-        document.body.appendChild(p);
-        p.addEventListener("animationend", () => p.remove());
+            p.style.left = "0px";
+            p.style.top = "0px";
+            p.style.color = "#ff4d6d";
+            p.style.fontSize = (10 + Math.random() * 10) + "px";
+
+            document.body.appendChild(p);
+            p.addEventListener("animationend", () => p.remove());
+        }
     }
-}
 
     let autoSlideTimer = null;
     let autoSlideResumeTimer = null;
@@ -2416,6 +2311,95 @@ function syncLightboxDate(index) {
   });
 })();
 
+
+// --- Game 4: Wheel of Fortune ---
+const wheelTasks = [
+    { short: "Rol 🎭", long: "5 dakika rol yaparak konuş 🎭" },
+    { short: "Anı 📖", long: "Bizimle ilgili güzel bir anını anlat 📖" },
+    { short: "Challenge ⚡", long: "Sana verdiğim mini challenge’ı yap ⚡" },
+    { short: "Lakap 🏷️", long: "Bana yeni bir lakap bul 🏷️" },
+    { short: "İtiraf 😳", long: "Bana küçük bir itiraf yap 😳" },
+    { short: "Emoji 😍", long: "Bana sadece emojilerle mesaj at 😍" },
+    { short: "Şiir 📝", long: "Bana kısa bir şiir yaz 📝" },
+    { short: "Video 🎥", long: "Bana kısa bir video çek 🎥" }
+];
+
+let canSpin = true;
+const canvas = document.getElementById('wheel-canvas');
+const ctx = canvas.getContext('2d');
+const spinBtn = document.getElementById('wheel-spin-btn');
+let currentRotation = 0;
+
+function drawWheel() {
+    const arc = (2 * Math.PI) / wheelTasks.length;
+    wheelTasks.forEach((task, i) => {
+        const angle = i * arc;
+        ctx.fillStyle = i % 2 === 0 ? "#7b2cbf" : "#b0b0b0";
+        ctx.beginPath();
+        ctx.moveTo(140, 140);
+        ctx.arc(140, 140, 140, angle, angle + arc);
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(140, 140);
+        ctx.rotate(angle + arc / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "white";
+        ctx.font = "bold 14px Inter";
+        ctx.fillText(task.short, 130, 5);
+        ctx.restore();
+    });
+}
+
+function spinWheel() {
+    if (!canSpin) return;
+    canSpin = false;
+    const extraDegree = Math.floor(Math.random() * 360) + 1800; // En az 5 tur
+    currentRotation += extraDegree;
+    canvas.style.transform = `rotate(${currentRotation}deg)`;
+    canvas.style.transition = "transform 4s cubic-bezier(0.15, 0, 0.15, 1)";
+
+    setTimeout(() => {
+        canSpin = true;
+        const actualDeg = currentRotation % 360;
+        const segmentDeg = 360 / wheelTasks.length;
+        // Ok üstte olduğu için (-90 derece offset)
+        const index = Math.floor((360 - (actualDeg % 360)) / segmentDeg) % wheelTasks.length;
+        showWheelResult(wheelTasks[index].long);
+    }, 4000);
+}
+
+function showWheelResult(text) {
+    // Pop-up oluştur
+    const pop = document.createElement("div");
+    pop.className = "wheel-popup show";
+    pop.innerHTML = `
+        <div class="wheel-popup-content">
+            <h3 style="color:#7b2cbf">Şansına Bu Geldi!</h3>
+            <p style="font-size:18px; margin:20px 0;">${text}</p>
+            <button class="mg-primary" onclick="this.parentElement.parentElement.remove()">Tamam Aşkım 💜</button>
+        </div>
+    `;
+    document.body.appendChild(pop);
+    // Kalp patlaması (Mevcut noteBurstHearts fonksiyonunu kullanıyoruz)
+    if(typeof noteBurstHearts === "function") noteBurstHearts(window.innerWidth/2, window.innerHeight/2);
+}
+
+// Sallama Özelliği (Shake Detection)
+let lastX, lastY, lastZ;
+let shakeThreshold = 15; 
+window.addEventListener('devicemotion', (e) => {
+    let acc = e.accelerationIncludingGravity;
+    if(!acc.x) return;
+    let diff = Math.abs(acc.x + acc.y + acc.z - lastX - lastY - lastZ);
+    if (diff > shakeThreshold) spinWheel();
+    lastX = acc.x; lastY = acc.y; lastZ = acc.z;
+});
+
+canvas.addEventListener('click', spinWheel);
+spinBtn.addEventListener('click', spinWheel);
+drawWheel();
+
 // ===== FOOTER OTOMATİK TARİH =====
 (function(){
   const el = document.getElementById("dynamic-date");
@@ -2518,100 +2502,6 @@ slider.addEventListener('wheel', (e) => {
     }
 });
 
-/* ===== AŞK ÇARKI TÜM MANTIK (PRO) ===== */
-let currentRotation = 0;
-let isSpinning = false;
-let motionInited = false;
-
-const rewards = [
-    "5 dakika rol yaparak konuş 🎭",
-    "Bizimle ilgili güzel bir anını anlat 📖",
-    "Sana verdiğim mini challenge’ı yap ⚡",
-    "Bana yeni bir lakap bul 🏷️",
-    "Bana küçük bir itiraf yap 😳",
-    "Bana sadece emojilerle mesaj at 😍",
-    "Bana kısa bir şiir yaz 📝",
-    "Bana kısa bir video çek 🎥"
-];
-
-function spinWheel() {
-    if (isSpinning) return;
-    if (!motionInited) requestMotionPermission();
-
-    isSpinning = true;
-    const wheel = document.getElementById('wheel');
-    const resultText = document.getElementById('wheel-result');
-    
-    if (resultText) {
-        resultText.style.opacity = "0.5";
-        resultText.innerText = "Kaderin dönüyor... ✨";
-    }
-    
-    // Rastgele dönüş miktarı
-    const randomExtra = Math.floor(Math.random() * 360) + 1800; 
-    currentRotation += randomExtra; 
-    
-    if (wheel) {
-        wheel.style.transform = `rotate(${currentRotation}deg)`;
-    }
-    
-    setTimeout(() => {
-    isSpinning = false;
-    
-    // Çarkın durduğu anlık açı
-    const actualAngle = currentRotation % 360;
-    
-    // Ok sağda (90 derece) olduğu için hesaplamaya +90 ekliyoruz.
-    // +22.5 payı ise okun dilimin tam ortasına denk gelmesini sağlar.
-    const prizeIndex = Math.floor(((360 - actualAngle + 90 + 22.5) % 360) / 45);
-    
-    if (resultText) {
-        resultText.style.opacity = "1";
-        resultText.innerHTML = `Görevin: <span style="color:#fff; background:rgba(255,77,109,0.3); padding:4px 10px; border-radius:10px;">${rewards[prizeIndex]}</span>`;
-    }
-    
-    // Efekt
-    const rect = wheel.getBoundingClientRect();
-    if (typeof noteBurstHearts === "function") {
-        noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    }
-}, 4000);
-}
-
-// SALLAMA AYARLARI (Gelişmiş)
-let lastShake = 0;
-const shakeThreshold = 55; // Daha da sert sallama gerekir
-
-function handleShake(event) {
-    const acc = event.accelerationIncludingGravity;
-    if (!acc) return;
-    
-    // Daha profesyonel ivme ölçümü
-    const speed = Math.sqrt(acc.x**2 + acc.y**2 + acc.z**2);
-    const now = Date.now();
-    
-    if (speed > shakeThreshold && (now - lastShake > 3500)) { 
-        lastShake = now;
-        spinWheel();
-    }
-}
-
-function requestMotionPermission() {
-    motionInited = true;
-    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-        DeviceMotionEvent.requestPermission().then(s => {
-            if (s === 'granted') window.addEventListener('devicemotion', handleShake);
-        });
-    } else {
-        window.addEventListener('devicemotion', handleShake);
-    }
-}
-
-// Mavi seçilme engelleyici
-document.addEventListener('contextmenu', e => {
-    if (e.target.closest('.wheel-wrapper')) e.preventDefault();
-});
-
 </script>
 
 
@@ -2639,7 +2529,7 @@ document.addEventListener('contextmenu', e => {
       <button class="mg-tab" data-tab="memory" role="tab">hafıza</button>
       <button class="mg-tab" data-tab="quiz" role="tab">mini quiz</button>
       <button class="mg-tab" data-tab="board" role="tab">sıralama</button>
-      <button class="mg-tab" data-tab="wheel" role="tab">aşk çarkı</button>
+      <button class="mg-tab" data-tab="wheel" role="tab">şans çarkı 🎡</button>
     </div>
 
     <div class="mg-body">
@@ -2686,6 +2576,19 @@ document.addEventListener('contextmenu', e => {
         </div>
       </section>
 
+<section class="mg-panel" data-panel="wheel" role="tabpanel">
+  <div class="mg-panel-top">
+    <div class="mg-hint">Çevir, salla veya butona bas! Gelen görevi yap 💜</div>
+  </div>
+  <div class="wheel-wrapper" style="position:relative; width:280px; height:280px; margin:20px auto;">
+    <div id="wheel-pointer" style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); z-index:10; font-size:30px;">▼</div>
+    <canvas id="wheel-canvas" width="280" height="280" style="border-radius:50%; box-shadow:0 0 20px rgba(123,44,191,0.4); cursor:pointer;"></canvas>
+  </div>
+  <div class="mg-actions" style="justify-content:center;">
+    <button id="wheel-spin-btn" class="mg-primary" type="button">Çarkı Çevir ✨</button>
+  </div>
+</section>
+
       <section class="mg-panel" data-panel="board" role="tabpanel">
         <div class="mg-panel-top">
           <div class="mg-hint">aynı isimle girersen skorun güncellenir (en iyi skor tutulur).</div>
@@ -2708,31 +2611,6 @@ document.addEventListener('contextmenu', e => {
           </div>
         </div>
       </section>
-
-   <section class="mg-panel" data-panel="wheel" role="tabpanel">
-    <div class="mg-panel-top">
-        <div class="mg-hint">çarkın ortasına bas veya telefonu sertçe salla! 💜</div>
-    </div>
-    <div class="wheel-container">
-        <div class="wheel-wrapper">
-            <div class="wheel-pointer"></div> 
-            
-            <div id="wheel">
-                <div class="wheel-label" style="transform: rotate(22.5deg)">Rol 🎭</div>
-                <div class="wheel-label" style="transform: rotate(67.5deg)">Anı 📖</div>
-                <div class="wheel-label" style="transform: rotate(112.5deg)">Challenge ⚡</div>
-                <div class="wheel-label" style="transform: rotate(157.5deg)">Lakap 🏷️</div>
-                <div class="wheel-label" style="transform: rotate(202.5deg)">İtiraf 😳</div>
-                <div class="wheel-label" style="transform: rotate(247.5deg)">Emoji 😍</div>
-                <div class="wheel-label" style="transform: rotate(292.5deg)">Şiir 📝</div>
-                <div class="wheel-label" style="transform: rotate(337.5deg)">Video 🎥</div>
-            </div>
-            <div class="wheel-center-btn" onclick="spinWheel()">ÇEVİR</div>
-        </div>
-        <div id="wheel-result" style="margin-top: 15px; font-weight: bold; min-height: 24px; color: #ff4d6d;"></div>
-    </div>
-</section>
-
     </div>
   </div>
 </div>
