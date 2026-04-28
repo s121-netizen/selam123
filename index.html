@@ -787,7 +787,6 @@ body.logged-in #mini-game-btn{ display:block !important; }
     <div class="gallery">
         <h2>bizi biz yapan şeyler yaşadığımız anılar</h2>
         <div class="gallery-filters">
-            <button class="filter-btn" onclick="showFavorites()">⭐ Favoriler</button>
           <div class="view-controls">
     <button class="view-btn active" id="btn-scroll" onclick="setView('scroll')">↔️ yatay mod</button>
     <button class="view-btn" id="btn-grid" onclick="setView('grid')">↕️ dikey</button>
@@ -1432,9 +1431,6 @@ body.logged-in #mini-game-btn{ display:block !important; }
         <button data-speed="2000">2s</button>
         <button data-speed="3000" class="active">3s</button>
     </div>
-    <button id="fav-toggle" class="autoplay-btn" style="right:20px; left:auto;">
-☆ 
-</button>
 <span class="nav-btn prev" onclick="changeImage(-1)">❮</span>
     <img id="lightbox-img" src="">
     <div id="lightbox-date" class="lightbox-date"></div>
@@ -1647,8 +1643,6 @@ document.body.appendChild(heart);
     });
 
     function openLightbox() {
-        currentIndex = index;
-        updateFavBtn();
         lightbox.style.display = "flex";
         lightboxImg.src = imgs[currentIdx].src;
         syncLightboxDate(currentIdx);
@@ -2403,37 +2397,6 @@ slider.addEventListener('wheel', (e) => {
         slider.scrollLeft += e.deltaY;
     }
 });
-
-let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-let currentIndex = 0; // sende zaten varsa bunu sil
-
-const favBtn = document.getElementById("fav-toggle");
-
-function updateFavBtn(){
-    if(favorites.includes(currentIndex)){
-        favBtn.innerText = "⭐";
-    } else {
-        favBtn.innerText = "☆";
-    }
-}
-
-favBtn.onclick = () => {
-    if(favorites.includes(currentIndex)){
-        favorites = favorites.filter(i => i !== currentIndex);
-    } else {
-        favorites.push(currentIndex);
-    }
-
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-    updateFavBtn();
-};
-
-
-function showFavorites(){
-    document.querySelectorAll(".gallery-item").forEach((item, index) => {
-        item.style.display = favorites.includes(index) ? "block" : "none";
-    });
-}
 
 </script>
 
