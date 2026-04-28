@@ -726,21 +726,6 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
-.wheel-spinning {
-    transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
-}
-/* Pop-up modalı için basit stil */
-.wheel-popup {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 100000; opacity: 0; pointer-events: none; transition: 0.4s;
-}
-.wheel-popup.show { opacity: 1; pointer-events: auto; }
-.wheel-popup-content {
-    background: #1a1a1a; border: 2px solid #7b2cbf; padding: 30px;
-    border-radius: 20px; text-align: center; max-width: 300px;
-}
-
 </style>
 </head>
 
@@ -2311,95 +2296,6 @@ function syncLightboxDate(index) {
   });
 })();
 
-
-// --- Game 4: Wheel of Fortune ---
-const wheelTasks = [
-    { short: "Rol 🎭", long: "5 dakika rol yaparak konuş 🎭" },
-    { short: "Anı 📖", long: "Bizimle ilgili güzel bir anını anlat 📖" },
-    { short: "Challenge ⚡", long: "Sana verdiğim mini challenge’ı yap ⚡" },
-    { short: "Lakap 🏷️", long: "Bana yeni bir lakap bul 🏷️" },
-    { short: "İtiraf 😳", long: "Bana küçük bir itiraf yap 😳" },
-    { short: "Emoji 😍", long: "Bana sadece emojilerle mesaj at 😍" },
-    { short: "Şiir 📝", long: "Bana kısa bir şiir yaz 📝" },
-    { short: "Video 🎥", long: "Bana kısa bir video çek 🎥" }
-];
-
-let canSpin = true;
-const canvas = document.getElementById('wheel-canvas');
-const ctx = canvas.getContext('2d');
-const spinBtn = document.getElementById('wheel-spin-btn');
-let currentRotation = 0;
-
-function drawWheel() {
-    const arc = (2 * Math.PI) / wheelTasks.length;
-    wheelTasks.forEach((task, i) => {
-        const angle = i * arc;
-        ctx.fillStyle = i % 2 === 0 ? "#7b2cbf" : "#b0b0b0";
-        ctx.beginPath();
-        ctx.moveTo(140, 140);
-        ctx.arc(140, 140, 140, angle, angle + arc);
-        ctx.fill();
-
-        ctx.save();
-        ctx.translate(140, 140);
-        ctx.rotate(angle + arc / 2);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "white";
-        ctx.font = "bold 14px Inter";
-        ctx.fillText(task.short, 130, 5);
-        ctx.restore();
-    });
-}
-
-function spinWheel() {
-    if (!canSpin) return;
-    canSpin = false;
-    const extraDegree = Math.floor(Math.random() * 360) + 1800; // En az 5 tur
-    currentRotation += extraDegree;
-    canvas.style.transform = `rotate(${currentRotation}deg)`;
-    canvas.style.transition = "transform 4s cubic-bezier(0.15, 0, 0.15, 1)";
-
-    setTimeout(() => {
-        canSpin = true;
-        const actualDeg = currentRotation % 360;
-        const segmentDeg = 360 / wheelTasks.length;
-        // Ok üstte olduğu için (-90 derece offset)
-        const index = Math.floor((360 - (actualDeg % 360)) / segmentDeg) % wheelTasks.length;
-        showWheelResult(wheelTasks[index].long);
-    }, 4000);
-}
-
-function showWheelResult(text) {
-    // Pop-up oluştur
-    const pop = document.createElement("div");
-    pop.className = "wheel-popup show";
-    pop.innerHTML = `
-        <div class="wheel-popup-content">
-            <h3 style="color:#7b2cbf">Şansına Bu Geldi!</h3>
-            <p style="font-size:18px; margin:20px 0;">${text}</p>
-            <button class="mg-primary" onclick="this.parentElement.parentElement.remove()">Tamam Aşkım 💜</button>
-        </div>
-    `;
-    document.body.appendChild(pop);
-    // Kalp patlaması (Mevcut noteBurstHearts fonksiyonunu kullanıyoruz)
-    if(typeof noteBurstHearts === "function") noteBurstHearts(window.innerWidth/2, window.innerHeight/2);
-}
-
-// Sallama Özelliği (Shake Detection)
-let lastX, lastY, lastZ;
-let shakeThreshold = 15; 
-window.addEventListener('devicemotion', (e) => {
-    let acc = e.accelerationIncludingGravity;
-    if(!acc.x) return;
-    let diff = Math.abs(acc.x + acc.y + acc.z - lastX - lastY - lastZ);
-    if (diff > shakeThreshold) spinWheel();
-    lastX = acc.x; lastY = acc.y; lastZ = acc.z;
-});
-
-canvas.addEventListener('click', spinWheel);
-spinBtn.addEventListener('click', spinWheel);
-drawWheel();
-
 // ===== FOOTER OTOMATİK TARİH =====
 (function(){
   const el = document.getElementById("dynamic-date");
@@ -2529,7 +2425,6 @@ slider.addEventListener('wheel', (e) => {
       <button class="mg-tab" data-tab="memory" role="tab">hafıza</button>
       <button class="mg-tab" data-tab="quiz" role="tab">mini quiz</button>
       <button class="mg-tab" data-tab="board" role="tab">sıralama</button>
-      <button class="mg-tab" data-tab="wheel" role="tab">şans çarkı 🎡</button>
     </div>
 
     <div class="mg-body">
@@ -2575,19 +2470,6 @@ slider.addEventListener('wheel', (e) => {
           <button id="q-start" class="mg-primary" type="button">başlat</button>
         </div>
       </section>
-
-<section class="mg-panel" data-panel="wheel" role="tabpanel">
-  <div class="mg-panel-top">
-    <div class="mg-hint">Çevir, salla veya butona bas! Gelen görevi yap 💜</div>
-  </div>
-  <div class="wheel-wrapper" style="position:relative; width:280px; height:280px; margin:20px auto;">
-    <div id="wheel-pointer" style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); z-index:10; font-size:30px;">▼</div>
-    <canvas id="wheel-canvas" width="280" height="280" style="border-radius:50%; box-shadow:0 0 20px rgba(123,44,191,0.4); cursor:pointer;"></canvas>
-  </div>
-  <div class="mg-actions" style="justify-content:center;">
-    <button id="wheel-spin-btn" class="mg-primary" type="button">Çarkı Çevir ✨</button>
-  </div>
-</section>
 
       <section class="mg-panel" data-panel="board" role="tabpanel">
         <div class="mg-panel-top">
