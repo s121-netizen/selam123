@@ -2450,75 +2450,75 @@ slider.addEventListener('wheel', (e) => {
     }
 });
 
-// --- FAVORİ SİSTEMİ MANTIĞI ---
+// --- FAVORİ SİSTEMİ (GÜNCELLENMİŞ) ---
 let favorites = JSON.parse(localStorage.getItem('ak_favorites')) || [];
 
 function toggleFavorite(imgSrc) {
-    // Eğer parametre yoksa lightbox'taki mevcut resmi al
+    // Eğer imgSrc gelmemişse (Lightbox'tan tıklandıysa) mevcut resmi al
     const currentSrc = imgSrc || document.getElementById('lightbox-img').getAttribute('src');
     
     const index = favorites.indexOf(currentSrc);
     if (index > -1) {
+        // Zaten favoriyse listeden çıkar
         favorites.splice(index, 1);
     } else {
+        // Favori değilse listeye ekle
         favorites.push(currentSrc);
     }
     
+    // Kaydet ve arayüzü tazele
     localStorage.setItem('ak_favorites', JSON.stringify(favorites));
     updateFavoriteUI();
 }
 
 function updateFavoriteUI() {
-    // Ana galerideki kalpleri güncelle
+    // 1. Ana galerideki her bir item için kontrol
     document.querySelectorAll('.gallery-item').forEach(item => {
-        const src = item.querySelector('img').getAttribute('src');
-        let favBtn = item.querySelector('.fav-btn');
+        const img = item.querySelector('img');
+        const src = img.getAttribute('src');
         
+        // Eğer buton yoksa oluştur
+        let favBtn = item.querySelector('.fav-btn');
         if (!favBtn) {
             favBtn = document.createElement('button');
             favBtn.className = 'fav-btn';
+            favBtn.type = 'button'; // Form submitini engellemek için
             favBtn.innerHTML = '❤️';
             favBtn.onclick = (e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // Lightbox'ın açılmasını engelle
                 toggleFavorite(src);
             };
             item.appendChild(favBtn);
         }
         
-        favBtn.classList.toggle('active', favorites.includes(src));
+        // Resim favori listesinde mi?
+        if (favorites.includes(src)) {
+            favBtn.classList.add('active');
+        } else {
+            favBtn.classList.remove('active');
+        }
     });
 
-    // Lightbox butonunu güncelle
+    // 2. Lightbox butonunu güncelle
+    const lbImg = document.getElementById('lightbox-img');
     const lbFavBtn = document.getElementById('lb-fav-toggle');
-    const currentSrc = document.getElementById('lightbox-img').getAttribute('src');
-    if (lbFavBtn) {
-        lbFavBtn.classList.toggle('active', favorites.includes(currentSrc));
+    
+    if (lbImg && lbFavBtn) {
+        const currentSrc = lbImg.getAttribute('src');
+        if (favorites.includes(currentSrc)) {
+            lbFavBtn.classList.add('active');
+            lbFavBtn.innerHTML = '❤️ Favorilerde';
+        } else {
+            lbFavBtn.classList.remove('active');
+            lbFavBtn.innerHTML = '🤍 Favoriye Ekle';
+        }
     }
 }
 
-// Mevcut filterGallery fonksiyonuna 'favorites' kontrolü ekle:
-function filterGallery(month) {
-    const btns = document.querySelectorAll('.filter-btn');
-    btns.forEach(btn => btn.classList.remove('active', 'active-purple', 'active-grey'));
-
-    const items = document.querySelectorAll('.gallery-item');
-    items.forEach(item => {
-        const imgSrc = item.querySelector('img').getAttribute('src');
-        let isMatch = false;
-
-        if (month === 'all') isMatch = true;
-        else if (month === 'favorites') isMatch = favorites.includes(imgSrc);
-        // ... diğer tarih filtrelerin ...
-        
-        else if (month === '11.2025' && imgSrc.includes('11.2025')) isMatch = true;
-        // (Burada mevcut else if bloklarını koru)
-
-        item.style.display = isMatch ? 'block' : 'none';
-    });
-}
-
-// Lightbox her açıldığında ve resim değiştiğinde UI'ı güncellemek için:
-// changeImage ve openLightbox fonksiyonlarının sonuna updateFavoriteUI() ekle.
+// Sayfa yüklendiğinde butonları hazırla
+document.addEventListener("DOMContentLoaded", () => {
+    updateFavoriteUI();
+});
 
 </script>
 
