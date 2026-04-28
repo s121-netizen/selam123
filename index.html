@@ -726,56 +726,6 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
-/* Favori Kalp Butonu */
-.fav-btn {
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.4);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    backdrop-filter: blur(4px);
-    transition: transform 0.2s, color 0.2s;
-    z-index: 5;
-}
-
-.fav-btn.active {
-    color: #ff4d6d;
-}
-
-.fav-btn:hover {
-    transform: scale(1.2);
-}
-
-/* Lightbox Favori Butonu */
-.lb-fav-btn {
-    position: absolute;
-    top: 22px;
-    right: 80px; /* Kapatma butonunun solunda durması için */
-    background: rgba(255, 255, 255, 0.12);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 8px 12px;
-    border-radius: 14px;
-    font-size: 14px;
-    cursor: pointer;
-    z-index: 13001;
-    backdrop-filter: blur(8px);
-}
-
-.lb-fav-btn.active {
-    color: #ff4d6d;
-    background: rgba(255, 77, 109, 0.2);
-}
-
-
 </style>
 </head>
 
@@ -837,6 +787,7 @@ body.logged-in #mini-game-btn{ display:block !important; }
     <div class="gallery">
         <h2>bizi biz yapan şeyler yaşadığımız anılar</h2>
         <div class="gallery-filters">
+            <button class="filter-btn" onclick="showFavorites()">⭐ Favoriler</button>
           <div class="view-controls">
     <button class="view-btn active" id="btn-scroll" onclick="setView('scroll')">↔️ yatay mod</button>
     <button class="view-btn" id="btn-grid" onclick="setView('grid')">↕️ dikey</button>
@@ -1476,13 +1427,14 @@ body.logged-in #mini-game-btn{ display:block !important; }
 <div class="lightbox" id="lightbox">
     <span class="close" onclick="closeLightbox()">×</span>
     <button id="autoplay-btn" class="autoplay-btn" type="button">otomatik: kapalı</button>
-    <button id="lb-fav-toggle" class="lb-fav-btn" onclick="toggleFavorite()">❤️ Favori</button>
     <div id="speed-controls" class="speed-controls">
         <button data-speed="1000">1s</button>
         <button data-speed="2000">2s</button>
         <button data-speed="3000" class="active">3s</button>
-        <button class="filter-btn" id="filter-favs" onclick="filterGallery('favorites')">❤️ Favorilerim</button>
     </div>
+    <button id="fav-toggle" class="autoplay-btn" style="right:20px; left:auto;">
+☆ 
+</button>
 <span class="nav-btn prev" onclick="changeImage(-1)">❮</span>
     <img id="lightbox-img" src="">
     <div id="lightbox-date" class="lightbox-date"></div>
@@ -1695,28 +1647,25 @@ document.body.appendChild(heart);
     });
 
     function openLightbox() {
+        currentIndex = index;
+        updateFavBtn();
         lightbox.style.display = "flex";
         lightboxImg.src = imgs[currentIdx].src;
         syncLightboxDate(currentIdx);
         updateAutoplayBtn();
         startAutoSlide();
-        // --- BU SATIRI EKLEDİK ---
-    updateFavoriteUI();
     }
 
     function closeLightbox() { lightbox.style.display = "none"; stopAutoSlide(); }
 
     function changeImage(dir) {
-    const img = document.getElementById('lightbox-img');
-    img.classList.add('img-fade-out');
-    setTimeout(()=>{ img.classList.remove('img-fade-out'); }, 200);
-    currentIdx = (currentIdx + dir + imgs.length) % imgs.length;
-    lightboxImg.src = imgs[currentIdx].src;
-    syncLightboxDate(currentIdx);
-    
-    // --- BU SATIRI EKLEDİK ---
-    updateFavoriteUI(); 
-}
+        const img = document.getElementById('lightbox-img');
+        img.classList.add('img-fade-out');
+        setTimeout(()=>{ img.classList.remove('img-fade-out'); }, 200);
+        currentIdx = (currentIdx + dir + imgs.length) % imgs.length;
+        lightboxImg.src = imgs[currentIdx].src;
+        syncLightboxDate(currentIdx);
+    }
 
 
 
@@ -2384,7 +2333,6 @@ function filterGallery(month) {
             clickedBtn.classList.add('active-grey');
         }
     }
-    
 
     // --- Filtreleme İşlemi (Mevcut kodun devamı) ---
     const items = document.querySelectorAll('.gallery-item');
@@ -2393,9 +2341,6 @@ function filterGallery(month) {
         let isMatch = false;
 
         if (month === 'all') isMatch = true;
-        // --- BU KISMI EKLEDİK ---
-        else if (month === 'favorites') isMatch = favorites.includes(imgSrc);
-        // ------------------------
         else if (month === '11.2025' && imgSrc.includes('11.2025')) isMatch = true;
         else if (month === '12.2025' && imgSrc.includes('2025') && !imgSrc.includes('11.2025')) isMatch = true;
         else if (month === '01.2026' && imgSrc.includes('01/')) isMatch = true;
@@ -2405,8 +2350,6 @@ function filterGallery(month) {
 
         item.style.display = isMatch ? 'block' : 'none';
     });
-
-    
 }
 
 function setView(mode) {
@@ -2461,75 +2404,36 @@ slider.addEventListener('wheel', (e) => {
     }
 });
 
-// --- FAVORİ SİSTEMİ (GÜNCELLENMİŞ) ---
-let favorites = JSON.parse(localStorage.getItem('ak_favorites')) || [];
+let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+let currentIndex = 0; // sende zaten varsa bunu sil
 
-function toggleFavorite(imgSrc) {
-    // Eğer imgSrc gelmemişse (Lightbox'tan tıklandıysa) mevcut resmi al
-    const currentSrc = imgSrc || document.getElementById('lightbox-img').getAttribute('src');
-    
-    const index = favorites.indexOf(currentSrc);
-    if (index > -1) {
-        // Zaten favoriyse listeden çıkar
-        favorites.splice(index, 1);
+const favBtn = document.getElementById("fav-toggle");
+
+function updateFavBtn(){
+    if(favorites.includes(currentIndex)){
+        favBtn.innerText = "⭐";
     } else {
-        // Favori değilse listeye ekle
-        favorites.push(currentSrc);
+        favBtn.innerText = "☆";
     }
-    
-    // Kaydet ve arayüzü tazele
-    localStorage.setItem('ak_favorites', JSON.stringify(favorites));
-    updateFavoriteUI();
 }
 
-function updateFavoriteUI() {
-    // 1. Ana galerideki her bir item için kontrol
-    document.querySelectorAll('.gallery-item').forEach(item => {
-        const img = item.querySelector('img');
-        const src = img.getAttribute('src');
-        
-        // Eğer buton yoksa oluştur
-        let favBtn = item.querySelector('.fav-btn');
-        if (!favBtn) {
-            favBtn = document.createElement('button');
-            favBtn.className = 'fav-btn';
-            favBtn.type = 'button'; // Form submitini engellemek için
-            favBtn.innerHTML = '❤️';
-            favBtn.onclick = (e) => {
-                e.stopPropagation(); // Lightbox'ın açılmasını engelle
-                toggleFavorite(src);
-            };
-            item.appendChild(favBtn);
-        }
-        
-        // Resim favori listesinde mi?
-        if (favorites.includes(src)) {
-            favBtn.classList.add('active');
-        } else {
-            favBtn.classList.remove('active');
-        }
+favBtn.onclick = () => {
+    if(favorites.includes(currentIndex)){
+        favorites = favorites.filter(i => i !== currentIndex);
+    } else {
+        favorites.push(currentIndex);
+    }
+
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    updateFavBtn();
+};
+
+
+function showFavorites(){
+    document.querySelectorAll(".gallery-item").forEach((item, index) => {
+        item.style.display = favorites.includes(index) ? "block" : "none";
     });
-
-    // 2. Lightbox butonunu güncelle
-    const lbImg = document.getElementById('lightbox-img');
-    const lbFavBtn = document.getElementById('lb-fav-toggle');
-    
-    if (lbImg && lbFavBtn) {
-        const currentSrc = lbImg.getAttribute('src');
-        if (favorites.includes(currentSrc)) {
-            lbFavBtn.classList.add('active');
-            lbFavBtn.innerHTML = '❤️ Favorilerde';
-        } else {
-            lbFavBtn.classList.remove('active');
-            lbFavBtn.innerHTML = '🤍 Favoriye Ekle';
-        }
-    }
 }
-
-// Sayfa yüklendiğinde butonları hazırla
-document.addEventListener("DOMContentLoaded", () => {
-    updateFavoriteUI();
-});
 
 </script>
 
