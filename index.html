@@ -726,6 +726,56 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
+/* Favori Kalp Butonu */
+.fav-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: transform 0.2s, color 0.2s;
+    z-index: 5;
+}
+
+.fav-btn.active {
+    color: #ff4d6d;
+}
+
+.fav-btn:hover {
+    transform: scale(1.2);
+}
+
+/* Lightbox Favori Butonu */
+.lb-fav-btn {
+    position: absolute;
+    top: 22px;
+    right: 80px; /* Kapatma butonunun solunda durması için */
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 8px 12px;
+    border-radius: 14px;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 13001;
+    backdrop-filter: blur(8px);
+}
+
+.lb-fav-btn.active {
+    color: #ff4d6d;
+    background: rgba(255, 77, 109, 0.2);
+}
+
+
 </style>
 </head>
 
@@ -1426,10 +1476,12 @@ body.logged-in #mini-game-btn{ display:block !important; }
 <div class="lightbox" id="lightbox">
     <span class="close" onclick="closeLightbox()">×</span>
     <button id="autoplay-btn" class="autoplay-btn" type="button">otomatik: kapalı</button>
+    <button id="lb-fav-toggle" class="lb-fav-btn" onclick="toggleFavorite()">❤️ Favori</button>
     <div id="speed-controls" class="speed-controls">
         <button data-speed="1000">1s</button>
         <button data-speed="2000">2s</button>
         <button data-speed="3000" class="active">3s</button>
+        <button class="filter-btn" id="filter-favs" onclick="filterGallery('favorites')">❤️ Favorilerim</button>
     </div>
 <span class="nav-btn prev" onclick="changeImage(-1)">❮</span>
     <img id="lightbox-img" src="">
@@ -2397,6 +2449,76 @@ slider.addEventListener('wheel', (e) => {
         slider.scrollLeft += e.deltaY;
     }
 });
+
+// --- FAVORİ SİSTEMİ MANTIĞI ---
+let favorites = JSON.parse(localStorage.getItem('ak_favorites')) || [];
+
+function toggleFavorite(imgSrc) {
+    // Eğer parametre yoksa lightbox'taki mevcut resmi al
+    const currentSrc = imgSrc || document.getElementById('lightbox-img').getAttribute('src');
+    
+    const index = favorites.indexOf(currentSrc);
+    if (index > -1) {
+        favorites.splice(index, 1);
+    } else {
+        favorites.push(currentSrc);
+    }
+    
+    localStorage.setItem('ak_favorites', JSON.stringify(favorites));
+    updateFavoriteUI();
+}
+
+function updateFavoriteUI() {
+    // Ana galerideki kalpleri güncelle
+    document.querySelectorAll('.gallery-item').forEach(item => {
+        const src = item.querySelector('img').getAttribute('src');
+        let favBtn = item.querySelector('.fav-btn');
+        
+        if (!favBtn) {
+            favBtn = document.createElement('button');
+            favBtn.className = 'fav-btn';
+            favBtn.innerHTML = '❤️';
+            favBtn.onclick = (e) => {
+                e.stopPropagation();
+                toggleFavorite(src);
+            };
+            item.appendChild(favBtn);
+        }
+        
+        favBtn.classList.toggle('active', favorites.includes(src));
+    });
+
+    // Lightbox butonunu güncelle
+    const lbFavBtn = document.getElementById('lb-fav-toggle');
+    const currentSrc = document.getElementById('lightbox-img').getAttribute('src');
+    if (lbFavBtn) {
+        lbFavBtn.classList.toggle('active', favorites.includes(currentSrc));
+    }
+}
+
+// Mevcut filterGallery fonksiyonuna 'favorites' kontrolü ekle:
+function filterGallery(month) {
+    const btns = document.querySelectorAll('.filter-btn');
+    btns.forEach(btn => btn.classList.remove('active', 'active-purple', 'active-grey'));
+
+    const items = document.querySelectorAll('.gallery-item');
+    items.forEach(item => {
+        const imgSrc = item.querySelector('img').getAttribute('src');
+        let isMatch = false;
+
+        if (month === 'all') isMatch = true;
+        else if (month === 'favorites') isMatch = favorites.includes(imgSrc);
+        // ... diğer tarih filtrelerin ...
+        
+        else if (month === '11.2025' && imgSrc.includes('11.2025')) isMatch = true;
+        // (Burada mevcut else if bloklarını koru)
+
+        item.style.display = isMatch ? 'block' : 'none';
+    });
+}
+
+// Lightbox her açıldığında ve resim değiştiğinde UI'ı güncellemek için:
+// changeImage ve openLightbox fonksiyonlarının sonuna updateFavoriteUI() ekle.
 
 </script>
 
