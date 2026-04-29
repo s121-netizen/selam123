@@ -2076,7 +2076,7 @@ function syncLightboxDate(index) {
       d.lastName = name;
       d.players[name].updatedAt = Date.now();
       save(d);
-      currentName = name;
+      window.currentName = name;
       R.nameOk.textContent = `kaydedildi: ${name} ✅`;
       renderBoards();
       return true;
@@ -2087,28 +2087,7 @@ function syncLightboxDate(index) {
       if(e.key === "Enter"){ e.preventDefault(); setName(R.nameInput.value); }
     });
 
- async function updateScore(mode, value) {
-    // currentName: mg-save-name butonuna tıklandığında set edilen isimdir
-    if (!currentName || !window.fbDB) return; 
 
-    const playerPath = 'players/' + currentName;
-    const dbRef = window.fbRef(window.fbDB, playerPath);
-
-    try {
-        const snapshot = await window.fbGet(dbRef);
-        let data = snapshot.val() || { click: 0, memory: 0, quiz: 0 };
-
-        // Sadece yeni skor eskisinden büyükse veritabanını güncelle
-        if (value > (data[mode] || 0)) {
-            data[mode] = value;
-            data.updatedAt = Date.now();
-            await window.fbSet(dbRef, data);
-            console.log(mode + " rekoru kaydedildi: " + value);
-        }
-    } catch (e) {
-        console.error("Firebase kayıt hatası:", e);
-    }
-}
 
     // leaderboard
     function topList(mode){
@@ -2139,36 +2118,9 @@ function syncLightboxDate(index) {
       renderBoards();
     });
 
-    function listenLeaderboard() {
-    if (!window.fbDB || !window.fbOnValue) return;
 
-    const playersRef = window.fbRef(window.fbDB, 'players');
-    
-    window.fbOnValue(playersRef, (snapshot) => {
-        const data = snapshot.val();
-        if (!data) return;
 
-        // Objeyi listeye çeviriyoruz
-        const allPlayers = Object.entries(data).map(([name, scores]) => ({
-            name, ...scores
-        }));
 
-        // 3 farklı kategori için listeleri güncelle
-        renderLeaderboardUI("lb-click", [...allPlayers].sort((a,b) => (b.click || 0) - (a.click || 0)), "click");
-        renderLeaderboardUI("lb-memory", [...allPlayers].sort((a,b) => (b.memory || 0) - (a.memory || 0)), "memory");
-        renderLeaderboardUI("lb-quiz", [...allPlayers].sort((a,b) => (b.quiz || 0) - (a.quiz || 0)), "quiz");
-    });
-}
-
-function renderLeaderboardUI(elementId, sortedList, mode) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    
-    // Sadece ilk 10 kişiyi göster
-    el.innerHTML = sortedList.slice(0, 10).map(p => 
-        `<li>${p.name} — ${p[mode] || 0} ${mode === 'click' ? '' : 'pts'}</li>`
-    ).join("");
-}
 
     // ---------------- Game 1: Click Hearts ----------------
     let chScore = 0, chTime = 30, chRunning = false, chTick=null, chSpawn=null;
@@ -2359,30 +2311,8 @@ function renderLeaderboardUI(elementId, sortedList, mode) {
       });
     }
 
-    function listenLeaderboard() {
-    const playersRef = window.fbRef(window.fbDB, 'players');
-    
-    window.fbOnValue(playersRef, (snapshot) => {
-        const data = snapshot.val();
-        if (!data) return;
 
-        const allPlayers = Object.entries(data).map(([name, scores]) => ({
-            name, ...scores
-        }));
 
-        // Kategorilere göre sıralayıp ekrana bas
-        renderTable("lb-click", [...allPlayers].sort((a,b) => (b.click || 0) - (a.click || 0)));
-        renderTable("lb-memory", [...allPlayers].sort((a,b) => (b.memory || 0) - (a.memory || 0)));
-        renderTable("lb-quiz", [...allPlayers].sort((a,b) => (b.quiz || 0) - (a.quiz || 0)));
-    });
-}
-
-function renderTable(id, list) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const mode = id.split('-')[1]; // click, memory veya quiz
-    el.innerHTML = list.slice(0, 10).map(p => `<li>${p.name} — ${p[mode] || 0}</li>`).join("");
-}
 
     R.qStart.addEventListener("click", ()=>{
       if(!setName(currentName || R.nameInput.value)){ R.nameInput.focus(); return; }
@@ -2615,6 +2545,7 @@ slider.addEventListener('wheel', (e) => {
 
 <button id="mini-game-btn" class="mini-game-btn" type="button" style="position:fixed;bottom:20px;right:20px;z-index:999999;pointer-events:auto;" onclick="(function(){var m=document.getElementById('mini-game-modal');if(m){m.classList.add('show');m.setAttribute('aria-hidden','false');}})();">mini oyun 🎮</button>
 
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -2632,17 +2563,45 @@ slider.addEventListener('wheel', (e) => {
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // Global erişim için window objesine bağlıyoruz
-  window.fbDB = db;
-  window.fbRef = ref;
-  window.fbSet = set;
-  window.fbGet = get;
-  window.fbOnValue = onValue;
+  // Global erişim tanımlamaları
+  window.updateScore = async function(mode, value) {
+    // Oyun içindeki ismi window.currentName üzerinden alıyoruz
+    const name = window.currentName; 
+    if (!name || !db) return;
 
-  console.log("Firebase bağlandı! ✅");
-  
-  // Tabloyu dinlemeye başla (Aşağıdaki 3. adımdaki fonksiyon)
-  if (typeof listenLeaderboard === "function") listenLeaderboard();
+    const playerPath = 'players/' + name;
+    const dbRef = ref(db, playerPath);
+    try {
+      const snapshot = await get(dbRef);
+      let data = snapshot.val() || { click: 0, memory: 0, quiz: 0 };
+      if (value > (data[mode] || 0)) {
+        data[mode] = value;
+        data.updatedAt = Date.now();
+        await set(dbRef, data);
+        console.log(mode + " skoru kaydedildi: " + value);
+      }
+    } catch (e) { console.error("Firebase Hatası:", e); }
+  };
+
+  window.listenLeaderboard = function() {
+    const playersRef = ref(db, 'players');
+    onValue(playersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+      const allPlayers = Object.entries(data).map(([name, scores]) => ({ name, ...scores }));
+      
+      const render = (id, sorted, key) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = sorted.slice(0, 10).map(p => `<li>${p.name} — ${p[key] || 0}</li>`).join("");
+      };
+
+      render("lb-click", [...allPlayers].sort((a,b) => (b.click || 0) - (a.click || 0)), "click");
+      render("lb-memory", [...allPlayers].sort((a,b) => (b.memory || 0) - (a.memory || 0)), "memory");
+      render("lb-quiz", [...allPlayers].sort((a,b) => (b.quiz || 0) - (a.quiz || 0)), "quiz");
+    });
+  };
+
+  window.listenLeaderboard();
 </script>
 
 </body>
