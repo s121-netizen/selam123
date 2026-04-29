@@ -2602,6 +2602,23 @@ slider.addEventListener('wheel', (e) => {
   };
 
   window.listenLeaderboard();
+  // Sayfa açıldığında veya isim girildiğinde eski skorları getirir
+window.loadPlayerStats = async function(name) {
+  if (!name || !window.fbDB) return;
+  const playerRef = window.fbRef(window.fbDB, 'players/' + name);
+  try {
+    const snapshot = await window.fbGet(playerRef);
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      console.log(name + " için eski skorlar yüklendi: ", data);
+      // Burası çok önemli: Firebase'den gelen veriyi yerel oyuna tanıtıyoruz
+      return data;
+    }
+  } catch (e) {
+    console.error("Skorlar yüklenirken hata oluştu:", e);
+  }
+  return null;
+};
 </script>
 
 </body>
