@@ -726,56 +726,89 @@ body.logged-in #mini-game-btn{ display:block !important; }
     scroll-behavior: smooth;
 }
 
-/* Çarkıfelek Tasarımı */
+/* ===== PROFESYONEL AŞK ÇARKI GÜNCEL ===== */
 .wheel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    /* Mavi seçilme efektini her yerden kaldırır */
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    outline: none;
+}
+
+.wheel-wrapper {
     position: relative;
-    width: 300px;
-    height: 300px;
+    width: min(300px, 80vw); 
+    height: min(300px, 80vw);
+    border-radius: 50%;
     margin: 20px auto;
 }
-.wheel-main {
+
+#wheel {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 8px solid rgba(255, 255, 255, 0.15);
     position: relative;
     overflow: hidden;
+    /* KASMA ÖNLEYİCİ AYARLAR */
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0); 
     transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
-    background: #1a1a1a;
+    background: conic-gradient(
+        #7b2cbf 0deg 45deg, #b0b0b0 45deg 90deg, #9d4edd 90deg 135deg, 
+        #8e8e8e 135deg 180deg, #5a189a 180deg 225deg, #ced4da 225deg 270deg,
+        #480ca8 270deg 315deg, #adb5bd 315deg 360deg
+    );
+    border: 4px solid rgba(255, 255, 255, 0.2);
 }
-.wheel-arrow {
+
+.wheel-center-btn {
     position: absolute;
-    top: -15px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 0; height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-top: 30px solid #ff4d6d;
-    z-index: 10;
-}
-.wheel-segment {
-    position: absolute;
-    width: 50%;
-    height: 50%;
-    transform-origin: 100% 100%;
+    transform: translate(-50%, -50%);
+    width: 65px;
+    height: 65px;
+    background: #ff4d6d;
+    border: 4px solid #fff;
+    border-radius: 50%;
+    z-index: 105;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
     font-weight: bold;
     color: white;
-    padding-bottom: 50px;
-    box-sizing: border-box;
+    font-size: 11px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    /* MOBİL MAVİ EFEKT ÖNLEYİCİ */
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
 }
-#wheel-result {
-    text-align: center;
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    color: #ff4d6d;
-    margin-top: 15px;
-    min-height: 30px;
-    font-weight: bold;
+
+.wheel-center-btn:active {
+    transform: translate(-50%, -50%) scale(0.92);
+}
+
+.wheel-label {
+    position: absolute;
+    width: 50%;
+    height: 30px;
+    top: calc(50% - 15px);
+    left: 50%;
+    transform-origin: left center;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 15px;
+    font-size: min(10px, 3vw);
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    pointer-events: none;
 }
 
 </style>
@@ -1438,57 +1471,6 @@ body.logged-in #mini-game-btn{ display:block !important; }
             <div class="gallery-item"><img src="04.2026/19.04.2026.7.png"><span class="gallery-date">19.04.2026</span></div>
             <div class="gallery-item"><img src="04.2026/19.04.2026.8.jpg"><span class="gallery-date">19.04.2026</span></div>
             <div class="gallery-item"><img src="04.2026/19.04.2026.png"><span class="gallery-date">19.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/20.04.2026.2.jpg"><span class="gallery-date">20.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/20.04.2026.3.jpg"><span class="gallery-date">20.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/20.04.2026.4.png"><span class="gallery-date">20.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/20.04.2026.png"><span class="gallery-date">20.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/21.04.2026.2.jpg"><span class="gallery-date">21.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/21.04.2026.3.jpg"><span class="gallery-date">21.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/21.04.2026.4.jpg"><span class="gallery-date">21.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/21.04.2026.5.jpg"><span class="gallery-date">21.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/21.04.2026.6.png"><span class="gallery-date">21.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/21.04.2026.jpg"><span class="gallery-date">21.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/22.04.2026.2.jpg"><span class="gallery-date">22.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/22.04.2026.3.jpg"><span class="gallery-date">22.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/22.04.2026.4.jpg"><span class="gallery-date">22.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/22.04.2026.jpg"><span class="gallery-date">22.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/23.04.2026.2.jpg"><span class="gallery-date">23.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/23.04.2026.3.jpg"><span class="gallery-date">23.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/23.04.2026.4.jpg"><span class="gallery-date">23.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/23.04.2026.5.jpg"><span class="gallery-date">23.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/23.04.2026.6.png"><span class="gallery-date">23.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/23.04.2026.png"><span class="gallery-date">23.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/24.04.2026.2.jpg"><span class="gallery-date">24.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/24.04.2026.3.jpg"><span class="gallery-date">24.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/24.04.2026.4.png"><span class="gallery-date">24.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/24.04.2026.jpg"><span class="gallery-date">24.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.10.jpg"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.11.jpg"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.12.jpg"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.13.jpg"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.2.png"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.3.png"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.4.png"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.5.png"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.6.jpg"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.7.jpg"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.8.jpg"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.9.jpg"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/25.04.2026.png"><span class="gallery-date">25.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/26.04.2026.2.png"><span class="gallery-date">26.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/26.04.2026.jpg"><span class="gallery-date">26.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/27.04.2026.2.jpg"><span class="gallery-date">27.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/27.04.2026.3.png"><span class="gallery-date">27.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/27.04.2026.4.png"><span class="gallery-date">27.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/27.04.2026.jpg"><span class="gallery-date">27.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/28.04.2026.2.jpg"><span class="gallery-date">28.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/28.04.2026.3.jpg"><span class="gallery-date">28.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/28.04.2026.4.jpg"><span class="gallery-date">28.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/28.04.2026.5.jpg"><span class="gallery-date">28.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/28.04.2026.6.png"><span class="gallery-date">28.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/28.04.2026.7.png"><span class="gallery-date">28.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/28.04.2026.8.png"><span class="gallery-date">28.04.2026</span></div>
-            <div class="gallery-item"><img src="04.2026/28.04.2026.png"><span class="gallery-date">28.04.2026</span></div>
         </div>
     </div>
 
@@ -1915,43 +1897,47 @@ function syncLightboxDate(index) {
     }
 
     function noteBurstHearts(x, y) {
-        const big = document.createElement("div");
-        big.className = "note-heart";
-        big.textContent = "❤️";
-        big.style.left = x + "px";
-        big.style.top = y + "px";
-        big.style.fontSize = "28px";
-        document.body.appendChild(big);
-        setTimeout(() => big.remove(), 950);
+    // Ana büyük kalp
+    const big = document.createElement("div");
+    big.className = "note-heart";
+    big.textContent = "❤️";
+    big.style.position = "fixed"; // Garantiye almak için
+    big.style.left = x + "px";
+    big.style.top = y + "px";
+    big.style.fontSize = "40px";
+    big.style.zIndex = "100000";
+    document.body.appendChild(big);
+    setTimeout(() => big.remove(), 950);
 
-        const count = 10;
-        for (let i = 0; i < count; i++) {
-            const p = document.createElement("div");
-            p.className = "note-heart-p";
-            p.textContent = "❤";
+    // Etrafa saçılan küçük kalpler
+    const count = 15; // Sayıyı biraz artırdım daha belirgin olsun
+    for (let i = 0; i < count; i++) {
+        const p = document.createElement("div");
+        p.className = "note-heart-p";
+        p.textContent = Math.random() > 0.5 ? "💜" : "🩶"; // Senin renklerin
 
-            const angle = Math.random() * Math.PI * 2;
-            const dist = 30 + Math.random() * 80;
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 50 + Math.random() * 100;
 
-            const x0 = x - 6;
-            const y0 = y - 10;
-            const x1 = x0 + Math.cos(angle) * dist;
-            const y1 = y0 + Math.sin(angle) * dist;
+        const x0 = x;
+        const y0 = y;
+        const x1 = x0 + Math.cos(angle) * dist;
+        const y1 = y0 + Math.sin(angle) * dist;
 
-            p.style.setProperty("--x0", `${x0}px`);
-            p.style.setProperty("--y0", `${y0}px`);
-            p.style.setProperty("--x1", `${x1}px`);
-            p.style.setProperty("--y1", `${y1}px`);
+        p.style.position = "fixed";
+        p.style.zIndex = "100000";
+        p.style.left = "0px";
+        p.style.top = "0px";
+        p.style.setProperty("--x0", `${x0}px`);
+        p.style.setProperty("--y0", `${y0}px`);
+        p.style.setProperty("--x1", `${x1}px`);
+        p.style.setProperty("--y1", `${y1}px`);
+        p.style.fontSize = (15 + Math.random() * 15) + "px";
 
-            p.style.left = "0px";
-            p.style.top = "0px";
-            p.style.color = "#ff4d6d";
-            p.style.fontSize = (10 + Math.random() * 10) + "px";
-
-            document.body.appendChild(p);
-            p.addEventListener("animationend", () => p.remove());
-        }
+        document.body.appendChild(p);
+        p.addEventListener("animationend", () => p.remove());
     }
+}
 
     let autoSlideTimer = null;
     let autoSlideResumeTimer = null;
@@ -2108,12 +2094,6 @@ function syncLightboxDate(index) {
     function activateTab(key){
       R.tabs.forEach(t=>{
         const on = t.dataset.tab === key;
-        // Board (Sıralama) veya Wheel (Çark) tıklandığında ilgili fonksiyonu çağır
-    if(key === "board") renderBoards();
-    if(key === "wheel") {
-        // DOM'un hazır olması için kısa bir gecikme ile başlat
-        setTimeout(initWheel, 50); 
-    }
         t.classList.toggle("active", on);
         t.setAttribute("aria-selected", on ? "true":"false");
       });
@@ -2324,9 +2304,6 @@ function syncLightboxDate(index) {
       mmReset(); mmRender();
     });
 
-
-    
-
     // ---------------- Game 3: Quiz ----------------
     const quiz = [
   { q: "Atakan'ın favori rengi?", a: ["mor", "kırmızı", "mavi", "siyah"], c: 0 },
@@ -2379,76 +2356,6 @@ function syncLightboxDate(index) {
         });
       });
     }
-    
-    // --- Çarkıfelek Ayarları ve Yazıları ---
-const wheelLabelsShort = ["Rol 🎭", "Anı 📖", "Challenge ⚡", "Lakap 🏷️", "İtiraf 😳", "Emoji 😍", "Şiir 📝", "Video 🎥"];
-const wheelLabelsLong = [
-    "5 dakika rol yaparak konuş 🎭",
-    "Bizimle ilgili güzel bir anını anlat 📖",
-    "Sana verdiğim mini challenge’ı yap ⚡",
-    "Bana yeni bir lakap bul 🏷️",
-    "Bana küçük bir itiraf yap 😳",
-    "Bana sadece emojilerle mesaj at 😍",
-    "Bana kısa bir şiir yaz 📝",
-    "Bana kısa bir video çek 🎥"
-];
-
-function initWheel() {
-    const wheel = document.getElementById("wheel");
-    const spinBtn = document.getElementById("wheel-spin");
-    const resultText = document.getElementById("wheel-result");
-    
-    // Eğer çark zaten doluysa tekrar oluşturma
-    if(!wheel || !spinBtn || wheel.innerHTML !== "") return;
-
-    const degPerOption = 360 / wheelLabelsShort.length;
-    
-    wheelLabelsShort.forEach((text, i) => {
-        const seg = document.createElement("div");
-        seg.className = "wheel-segment";
-        // Dilimleri yerleştiriyoruz
-        seg.style.transform = `rotate(${i * degPerOption}deg) skewY(${90 - degPerOption}deg)`;
-        // Mor ve gri geçişli tema
-        seg.style.background = i % 2 === 0 ? "#7b2cbf" : "#b0b0b0"; 
-        
-        const content = document.createElement("div");
-        content.innerText = text;
-        // Metni dilimin içine düzgünce hizalıyoruz
-        content.style.transform = `skewY(-${90 - degPerOption}deg) rotate(${degPerOption / 2}deg)`;
-        content.style.position = "absolute";
-        content.style.right = "-35px";
-        content.style.top = "55px";
-        content.style.width = "90px";
-        content.style.textAlign = "center";
-        content.style.fontSize = "12px";
-
-        seg.appendChild(content);
-        wheel.appendChild(seg);
-    });
-
-    let currentRotation = 0;
-
-    spinBtn.onclick = () => {
-        spinBtn.disabled = true;
-        resultText.innerText = "Dönüyor... 🔄";
-        
-        // En az 5 tam tur atacak şekilde rastgele dönüş
-        const randomDeg = Math.floor(Math.random() * 360) + 1800; 
-        currentRotation += randomDeg;
-        wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-        setTimeout(() => {
-            spinBtn.disabled = false;
-            // Okun gösterdiği dilimi hesaplıyoruz
-            const actualDeg = currentRotation % 360;
-            const index = Math.floor((360 - (actualDeg % 360)) / degPerOption) % wheelLabelsShort.length;
-            
-            // Uzun metni sonuç olarak yazdırıyoruz
-            resultText.innerText = "Şansına: " + wheelLabelsLong[index];
-            resultText.style.color = "#ff4d6d"; // Pembe vurgu rengi
-        }, 4000);
-    };
-}
 
     R.qStart.addEventListener("click", ()=>{
       if(!setName(currentName || R.nameInput.value)){ R.nameInput.focus(); return; }
@@ -2580,6 +2487,88 @@ slider.addEventListener('wheel', (e) => {
     }
 });
 
+/* ===== AŞK ÇARKI TÜM MANTIK (PRO) ===== */
+let currentRotation = 0;
+let isSpinning = false;
+let motionInited = false;
+
+const rewards = [
+    "5 dakika rol yaparak konuş 🎭",
+    "Bizimle ilgili güzel bir anını anlat 📖",
+    "Sana verdiğim mini challenge’ı yap ⚡",
+    "Bana yeni bir lakap bul 🏷️",
+    "Bana küçük bir itiraf yap 😳",
+    "Bana sadece emojilerle mesaj at 😍",
+    "Bana kısa bir şiir yaz 📝",
+    "Bana kısa bir video çek 🎥"
+];
+
+function spinWheel() {
+    if (isSpinning) return;
+    if (!motionInited) requestMotionPermission();
+
+    isSpinning = true;
+    const wheel = document.getElementById('wheel');
+    const resultText = document.getElementById('wheel-result');
+    
+    if (resultText) resultText.innerText = "Kaderin dönüyor... ✨";
+    
+    // Rastgele dönüş (GPU dostu miktar)
+    const randomExtra = Math.floor(Math.random() * 360) + 1800; 
+    currentRotation += randomExtra; 
+    
+    if (wheel) {
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
+    }
+    
+    setTimeout(() => {
+        isSpinning = false;
+        const actualAngle = currentRotation % 360;
+        const prizeIndex = Math.floor(((360 - (actualAngle % 360)) % 360) / 45);
+        
+        if (resultText) resultText.innerText = rewards[prizeIndex];
+        
+        const rect = wheel.getBoundingClientRect();
+        if (typeof noteBurstHearts === "function") {
+            noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        }
+    }, 4000);
+}
+
+// SALLAMA AYARLARI (Gelişmiş)
+let lastShake = 0;
+const shakeThreshold = 55; // Daha da sert sallama gerekir
+
+function handleShake(event) {
+    const acc = event.accelerationIncludingGravity;
+    if (!acc) return;
+    
+    // Daha profesyonel ivme ölçümü
+    const speed = Math.sqrt(acc.x**2 + acc.y**2 + acc.z**2);
+    const now = Date.now();
+    
+    if (speed > shakeThreshold && (now - lastShake > 3500)) { 
+        lastShake = now;
+        spinWheel();
+    }
+}
+
+function requestMotionPermission() {
+    motionInited = true;
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission().then(s => {
+            if (s === 'granted') window.addEventListener('devicemotion', handleShake);
+        });
+    } else {
+        window.addEventListener('devicemotion', handleShake);
+    }
+}
+
+// Mavi seçilme engelleyici
+document.addEventListener('contextmenu', e => {
+    if (e.target.closest('.wheel-wrapper')) e.preventDefault();
+});
+
 </script>
 
 
@@ -2607,7 +2596,7 @@ slider.addEventListener('wheel', (e) => {
       <button class="mg-tab" data-tab="memory" role="tab">hafıza</button>
       <button class="mg-tab" data-tab="quiz" role="tab">mini quiz</button>
       <button class="mg-tab" data-tab="board" role="tab">sıralama</button>
-      <button class="mg-tab" data-tab="wheel" role="tab">çarkıfelek</button>
+      <button class="mg-tab" data-tab="wheel" role="tab">aşk çarkı</button>
     </div>
 
     <div class="mg-body">
@@ -2676,18 +2665,27 @@ slider.addEventListener('wheel', (e) => {
           </div>
         </div>
       </section>
-      
-      <section class="mg-panel" data-panel="wheel" role="tabpanel">
+
+   <section class="mg-panel" data-panel="wheel" role="tabpanel">
     <div class="mg-panel-top">
-        <div class="mg-hint">şansına ne çıkarsa artık sevgilim 💜</div>
+        <div class="mg-hint">çarkın ortasına bas veya telefonu sertçe salla! 💜</div>
     </div>
     <div class="wheel-container">
-        <div class="wheel-arrow"></div>
-        <div id="wheel" class="wheel-main"></div>
-    </div>
-    <div id="wheel-result"></div>
-    <div class="mg-actions">
-        <button id="wheel-spin" class="mg-primary" style="margin:0 auto;" type="button">çevir bakalım</button>
+        <div class="wheel-wrapper">
+            <div class="wheel-pointer"></div>
+            <div id="wheel">
+                <div class="wheel-label" style="transform: rotate(22.5deg)">Rol 🎭</div>
+    <div class="wheel-label" style="transform: rotate(67.5deg)">Anı 📖</div>
+    <div class="wheel-label" style="transform: rotate(112.5deg)">Challenge ⚡</div>
+    <div class="wheel-label" style="transform: rotate(157.5deg)">Lakap 🏷️</div>
+    <div class="wheel-label" style="transform: rotate(202.5deg)">İtiraf 😳</div>
+    <div class="wheel-label" style="transform: rotate(247.5deg)">Emoji 😍</div>
+    <div class="wheel-label" style="transform: rotate(292.5deg)">Şiir 📝</div>
+    <div class="wheel-label" style="transform: rotate(337.5deg)">Video 🎥</div>
+            </div>
+            <div class="wheel-center-btn" onclick="spinWheel()">ÇEVİR</div>
+        </div>
+        <div id="wheel-result"></div>
     </div>
 </section>
 
