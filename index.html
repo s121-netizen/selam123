@@ -745,6 +745,86 @@ body.logged-in #mini-game-btn{ display:block !important; }
 <p id="error-msg" style="color: #ff4d4d; display: none; margin-top: 15px; font-size: 13px;">Hatalı şifre sevgilim, tekrar dene.</p>
 </div>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCzbNG4XiY6uAcFtTMbffKQ372ZUcFwS2k",
+    authDomain: "project-3362233817744032673.firebaseapp.com",
+    databaseURL: "https://project-3362233817744032673-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "project-3362233817744032673",
+    storageBucket: "project-3362233817744032673.firebasestorage.app",
+    messagingSenderId: "25164792224",
+    appId: "1:25164792224:web:27f226eeb46ab8bfc9a4c5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Global Değişkenleri Tanımla (Diğer scriptlerin görmesi için)
+  window.fbDB = db;
+  window.fbRef = ref;
+  window.fbSet = set;
+  window.fbGet = get;
+  window.fbOnValue = onValue;
+
+  // 1. CANLI SIRALAMA SİSTEMİ (Site açılır açılmaz çalışır)
+  window.listenLeaderboard = function() {
+    const playersRef = ref(db, 'players');
+    onValue(playersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      const allPlayers = Object.entries(data).map(([name, scores]) => ({
+        name, ...scores
+      }));
+
+      const render = (id, sorted, key) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.innerHTML = sorted.slice(0, 10).map(p => 
+            `<li><span class="name">${p.name}</span> — <span class="score">${p[key] || 0}</span></li>`
+          ).join("");
+        }
+      };
+
+      // Skorları büyükten küçüğe diz ve listelere bas
+      render("lb-click", [...allPlayers].sort((a,b) => (b.click || 0) - (a.click || 0)), "click");
+      render("lb-memory", [...allPlayers].sort((a,b) => (b.memory || 0) - (a.memory || 0)), "memory");
+      render("lb-quiz", [...allPlayers].sort((a,b) => (b.quiz || 0) - (a.quiz || 0)), "quiz");
+    });
+  };
+
+  // 2. SKOR KAYDETME SİSTEMİ
+  window.updateScore = async function(mode, value) {
+    // window.currentName: mg-save-name butonuna basıldığında set edilen değişkendir
+    const name = window.currentName;
+    if (!name || !db) return;
+
+    const playerPath = 'players/' + name;
+    const dbRef = ref(db, playerPath);
+
+    try {
+      const snapshot = await get(dbRef);
+      let data = snapshot.val() || { click: 0, memory: 0, quiz: 0 };
+
+      // Sadece rekor kırıldıysa Firebase'e gönder
+      if (value > (data[mode] || 0)) {
+        data[mode] = value;
+        data.updatedAt = Date.now();
+        await set(dbRef, data);
+        console.log("Yeni rekor kaydedildi! 🚀");
+      }
+    } catch (e) {
+      console.error("Firebase kayıt hatası:", e);
+    }
+  };
+
+  // Sayfa yüklendiği an sıralamayı dinlemeye başla
+  window.listenLeaderboard();
+  console.log("Firebase Sistemi Aktif! ✅");
+</script>
 
 <div class="page" id="main-content">
     <h1>aynı şehirde olmasak da<br>aynı hislerdeyiz</h1>
@@ -2545,81 +2625,6 @@ slider.addEventListener('wheel', (e) => {
 
 <button id="mini-game-btn" class="mini-game-btn" type="button" style="position:fixed;bottom:20px;right:20px;z-index:999999;pointer-events:auto;" onclick="(function(){var m=document.getElementById('mini-game-modal');if(m){m.classList.add('show');m.setAttribute('aria-hidden','false');}})();">mini oyun 🎮</button>
 
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCzbNG4XiY6uAcFtTMbffKQ372ZUcFwS2k",
-    authDomain: "project-3362233817744032673.firebaseapp.com",
-    databaseURL: "https://project-3362233817744032673-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "project-3362233817744032673",
-    storageBucket: "project-3362233817744032673.firebasestorage.app",
-    messagingSenderId: "25164792224",
-    appId: "1:25164792224:web:27f226eeb46ab8bfc9a4c5"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  // Global erişim tanımlamaları
-  window.updateScore = async function(mode, value) {
-    // Oyun içindeki ismi window.currentName üzerinden alıyoruz
-    const name = window.currentName; 
-    if (!name || !db) return;
-
-    const playerPath = 'players/' + name;
-    const dbRef = ref(db, playerPath);
-    try {
-      const snapshot = await get(dbRef);
-      let data = snapshot.val() || { click: 0, memory: 0, quiz: 0 };
-      if (value > (data[mode] || 0)) {
-        data[mode] = value;
-        data.updatedAt = Date.now();
-        await set(dbRef, data);
-        console.log(mode + " skoru kaydedildi: " + value);
-      }
-    } catch (e) { console.error("Firebase Hatası:", e); }
-  };
-
-  window.listenLeaderboard = function() {
-    const playersRef = ref(db, 'players');
-    onValue(playersRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) return;
-      const allPlayers = Object.entries(data).map(([name, scores]) => ({ name, ...scores }));
-      
-      const render = (id, sorted, key) => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = sorted.slice(0, 10).map(p => `<li>${p.name} — ${p[key] || 0}</li>`).join("");
-      };
-
-      render("lb-click", [...allPlayers].sort((a,b) => (b.click || 0) - (a.click || 0)), "click");
-      render("lb-memory", [...allPlayers].sort((a,b) => (b.memory || 0) - (a.memory || 0)), "memory");
-      render("lb-quiz", [...allPlayers].sort((a,b) => (b.quiz || 0) - (a.quiz || 0)), "quiz");
-    });
-  };
-
-  window.listenLeaderboard();
-  // Sayfa açıldığında veya isim girildiğinde eski skorları getirir
-window.loadPlayerStats = async function(name) {
-  if (!name || !window.fbDB) return;
-  const playerRef = window.fbRef(window.fbDB, 'players/' + name);
-  try {
-    const snapshot = await window.fbGet(playerRef);
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      console.log(name + " için eski skorlar yüklendi: ", data);
-      // Burası çok önemli: Firebase'den gelen veriyi yerel oyuna tanıtıyoruz
-      return data;
-    }
-  } catch (e) {
-    console.error("Skorlar yüklenirken hata oluştu:", e);
-  }
-  return null;
-};
-</script>
 
 </body>
 </html>
