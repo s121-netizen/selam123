@@ -2087,10 +2087,10 @@ function syncLightboxDate(index) {
       if(e.key === "Enter"){ e.preventDefault(); setName(R.nameInput.value); }
     });
 
-    async function updateScore(mode, value) {
-    if (!currentName) return; 
+ async function updateScore(mode, value) {
+    // currentName: mg-save-name butonuna tıklandığında set edilen isimdir
+    if (!currentName || !window.fbDB) return; 
 
-    // Veritabanında gideceği yol: players/Atakan gibi
     const playerPath = 'players/' + currentName;
     const dbRef = window.fbRef(window.fbDB, playerPath);
 
@@ -2098,14 +2098,15 @@ function syncLightboxDate(index) {
         const snapshot = await window.fbGet(dbRef);
         let data = snapshot.val() || { click: 0, memory: 0, quiz: 0 };
 
-        // Eğer yeni skor, eski rekorundan büyükse kaydet
+        // Sadece yeni skor eskisinden büyükse veritabanını güncelle
         if (value > (data[mode] || 0)) {
             data[mode] = value;
             data.updatedAt = Date.now();
             await window.fbSet(dbRef, data);
+            console.log(mode + " rekoru kaydedildi: " + value);
         }
     } catch (e) {
-        console.error("Firebase'e yazılamadı:", e);
+        console.error("Firebase kayıt hatası:", e);
     }
 }
 
@@ -2137,6 +2138,37 @@ function syncLightboxDate(index) {
       save({players:{}, lastName: currentName || ""});
       renderBoards();
     });
+
+    function listenLeaderboard() {
+    if (!window.fbDB || !window.fbOnValue) return;
+
+    const playersRef = window.fbRef(window.fbDB, 'players');
+    
+    window.fbOnValue(playersRef, (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        // Objeyi listeye çeviriyoruz
+        const allPlayers = Object.entries(data).map(([name, scores]) => ({
+            name, ...scores
+        }));
+
+        // 3 farklı kategori için listeleri güncelle
+        renderLeaderboardUI("lb-click", [...allPlayers].sort((a,b) => (b.click || 0) - (a.click || 0)), "click");
+        renderLeaderboardUI("lb-memory", [...allPlayers].sort((a,b) => (b.memory || 0) - (a.memory || 0)), "memory");
+        renderLeaderboardUI("lb-quiz", [...allPlayers].sort((a,b) => (b.quiz || 0) - (a.quiz || 0)), "quiz");
+    });
+}
+
+function renderLeaderboardUI(elementId, sortedList, mode) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    
+    // Sadece ilk 10 kişiyi göster
+    el.innerHTML = sortedList.slice(0, 10).map(p => 
+        `<li>${p.name} — ${p[mode] || 0} ${mode === 'click' ? '' : 'pts'}</li>`
+    ).join("");
+}
 
     // ---------------- Game 1: Click Hearts ----------------
     let chScore = 0, chTime = 30, chRunning = false, chTick=null, chSpawn=null;
@@ -2587,7 +2619,6 @@ slider.addEventListener('wheel', (e) => {
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  // BU BİLGİLER SENİN ATTIĞIN BİLGİLER, DEĞİŞTİRME
   const firebaseConfig = {
     apiKey: "AIzaSyCzbNG4XiY6uAcFtTMbffKQ372ZUcFwS2k",
     authDomain: "project-3362233817744032673.firebaseapp.com",
@@ -2601,17 +2632,17 @@ slider.addEventListener('wheel', (e) => {
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // Bunları pencereye (window) kaydediyoruz ki dosyadaki her yerden ulaşılsın
+  // Global erişim için window objesine bağlıyoruz
   window.fbDB = db;
   window.fbRef = ref;
   window.fbSet = set;
   window.fbGet = get;
   window.fbOnValue = onValue;
 
-  console.log("Firebase bağlandı!");
+  console.log("Firebase bağlandı! ✅");
   
-  // Sıralamayı canlı dinlemeye başla
-  listenLeaderboard();
+  // Tabloyu dinlemeye başla (Aşağıdaki 3. adımdaki fonksiyon)
+  if (typeof listenLeaderboard === "function") listenLeaderboard();
 </script>
 
 </body>
