@@ -2108,6 +2108,12 @@ function syncLightboxDate(index) {
     function activateTab(key){
       R.tabs.forEach(t=>{
         const on = t.dataset.tab === key;
+        // Board (Sıralama) veya Wheel (Çark) tıklandığında ilgili fonksiyonu çağır
+    if(key === "board") renderBoards();
+    if(key === "wheel") {
+        // DOM'un hazır olması için kısa bir gecikme ile başlat
+        setTimeout(initWheel, 50); 
+    }
         t.classList.toggle("active", on);
         t.setAttribute("aria-selected", on ? "true":"false");
       });
@@ -2319,74 +2325,7 @@ function syncLightboxDate(index) {
     });
 
 
-    // Çark Ayarları ve İçeriği
-const wheelOptions = [
-    "Sana kahve yapayım ☕",
-    "İstediğin bir şeyi alayım 🎁",
-    "Görüntülü arama sözü 📞",
-    "1 hafta boyunca pas pas 🧹",
-    "Günün sorusunu sen sor ❓",
-    "Sana özel bir not yazayım ✍️",
-    "İstediğin yemeği sipariş edelim 🍕",
-    "Bir oyun seç oynayalım 🎮"
-];
-
-function initWheel() {
-    const wheel = document.getElementById("wheel");
-    const spinBtn = document.getElementById("wheel-spin");
-    const resultText = document.getElementById("wheel-result");
     
-    if(!wheel || !spinBtn) return;
-
-    // Çark dilimlerini oluştur
-    wheel.innerHTML = "";
-    const degPerOption = 360 / wheelOptions.length;
-    
-    wheelOptions.forEach((text, i) => {
-        const seg = document.createElement("div");
-        seg.className = "wheel-segment";
-        seg.style.transform = `rotate(${i * degPerOption}deg) skewY(${90 - degPerOption}deg)`;
-        seg.style.background = i % 2 === 0 ? "#7b2cbf" : "#b0b0b0";
-        
-        const content = document.createElement("div");
-        content.innerText = text;
-        content.style.transform = `skewY(-${90 - degPerOption}deg) rotate(${degPerOption / 2}deg)`;
-        content.style.position = "absolute";
-        content.style.right = "-40px";
-        content.style.top = "60px";
-        content.style.width = "100px";
-        content.style.textAlign = "center";
-
-        seg.appendChild(content);
-        wheel.appendChild(seg);
-    });
-
-    let currentRotation = 0;
-
-    spinBtn.onclick = () => {
-        spinBtn.disabled = true;
-        resultText.innerText = "Dönüyor... 🔄";
-        
-        const randomDeg = Math.floor(Math.random() * 360) + 1440; // En az 4 tur döner
-        currentRotation += randomDeg;
-        wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-        setTimeout(() => {
-            spinBtn.disabled = false;
-            const actualDeg = currentRotation % 360;
-            // Oku (üstteki ok) gösteren dilimi hesapla
-            const index = Math.floor((360 - (actualDeg % 360)) / degPerOption) % wheelOptions.length;
-            resultText.innerText = wheelOptions[index];
-            
-            // Eğer Firebase kullanmak istersen buraya updateScore benzeri bir şey eklenebilir
-        }, 4000);
-    };
-}
-
-// Sekme değişiminde çarkı başlat (Eski activateTab fonksiyonuna entegre et)
-// ensureInit fonksiyonu içinde Tab olay dinleyicilerinin olduğu yere:
-if (key === "wheel") setTimeout(initWheel, 100);
-
 
     // ---------------- Game 3: Quiz ----------------
     const quiz = [
@@ -2440,6 +2379,76 @@ if (key === "wheel") setTimeout(initWheel, 100);
         });
       });
     }
+    
+    // --- Çarkıfelek Ayarları ve Yazıları ---
+const wheelLabelsShort = ["Rol 🎭", "Anı 📖", "Challenge ⚡", "Lakap 🏷️", "İtiraf 😳", "Emoji 😍", "Şiir 📝", "Video 🎥"];
+const wheelLabelsLong = [
+    "5 dakika rol yaparak konuş 🎭",
+    "Bizimle ilgili güzel bir anını anlat 📖",
+    "Sana verdiğim mini challenge’ı yap ⚡",
+    "Bana yeni bir lakap bul 🏷️",
+    "Bana küçük bir itiraf yap 😳",
+    "Bana sadece emojilerle mesaj at 😍",
+    "Bana kısa bir şiir yaz 📝",
+    "Bana kısa bir video çek 🎥"
+];
+
+function initWheel() {
+    const wheel = document.getElementById("wheel");
+    const spinBtn = document.getElementById("wheel-spin");
+    const resultText = document.getElementById("wheel-result");
+    
+    // Eğer çark zaten doluysa tekrar oluşturma
+    if(!wheel || !spinBtn || wheel.innerHTML !== "") return;
+
+    const degPerOption = 360 / wheelLabelsShort.length;
+    
+    wheelLabelsShort.forEach((text, i) => {
+        const seg = document.createElement("div");
+        seg.className = "wheel-segment";
+        // Dilimleri yerleştiriyoruz
+        seg.style.transform = `rotate(${i * degPerOption}deg) skewY(${90 - degPerOption}deg)`;
+        // Mor ve gri geçişli tema
+        seg.style.background = i % 2 === 0 ? "#7b2cbf" : "#b0b0b0"; 
+        
+        const content = document.createElement("div");
+        content.innerText = text;
+        // Metni dilimin içine düzgünce hizalıyoruz
+        content.style.transform = `skewY(-${90 - degPerOption}deg) rotate(${degPerOption / 2}deg)`;
+        content.style.position = "absolute";
+        content.style.right = "-35px";
+        content.style.top = "55px";
+        content.style.width = "90px";
+        content.style.textAlign = "center";
+        content.style.fontSize = "12px";
+
+        seg.appendChild(content);
+        wheel.appendChild(seg);
+    });
+
+    let currentRotation = 0;
+
+    spinBtn.onclick = () => {
+        spinBtn.disabled = true;
+        resultText.innerText = "Dönüyor... 🔄";
+        
+        // En az 5 tam tur atacak şekilde rastgele dönüş
+        const randomDeg = Math.floor(Math.random() * 360) + 1800; 
+        currentRotation += randomDeg;
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+        setTimeout(() => {
+            spinBtn.disabled = false;
+            // Okun gösterdiği dilimi hesaplıyoruz
+            const actualDeg = currentRotation % 360;
+            const index = Math.floor((360 - (actualDeg % 360)) / degPerOption) % wheelLabelsShort.length;
+            
+            // Uzun metni sonuç olarak yazdırıyoruz
+            resultText.innerText = "Şansına: " + wheelLabelsLong[index];
+            resultText.style.color = "#ff4d6d"; // Pembe vurgu rengi
+        }, 4000);
+    };
+}
 
     R.qStart.addEventListener("click", ()=>{
       if(!setName(currentName || R.nameInput.value)){ R.nameInput.focus(); return; }
