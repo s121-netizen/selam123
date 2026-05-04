@@ -811,6 +811,28 @@ body.logged-in #mini-game-btn{ display:block !important; }
     pointer-events: none;
 }
 
+/* Kalp Akış Kontrol Butonu */
+.heart-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001; /* Login overlay'in üzerinde kalması için */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.heart-toggle-btn.off {
+    background: rgba(255, 77, 109, 0.2);
+    border-color: rgba(255, 77, 109, 0.4);
+}
+
 </style>
 </head>
 
@@ -829,6 +851,8 @@ body.logged-in #mini-game-btn{ display:block !important; }
     <button onclick="checkPass()">Anılarımıza Giriş Yap</button>
 <p id="error-msg" style="color: #ff4d4d; display: none; margin-top: 15px; font-size: 13px;">Hatalı şifre sevgilim, tekrar dene.</p>
 </div>
+
+<button id="heart-toggle" class="heart-toggle-btn" onclick="toggleHeartRain()">❤️ Akış: Açık</button>
 
 
 <div class="page" id="main-content">
@@ -1787,8 +1811,35 @@ document.body.appendChild(heart);
         setTimeout(() => { if(heart.parentNode) heart.remove(); }, 6000);
     }
 
-    function startHeartRain() { setInterval(createHeart, 600); }
+    let heartInterval = null;
+let isHeartRainActive = false; // Başlangıçta kapalı (girişten sonra açılacak)
 
+function toggleHeartRain() {
+    const btn = document.getElementById("heart-toggle");
+    if (isHeartRainActive) {
+        // Durdur
+        clearInterval(heartInterval);
+        heartInterval = null;
+        isHeartRainActive = false;
+        btn.innerHTML = "💔 Akış: Kapalı";
+        btn.classList.add("off");
+    } else {
+        // Başlat
+        heartInterval = setInterval(createHeart, 600);
+        isHeartRainActive = true;
+        btn.innerHTML = "❤️ Akış: Açık";
+        btn.classList.remove("off");
+    }
+}
+
+// executeLogin fonksiyonunun içindeki startHeartRain() çağrısını bununla değiştir:
+function executeLogin() {
+    // ... mevcut kodların ...
+    setTimeout(() => {
+        // ... mevcut kodların ...
+        toggleHeartRain(); // Giriş yapınca otomatik başlat
+    }, 800);
+}
     let currentIdx = 0;
     const imgs = document.querySelectorAll(".gallery-item img");
     const lightbox = document.getElementById("lightbox");
