@@ -265,6 +265,27 @@
             z-index: 13000;
         }
 
+
+        .download-btn{
+    position:absolute;
+    bottom:18px;
+    right:18px;
+    z-index:13000;
+    background:rgba(255,255,255,0.12);
+    color:#fff;
+    text-decoration:none;
+    padding:10px 14px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,0.18);
+    backdrop-filter:blur(8px);
+    font-size:14px;
+    transition:0.2s;
+}
+.download-btn:hover{
+    background:rgba(255,255,255,0.2);
+}
+
+
         /* --- HOŞ GELDİN TOAST --- */
         #welcome-toast {
           position: fixed;
@@ -1610,6 +1631,7 @@ body.logged-in #mini-game-btn{ display:block !important; }
 <span class="nav-btn prev" onclick="changeImage(-1)">❮</span>
     <img id="lightbox-img" src="">
     <div id="lightbox-date" class="lightbox-date"></div>
+    <a id="download-btn" download class="download-btn">⬇ İndir</a>
     <span class="nav-btn next" onclick="changeImage(1)">❯</span>
 </div>
 
@@ -1825,6 +1847,8 @@ document.body.appendChild(heart);
         updateAutoplayBtn();
         startAutoSlide();
     }
+
+    document.getElementById("download-btn").href = images[currentIndex].src;
 
     function closeLightbox() { lightbox.style.display = "none"; stopAutoSlide(); }
 
