@@ -844,6 +844,7 @@ body.logged-in #mini-game-btn{ display:block !important; }
     <div class="subtitle">bir mesafeye değil, bir hisse aitiz.</div>
 
     <div id="counter-container">
+        <div id="counter-container" onclick="toggleTimerFormat()" style="cursor: pointer;"></div>
         <span class="counter-label">Her Saniye Senleyim</span>
         <div id="live-timer">Hesaplanıyor...</div>
     </div>
@@ -1757,36 +1758,50 @@ function logout() {
 }
 
 
-    function updateLiveTimer() {
+let showTotalDaysOnly = false; // Format durumunu tutan değişken
+
+function toggleTimerFormat() {
+    showTotalDaysOnly = !showTotalDaysOnly;
+    updateLiveTimer(); // Hemen güncelle
+    
+    // Görsel geri bildirim için küçük bir kalp patlatması (opsiyonel)
+    if (typeof noteBurstHearts === "function") {
+        const rect = document.getElementById("live-timer").getBoundingClientRect();
+        noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+}
+
+function updateLiveTimer() {
     const now = new Date();
-    
-    // Yıl, Ay, Gün hesaplaması için başlangıç değerleri
-    let years = now.getFullYear() - START_DATE.getFullYear();
-    let months = now.getMonth() - START_DATE.getMonth();
-    let days = now.getDate() - START_DATE.getDate();
-
-    // Ay ve gün dengelemesi
-    if (days < 0) {
-        months--;
-        let lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-        days += lastMonth.getDate();
-    }
-    if (months < 0) {
-        years--;
-        months += 12;
-    }
-
-    // Saat, Dakika, Saniye (Mevcut mantık)
     const diff = now - START_DATE;
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const mins = Math.floor((diff / (1000 * 60)) % 60);
-    const secs = Math.floor((diff / 1000) % 60);
 
-    // Ekrana yazdırma (Eğer yıl 0 ise sadece ay/gün gösterir)
-    let yearText = years > 0 ? `${years} yıl ` : "";
-    
-    document.getElementById("live-timer").innerText = 
-        `${yearText}${months} ay ${days} gün ${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    if (showTotalDaysOnly) {
+        // Sadece Toplam Gün Formatı
+        const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById("live-timer").innerText = `${totalDays} GÜN`;
+    } else {
+        // Yıl - Ay - Gün Formatı (Saatler kaldırıldı)
+        let years = now.getFullYear() - START_DATE.getFullYear();
+        let months = now.getMonth() - START_DATE.getMonth();
+        let days = now.getDate() - START_DATE.getDate();
+
+        if (days < 0) {
+            months--;
+            let lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+            days += lastMonth.getDate();
+        }
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        let result = "";
+        if (years > 0) result += `${years} yıl `;
+        if (months > 0 || years > 0) result += `${months} ay `;
+        result += `${days} gün`;
+
+        document.getElementById("live-timer").innerText = result;
+    }
 }
 
     function createHeart() {
