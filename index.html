@@ -949,10 +949,10 @@ body.logged-in #mini-game-btn{ display:block !important; }
     <div class="subtitle">bir mesafeye değil, bir hisse aitiz.</div>
 
     <div id="counter-container">
-        <div id="counter-container" onclick="toggleTimerFormat()" style="cursor: pointer;"></div>
-        <span class="counter-label">Her Saniye Senleyim</span>
-        <div id="live-timer">Hesaplanıyor...</div>
-    </div>
+    <div id="counter-container" onclick="toggleTimerFormat()" style="cursor: pointer;"></div>
+    <span class="counter-label">Her Saniye Senleyim</span>
+    <div id="live-timer">Hesaplanıyor...</div>
+</div>
 
     <div id="birthday-message">Bugün senin günün… İyi ki doğdun sevgilim. Dileklerinin içinde biraz ben olayım 💜</div>
 
@@ -1886,11 +1886,17 @@ function logout() {
 
 let showTotalDaysOnly = false; // Format durumunu tutan değişken
 
+let timerFormatMode = 0; 
+// 0 = yıl/ay/gün
+// 1 = sadece toplam gün
+// 2 = gün + saat:dakika:saniye
+
 function toggleTimerFormat() {
-    showTotalDaysOnly = !showTotalDaysOnly;
+    timerFormatMode = (timerFormatMode + 1) % 3;
+
     updateLiveTimer(); // Hemen güncelle
-    
-    // Görsel geri bildirim için küçük bir kalp patlatması (opsiyonel)
+
+    // Kalp efekti
     if (typeof noteBurstHearts === "function") {
         const rect = document.getElementById("live-timer").getBoundingClientRect();
         noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
@@ -1901,12 +1907,25 @@ function updateLiveTimer() {
     const now = new Date();
     const diff = now - START_DATE;
 
-    if (showTotalDaysOnly) {
-        // Sadece Toplam Gün Formatı
+    // 2. MOD → Gün + Saat
+    if (timerFormatMode === 2) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const mins = Math.floor((diff / (1000 * 60)) % 60);
+        const secs = Math.floor((diff / 1000) % 60);
+
+        document.getElementById("live-timer").innerText =
+            `${days} gün ${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+    // 1. MOD → Sadece toplam gün
+    } else if (timerFormatMode === 1) {
+
         const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
         document.getElementById("live-timer").innerText = `${totalDays} GÜN`;
+
+    // 0. MOD → Yıl / Ay / Gün
     } else {
-        // Yıl - Ay - Gün Formatı (Saatler kaldırıldı)
+
         let years = now.getFullYear() - START_DATE.getFullYear();
         let months = now.getMonth() - START_DATE.getMonth();
         let days = now.getDate() - START_DATE.getDate();
@@ -1916,12 +1935,14 @@ function updateLiveTimer() {
             let lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
             days += lastMonth.getDate();
         }
+
         if (months < 0) {
             years--;
             months += 12;
         }
 
         let result = "";
+
         if (years > 0) result += `${years} yıl `;
         if (months > 0 || years > 0) result += `${months} ay `;
         result += `${days} gün`;
