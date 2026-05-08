@@ -948,10 +948,11 @@ body.logged-in #mini-game-btn{ display:block !important; }
     <h1>aynı şehirde olmasak da<br>aynı hislerdeyiz</h1>
     <div class="subtitle">bir mesafeye değil, bir hisse aitiz.</div>
 
-   <div id="counter-container" onclick="toggleTimerFormat()" style="cursor: pointer;">
-    <span class="counter-label">Her Saniye Senleyim</span>
-    <div id="live-timer">Hesaplanıyor...</div>
-</div>
+    <div id="counter-container">
+        <div id="counter-container" onclick="toggleTimerFormat()" style="cursor: pointer;"></div>
+        <span class="counter-label">Her Saniye Senleyim</span>
+        <div id="live-timer">Hesaplanıyor...</div>
+    </div>
 
     <div id="birthday-message">Bugün senin günün… İyi ki doğdun sevgilim. Dileklerinin içinde biraz ben olayım 💜</div>
 
@@ -1885,12 +1886,11 @@ function logout() {
 
 let showTotalDaysOnly = false; // Format durumunu tutan değişken
 
-let timerMode = 0; // 0: Ay/Gün, 1: Toplam Gün, 2: Detaylı (Yıl, Ay, Gün, Saat)
-
 function toggleTimerFormat() {
-    timerMode = (timerMode + 1) % 3; // 0 -> 1 -> 2 döngüsü
-    updateLiveTimer(); 
+    showTotalDaysOnly = !showTotalDaysOnly;
+    updateLiveTimer(); // Hemen güncelle
     
+    // Görsel geri bildirim için küçük bir kalp patlatması (opsiyonel)
     if (typeof noteBurstHearts === "function") {
         const rect = document.getElementById("live-timer").getBoundingClientRect();
         noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
@@ -1900,47 +1900,33 @@ function toggleTimerFormat() {
 function updateLiveTimer() {
     const now = new Date();
     const diff = now - START_DATE;
-    const timerEl = document.getElementById("live-timer");
 
-    // Temel Zaman Birimleri
-    const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
-    const mins = Math.floor((diff / (1000 * 60)) % 60).toString().padStart(2, '0');
-    const secs = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
+    if (showTotalDaysOnly) {
+        // Sadece Toplam Gün Formatı
+        const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById("live-timer").innerText = `${totalDays} GÜN`;
+    } else {
+        // Yıl - Ay - Gün Formatı (Saatler kaldırıldı)
+        let years = now.getFullYear() - START_DATE.getFullYear();
+        let months = now.getMonth() - START_DATE.getMonth();
+        let days = now.getDate() - START_DATE.getDate();
 
-    // Yıl/Ay/Gün Hesaplama
-    let years = now.getFullYear() - START_DATE.getFullYear();
-    let months = now.getMonth() - START_DATE.getMonth();
-    let days = now.getDate() - START_DATE.getDate();
+        if (days < 0) {
+            months--;
+            let lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+            days += lastMonth.getDate();
+        }
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
 
-    if (days < 0) {
-        months--;
-        let lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-        days += lastMonth.getDate();
-    }
-    if (months < 0) {
-        years--;
-        months += 12;
-    }
-
-    if (timerMode === 0) {
-        // Tıklamayınca: Kaç ay kaç gün
         let result = "";
         if (years > 0) result += `${years} yıl `;
         if (months > 0 || years > 0) result += `${months} ay `;
         result += `${days} gün`;
-        timerEl.innerText = result;
-    } 
-    else if (timerMode === 1) {
-        // 1. Tıklayış: Kaç gün olduğu
-        timerEl.innerText = `${totalDays} GÜN`;
-    } 
-    else if (timerMode === 2) {
-        // 2. Tıklayış: Kaç ay kaç gün kaç SAAT (Index 16 sistemi)
-        let result = "";
-        if (years > 0) result += `${years}y `;
-        result += `${months} ay ${days} gün ${hours}:${mins}:${secs}`;
-        timerEl.innerText = result;
+
+        document.getElementById("live-timer").innerText = result;
     }
 }
 
