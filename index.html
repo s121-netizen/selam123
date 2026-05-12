@@ -997,11 +997,13 @@ body.logged-in #mini-game-btn{ display:block !important; }
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-shadow: 0 4px 15px rgba(123, 44, 191, 0.2);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .miss-you-btn:active {
-    transform: scale(0.85); /* Kick vuruşu gibi içe çöksün */
-    box-shadow: 0 0 25px #7b2cbf;
+    transform: scale(0.85); /* 808 kick vuruşu gibi */
+    box-shadow: 0 0 25px #4e4c50;
 }
 
 .miss-you-btn:disabled {
@@ -1041,11 +1043,11 @@ body.logged-in #mini-game-btn{ display:block !important; }
 
 <div class="miss-you-container">
     <button id="miss-you-btn" class="miss-you-btn">
-        <span class="btn-icon">💜</span>
+        <span class="btn-icon">💜🩶</span>
         <span class="btn-text">Seni Özledim</span>
     </button>
     <p id="miss-count-msg" style="font-size: 12px; opacity: 0.7; margin-top: 12px; display: none; font-style: italic;">
-        Özlemin Atakan'a ulaştı sevgilim... 🩶
+        Özlemimiz birbirimize  ulaştı sevgilim... 🩶
     </p>
 </div>
 
@@ -3091,6 +3093,54 @@ document.getElementById('miss-you-btn').addEventListener('click', function() {
             }
         })
         .catch(err => console.error("Hata:", err));
+});
+
+
+// --- ORTAK ÖZLEM SAYACI AYARLARI ---
+const NAMESPACE = "seniseviyorumk"; 
+const KEY = "ozlemsayaci";
+
+document.getElementById('miss-you-btn').addEventListener('click', function() {
+    const btn = this;
+    const msg = document.getElementById('miss-count-msg');
+
+    // 1. Önce ortak sayacı 1 artırıyoruz
+    // Not: Kullandığın servis API yapısına göre URL değişebilir, 
+    // genel CountAPI formatı şudur:
+    fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`)
+        .then(res => res.json())
+        .then(data => {
+            const currentTotal = data.value; // Ortak havuzdaki güncel sayı
+
+            // 2. Telegram Bildirimi Gönder
+            const botToken = "8637374659:AAG_hMNTd86vvCD33yYLA4SDKcKdc7Hy_Tk";
+            const chatId = "6548616471";
+            const text = `💜 Özlem Sayacı: ${currentTotal}\n\nKevser seni bir kez daha özledi sevgilim! 🩶`;
+
+            const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}`;
+            
+            return fetch(telegramUrl);
+        })
+        .then(response => {
+            if (response.ok) {
+                // Kalp patlatma efekti
+                const rect = btn.getBoundingClientRect();
+                if (typeof noteBurstHearts === "function") {
+                    noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                }
+
+                // Geri bildirim mesajı ve buton kilidi
+                msg.style.display = "block";
+                btn.disabled = true;
+                setTimeout(() => {
+                    btn.disabled = false;
+                    msg.style.display = "none";
+                }, 10000); // 10 saniye bekleme süresi
+            }
+        })
+        .catch(err => {
+            console.error("Bir sorun oluştu:", err);
+        });
 });
 
 </script>
