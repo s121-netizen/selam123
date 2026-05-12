@@ -1046,6 +1046,9 @@ body.logged-in #mini-game-btn{ display:block !important; }
         <span class="btn-icon">💜🩶</span>
         <span class="btn-text">Seni Özledim</span>
     </button>
+    <div id="live-counter" style="font-size: 14px; color: #b57edc; margin-top: 10px; font-weight: bold; opacity: 0.9;">
+        Toplam Özlem: <span id="count-number">...</span>
+    </div>
     <p id="miss-count-msg" style="font-size: 12px; opacity: 0.7; margin-top: 12px; display: none; font-style: italic;">
         Özlemimiz birbirimize  ulaştı sevgilim... 🩶
     </p>
@@ -3100,46 +3103,50 @@ document.getElementById('miss-you-btn').addEventListener('click', function() {
 const NAMESPACE = "seniseviyorumk"; 
 const KEY = "ozlemsayaci";
 
+// Sayfa açıldığında güncel sayıyı API'den çekip ekrana yazan fonksiyon
+function updateDisplayCount() {
+    fetch(`https://api.countapi.xyz/get/${NAMESPACE}/${KEY}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('count-number').innerText = data.value || 0;
+        });
+}
+
+// Sayfa yüklenince sayacı getir
+updateDisplayCount();
+
 document.getElementById('miss-you-btn').addEventListener('click', function() {
     const btn = this;
     const msg = document.getElementById('miss-count-msg');
+    const countDisplay = document.getElementById('count-number');
 
-    // 1. Önce ortak sayacı 1 artırıyoruz
-    // Not: Kullandığın servis API yapısına göre URL değişebilir, 
-    // genel CountAPI formatı şudur:
     fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`)
         .then(res => res.json())
         .then(data => {
-            const currentTotal = data.value; // Ortak havuzdaki güncel sayı
+            const currentTotal = data.value;
+            
+            // Ekranda sayıyı anlık güncelle
+            countDisplay.innerText = currentTotal;
 
-            // 2. Telegram Bildirimi Gönder
+            // Telegram Bildirimi
             const botToken = "8637374659:AAG_hMNTd86vvCD33yYLA4SDKcKdc7Hy_Tk";
             const chatId = "6548616471";
             const text = `💜 Özlem Sayacı: ${currentTotal}\n\nKevser seni bir kez daha özledi sevgilim! 🩶`;
-
-            const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}`;
             
-            return fetch(telegramUrl);
-        })
-        .then(response => {
-            if (response.ok) {
-                // Kalp patlatma efekti
-                const rect = btn.getBoundingClientRect();
-                if (typeof noteBurstHearts === "function") {
-                    noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
-                }
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}`);
 
-                // Geri bildirim mesajı ve buton kilidi
-                msg.style.display = "block";
-                btn.disabled = true;
-                setTimeout(() => {
-                    btn.disabled = false;
-                    msg.style.display = "none";
-                }, 10000); // 10 saniye bekleme süresi
+            // Efektler
+            const rect = btn.getBoundingClientRect();
+            if (typeof noteBurstHearts === "function") {
+                noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
             }
-        })
-        .catch(err => {
-            console.error("Bir sorun oluştu:", err);
+
+            msg.style.display = "block";
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.disabled = false;
+                msg.style.display = "none";
+            }, 10000);
         });
 });
 
