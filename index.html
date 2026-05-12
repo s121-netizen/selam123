@@ -979,24 +979,6 @@ body.logged-in #mini-game-btn{ display:block !important; }
     color:#d9d9d9;
 }
 
-
-
-.love-status {
-    font-size: 24px;
-    text-align: center;
-    padding: 20px;
-    border: 2px solid #ff4d6d;
-    border-radius: 12px;
-    background: #1a1a1a;
-}
-
-strong {
-    display: block;
-    margin-top: 10px;
-    color: #ff4d6d;
-    font-size: 28px;
-}
-
 </style>
 </head>
 
@@ -3041,7 +3023,6 @@ function downloadImage() {
     document.body.removeChild(link);
 }
 
-
 </script>
 
 
@@ -3165,23 +3146,6 @@ function downloadImage() {
     </div>
   </div>
 </div>
-
-
-<script>
-const statuses = [
-    "özleşmiş",
-    "kıskanç",
-    "romantik",
-    "manyak aşık",
-    "gece sarılma isteği aktif",
-    "birbirini yeme seviyesi"
-];
-
-const el = document.getElementById("statusText");
-if (el) {
-    el.textContent = statuses[Math.floor(Math.random() * statuses.length)];
-}
-</script>
 
 <button id="mini-game-btn" class="mini-game-btn" type="button" style="position:fixed;bottom:20px;right:20px;z-index:999999;pointer-events:auto;" onclick="(function(){var m=document.getElementById('mini-game-modal');if(m){m.classList.add('show');m.setAttribute('aria-hidden','false');}})();">mini oyun 🎮</button>
 </body>
