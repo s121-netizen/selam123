@@ -979,6 +979,36 @@ body.logged-in #mini-game-btn{ display:block !important; }
     color:#d9d9d9;
 }
 
+
+.miss-you-container {
+    margin: 40px 0;
+    text-align: center;
+}
+
+.miss-you-btn {
+    background: rgba(123, 44, 191, 0.1);
+    border: 2px solid #7b2cbf;
+    color: #f5f5f5;
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(123, 44, 191, 0.2);
+}
+
+.miss-you-btn:active {
+    transform: scale(0.85); /* Kick vuruşu gibi içe çöksün */
+    box-shadow: 0 0 25px #7b2cbf;
+}
+
+.miss-you-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 </style>
 </head>
 
@@ -1008,6 +1038,17 @@ body.logged-in #mini-game-btn{ display:block !important; }
     <span class="counter-label">Her Saniye Senleyim</span>
     <div id="live-timer">Hesaplanıyor...</div>
 </div>
+
+<div class="miss-you-container">
+    <button id="miss-you-btn" class="miss-you-btn">
+        <span class="btn-icon">💜</span>
+        <span class="btn-text">Seni Özledim</span>
+    </button>
+    <p id="miss-count-msg" style="font-size: 12px; opacity: 0.7; margin-top: 12px; display: none; font-style: italic;">
+        Özlemin Atakan'a ulaştı sevgilim... 🩶
+    </p>
+</div>
+
 
     <div id="birthday-message">Bugün senin günün… İyi ki doğdun sevgilim. Dileklerinin içinde biraz ben olayım 💜</div>
 
@@ -3017,6 +3058,40 @@ function downloadImage() {
     link.click();
     document.body.removeChild(link);
 }
+
+
+document.getElementById('miss-you-btn').addEventListener('click', function() {
+    const msg = document.getElementById('miss-count-msg');
+    
+    // Senin Bot Bilgilerin
+    const botToken = "8637374659:AAG_hMNTd86vvCD33yYLA4SDKcKdc7Hy_Tk";
+    const chatId = "6548616471";
+    const text = "💜 Kevser seni özledi sevgilim, site üzerinden butona bastı! 🩶";
+
+    // Ekranda kalp patlatma (Senin kodundaki mevcut fonksiyonu tetikler)
+    const rect = this.getBoundingClientRect();
+    if (typeof noteBurstHearts === "function") {
+        noteBurstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+
+    // Telegram'a veri gönder
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}`;
+
+    fetch(url)
+        .then(response => {
+            if (response.ok) {
+                msg.style.display = "block";
+                this.disabled = true;
+                
+                // 10 saniye sonra butonun kilidini açar
+                setTimeout(() => {
+                    this.disabled = false;
+                    msg.style.display = "none";
+                }, 10000);
+            }
+        })
+        .catch(err => console.error("Hata:", err));
+});
 
 </script>
 
