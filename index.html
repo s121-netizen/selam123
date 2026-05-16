@@ -1072,6 +1072,110 @@ body.logged-in #mini-game-btn{ display:block !important; }
     }
 }
 
+
+/* Özel Pop-up Katmanı (Arka Plan Karartma) */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 12, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Pop-up Açık Olduğunda */
+.popup-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Pop-up Kutusu */
+.popup-content {
+    background: linear-gradient(135deg, rgba(25, 25, 30, 0.95), rgba(15, 15, 20, 0.98));
+    border: 1px solid rgba(123, 44, 191, 0.3);
+    box-shadow: 0 15px 35px rgba(123, 44, 191, 0.2), 0 0 15px rgba(255, 255, 255, 0.02);
+    border-radius: 24px;
+    width: 85%;
+    max-width: 360px;
+    padding: 20px;
+    transform: scale(0.8);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: #fff;
+    text-align: center;
+}
+
+/* Pop-up Açıldığında İçeriğin Büyüme Animasyonu */
+.popup-overlay.active .popup-content {
+    transform: scale(1);
+}
+
+/* Başlık Alanı */
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 10px;
+}
+
+#popup-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: #b0a8b9; /* Asil Gri tonu */
+}
+
+.popup-close-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+.popup-close-btn:hover { color: #7b2cbf; }
+
+/* İçerik Yazısı */
+.popup-body {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 20px 0;
+    white-space: pre-line; /* Alt satırları düzgün korur */
+}
+
+/* Kapat Butonu */
+.popup-ok-btn {
+    background: linear-gradient(135deg, #7b2cbf, #5a189a);
+    border: none;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3);
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.popup-ok-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(123, 44, 191, 0.4);
+}
+
+
 </style>
 </head>
 
@@ -1143,6 +1247,22 @@ body.logged-in #mini-game-btn{ display:block !important; }
     <div class="tatil-grid" id="tatil-notlari-konteyner">
         </div>
 </div>
+
+<div id="custom-popup" class="popup-overlay" onclick="closePopup()">
+    <div class="popup-content" onclick="event.stopPropagation()">
+        <div class="popup-header">
+            <span id="popup-title">Not Başlığı</span>
+            <button class="popup-close-btn" onclick="closePopup()">×</button>
+        </div>
+        <div class="popup-body">
+            <p id="popup-text">Not içeriği buraya gelecek...</p>
+        </div>
+        <div class="popup-footer">
+            <button class="popup-ok-btn" onclick="closePopup()">Kapat 💜</button>
+        </div>
+    </div>
+</div>
+
 
 
     <div class="card card-birthday">
@@ -3182,6 +3302,7 @@ document.getElementById('miss-you-btn').addEventListener('click', function() {
 // 1. Gün Pazar saat 14:00'te açılır. Diğer günler (2,3,4,5,6) gece 00:00'da açılır.
 // HER HAFTA BURADAKİ GERÇEK TARİHLERİ VE NOTLARI YENİLEYEBİLİRSİN
 // 1. Gün Pazar saat 14:00'te açılır. Diğer günler (2,3,4,5,6) gece 00:00'da açılır.
+// HER HAFTA BURADAKİ GERÇEK TARİHLERİ VE NOTLARI YENİLEYEBİLİRSİN
 const haftalikNotlar = [
     { tarih: "2026-05-17T14:00:00", baslik: "1. Gün (Pazar)", not: "Yurda dönüş yolu başladı ama bu notun sevgisi hep seninle sevgilim... 💜" },
     { tarih: "2026-05-18T00:00:00", baslik: "2. Gün (Pazartesi)", not: "Yeni hafta başladı, yurttayken sesini duymak için sabırsızlanıyorum! 🩶" },
@@ -3191,8 +3312,20 @@ const haftalikNotlar = [
     { tarih: "2026-05-22T00:00:00", baslik: "6. Gün (Cuma)", not: "Veee Cuma geldi! Evine hoş geldin sevgilim, nihayet yan yanayız..." }
 ];
 
+// ÖZEL POP-UP'I AÇMA FONKSİYONU
+function openPopup(title, text) {
+    document.getElementById("popup-title").innerText = title;
+    document.getElementById("popup-text").innerText = text;
+    document.getElementById("custom-popup").classList.add("active");
+}
+
+// ÖZEL POP-UP'I KAPATMA FONKSİYONU
+function closePopup() {
+    document.getElementById("custom-popup").classList.remove("active");
+}
+
 function haftalikNotSisteminiYonet() {
-    const simdi = new Date(); // Gerçek anlık zaman verisini çeker
+    const simdi = new Date(); 
     const konteyner = document.getElementById("tatil-notlari-konteyner");
     if (!konteyner) return;
     konteyner.innerHTML = "";
@@ -3202,32 +3335,39 @@ function haftalikNotSisteminiYonet() {
         const kart = document.createElement("div");
         kart.className = "tatil-not-karti";
 
-        // Gerçek zaman, kartın açılış zamanından önce mi? (KİLİTLİ DURUMU)
+        // Gün ismini ayıklama (Mobilde taşmasın diye)
+        let baslikMetni = item.baslik.split(" ")[0] + " " + (item.baslik.split(" ")[1] || "");
+
         if (simdi < acilisZamani) {
+            // KİLİTLİ DURUMU
             kart.classList.add("kilitli");
             kart.innerHTML = `
                 <div class="kart-icon">🔒</div>
-                <div class="kart-baslik">${item.baslik.split(" ")[0]} ${item.baslik.split(" ")[1] || ""}</div>
+                <div class="kart-baslik">${baslikMetni}</div>
                 <div class="kart-sayac">Kilitli</div>
             `;
-            kart.onclick = () => alert(`Bu not henüz kilitli! 🔒 Açılış saati: ${acilisZamani.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'})}`);
+            // Kilitliyken tıklandığında da eski çirkin alert yerine yeni şık pop-up'ı açıyoruz
+            kart.onclick = () => {
+                openPopup("Kilitli Giriş 🔒", `Bu not henüz kilitli sevgilim!\nAçılış saati: ${acilisZamani.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'})}`);
+            };
         } else {
-            // ZAMANI GELMİŞ VEYA GEÇMİŞ GÜNLER (Açık durum)
+            // AÇIK DURUMU
             kart.classList.add("acik");
             kart.innerHTML = `
                 <div class="kart-icon">💌</div>
-                <div class="kart-baslik">${item.baslik.split(" ")[0]} ${item.baslik.split(" ")[1] || ""}</div>
+                <div class="kart-baslik">${baslikMetni}</div>
                 <div class="kart-sayac" style="color:#7b2cbf; font-weight:bold;">Oku</div>
             `;
+            // Açık nota tıklayınca yeni şık pop-up açılır
             kart.onclick = () => {
-                alert(`💌 [${item.baslik} Notu]:\n\n"${item.not}"`);
+                openPopup(`💌 ${item.baslik} Notu`, item.not);
             };
         }
         konteyner.appendChild(kart);
     });
 }
 
-// Sayfa açıldığında sistemi tetikle
+// Sayfa yüklendiğinde çalıştır
 document.addEventListener("DOMContentLoaded", () => {
     haftalikNotSisteminiYonet();
 });
