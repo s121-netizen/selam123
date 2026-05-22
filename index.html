@@ -2310,9 +2310,12 @@ function executeLogin() {
         updateLiveTimer();
         setInterval(updateLiveTimer, 1000);
         
-        // Eğer varsa diğer fonksiyonları başlat
         if (typeof updateFooterDate === "function") updateFooterDate();
         if (typeof startHeartRain === "function") startHeartRain();
+        
+        // 🔥 İŞTE BURAYA EKLEDİK: Giriş yapıldığı an cache sistemini başlatıyoruz
+        startOfflineCaching(); 
+        
     }, 800);
 }
 
@@ -3419,10 +3422,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-// ===== OFFLINE VE ÖNBELLEK (CACHE) SİSTEMİ =====
+// ===== GARANTİLİ OFFLINE VE CACHE SİSTEMİ =====
 const CACHE_NAME = 'ak-anilar-v3';
 
-// Sitedeki tüm resim yollarını dinamik olarak toplayan fonksiyon
 function getStaticAssets() {
     const assets = [
         window.location.pathname,
@@ -3431,7 +3433,6 @@ function getStaticAssets() {
         'logo4.png'
     ];
     
-    // HTML içindeki tüm img etiketlerinin src yollarını otomatik listeye ekler
     document.querySelectorAll('.gallery-item img').forEach(img => {
         const src = img.getAttribute('src');
         if (src && !assets.includes(src)) {
@@ -3442,22 +3443,13 @@ function getStaticAssets() {
     return assets;
 }
 
-// Service Worker'ı kaydet ve resimleri telefona yükle
-if ('service worker' in navigator) {
-    window.addEventListener('load', () => {
-        // Küçük bir Service Worker scriptini tarayıcı belleğinde oluşturuyoruz
+// Bu fonksiyonu doğrudan giriş başarılı olduğunda tetikleyeceğiz
+function startOfflineCaching() {
+    if ('service worker' in navigator) {
         const swBlob = new Blob([`
             const CACHE_NAME = '${CACHE_NAME}';
-            
-            self.addEventListener('install', (e) => {
-                self.skipWaiting();
-            });
-
-            self.addEventListener('activate', (e) => {
-                e.waitUntil(clients.claim());
-            });
-
-            // İnternet olmasa bile her şeyi telefondaki gizli hafızadan getirir
+            self.addEventListener('install', (e) => { self.skipWaiting(); });
+            self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
             self.addEventListener('fetch', (e) => {
                 e.respondWith(
                     caches.match(e.request).then((cachedResponse) => {
@@ -3480,19 +3472,30 @@ if ('service worker' in navigator) {
         
         navigator.serviceWorker.register(swUrl, { scope: './' })
             .then(reg => {
-                console.log('Offline mod aktif! 💜');
+                const toastEl = document.getElementById("welcome-toast");
                 
-                // İlk girişte tüm resimleri gizli hafızaya doldurma tetikleyicisi
                 caches.open(CACHE_NAME).then(cache => {
                     const urlsToCache = getStaticAssets();
+                    
+                    if(toastEl) {
+                        toastEl.innerText = "Anılarımız telefona kilitleniyor... ⏳";
+                        toastEl.classList.add("show");
+                    }
+
                     cache.addAll(urlsToCache).then(() => {
-                        console.log('Tüm fotoğraflar galeriye sızmadan telefona güvenle kaydoldu! 🩶');
-                    }).catch(err => console.log('Bazı resimler yüklenirken atlandı, sorun değil internet oldukça dolacak.'));
+                        console.log('Önbelleğe alma başarılı!');
+                        if(toastEl) {
+                            toastEl.innerText = "Tüm anılar internetsiz kullanım için hazır! 💜🩶";
+                            toastEl.classList.add("show");
+                            setTimeout(() => { toastEl.classList.remove("show"); }, 4000);
+                        }
+                    }).catch(err => {
+                        console.log("Önbelleğe alınırken bazı dosyalar atlandı:", err);
+                    });
                 });
             });
-    });
+    }
 }
-
 
 </script>
 
