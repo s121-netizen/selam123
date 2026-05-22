@@ -3417,6 +3417,83 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
+
+// ===== OFFLINE VE ÖNBELLEK (CACHE) SİSTEMİ =====
+const CACHE_NAME = 'ak-anilar-v3';
+
+// Sitedeki tüm resim yollarını dinamik olarak toplayan fonksiyon
+function getStaticAssets() {
+    const assets = [
+        window.location.pathname,
+        'index.html',
+        'favicon.png',
+        'logo4.png'
+    ];
+    
+    // HTML içindeki tüm img etiketlerinin src yollarını otomatik listeye ekler
+    document.querySelectorAll('.gallery-item img').forEach(img => {
+        const src = img.getAttribute('src');
+        if (src && !assets.includes(src)) {
+            assets.push(src);
+        }
+    });
+    
+    return assets;
+}
+
+// Service Worker'ı kaydet ve resimleri telefona yükle
+if ('service worker' in navigator) {
+    window.addEventListener('load', () => {
+        // Küçük bir Service Worker scriptini tarayıcı belleğinde oluşturuyoruz
+        const swBlob = new Blob([`
+            const CACHE_NAME = '${CACHE_NAME}';
+            
+            self.addEventListener('install', (e) => {
+                self.skipWaiting();
+            });
+
+            self.addEventListener('activate', (e) => {
+                e.waitUntil(clients.claim());
+            });
+
+            // İnternet olmasa bile her şeyi telefondaki gizli hafızadan getirir
+            self.addEventListener('fetch', (e) => {
+                e.respondWith(
+                    caches.match(e.request).then((cachedResponse) => {
+                        if (cachedResponse) return cachedResponse;
+                        return fetch(e.request).then((networkResponse) => {
+                            if (networkResponse.status === 200) {
+                                let responseToCache = networkResponse.clone();
+                                caches.open(CACHE_NAME).then((cache) => {
+                                    cache.put(e.request, responseToCache);
+                                });
+                            }
+                            return networkResponse;
+                        }).catch(() => caches.match('index.html'));
+                    })
+                );
+            });
+        `], { type: 'text/javascript' });
+
+        const swUrl = URL.createObjectURL(swBlob);
+        
+        navigator.serviceWorker.register(swUrl, { scope: './' })
+            .then(reg => {
+                console.log('Offline mod aktif! 💜');
+                
+                // İlk girişte tüm resimleri gizli hafızaya doldurma tetikleyicisi
+                caches.open(CACHE_NAME).then(cache => {
+                    const urlsToCache = getStaticAssets();
+                    cache.addAll(urlsToCache).then(() => {
+                        console.log('Tüm fotoğraflar galeriye sızmadan telefona güvenle kaydoldu! 🩶');
+                    }).catch(err => console.log('Bazı resimler yüklenirken atlandı, sorun değil internet oldukça dolacak.'));
+                });
+            });
+    });
+}
+
+
 </script>
 
 
