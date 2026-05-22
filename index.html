@@ -780,8 +780,35 @@ body.logged-in #mini-game-btn{ display:block !important; }
     display: flex;
     gap: 14px;
     overflow-x: auto;
-    padding: 10px;
+    padding: 10px 10px 25px 10px; /* Alttaki bar sıkışmasın diye alt padding'i artırdık */
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* İPhone'larda parmak akıcılığı sağlar */
+}
+
+/* 2. Kaydırma çubuğunun kendisi (Gövdesi) */
+.gallery-scroll::-webkit-scrollbar {
+    height: 6px; /* Barı zarif ve ince yapıyoruz */
+}
+
+/* 3. Barın arkasındaki boş yol (Pist) */
+.gallery-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05); /* Çok hafif şeffaf beyaz yol */
+    border-radius: 10px;
+    margin: 0 20px; /* Kenarlardan biraz boşluk bırakır, şık durur */
+}
+
+/* 4. Parmağımızla tutup hızlıca kaydıracağımız hareketli parça (Kulp) */
+.gallery-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #7b2cbf, #b0b0b0); /* Senin mor ve gri renk geçişin */
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(123, 44, 191, 0.4); /* Hafifçe mor parlar */
+}
+
+/* 5. Üzerine gelindiğinde veya mobilde parmakla basılı tutulduğunda parlasın */
+.gallery-scroll::-webkit-scrollbar-thumb:hover,
+.gallery-scroll::-webkit-scrollbar-thumb:active {
+    background: #7b2cbf; /* Tamamen mor olur */
+    box-shadow: 0 0 12px rgba(123, 44, 191, 0.7);
 }
 
 #download-btn {
